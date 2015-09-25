@@ -38,7 +38,7 @@
                         {% for article in active_articles %}
                             <tr>
                                 <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="/article/{{ article.id }}/{{ article.clean_url_title }}">{{ article.title }}</a></td>
+                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
                                 <td>{{ article.word_count }}</td>
                                 <td>{{ article.magazine }}</td>
                                 <td>{{ article.magazine_number }}</td>
@@ -73,7 +73,7 @@
                             {% for article in a %}
                             <tr>
                                 <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="#" class="dialog-trigger modal-trigger">{{ article.title }}</a></td>
+                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
                                 <td>{{ article.word_count }}</td>
                                 <td>{{ article.magazine }}</td>
                                 <td>{{ article.magazine_number }}</td>
@@ -151,7 +151,7 @@
                 $('#confirmText').text("Weet je zeker dat je het artikel " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
             } else if ($(this).hasClass("dialog-trigger")) {
-                var page = "/article/1/";
+                var page = "/article/" + $(this).attr('value');
                 $('.article-iframe').attr('src', page)
                 $('#modal-article').openModal();
             } else {
