@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    FactuurMaker
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    {% if edit %}
+        <h1>Artikel bewerken</h1>
+    {% else %}
+        <h1>Nieuw artikel toevoegen</h1>
+    {% endif %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <form id="article_form" class="col s12" method="post" action="/article/edit/{{ articleid }}/">
+    {% else %}
+        <form id="article_form" class="col s12" method="post" action="/article/add/">
+    {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.title }}
+                    <label for="{{ form.title.id_for_label }}">Titel</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.date_received }}
+                    <label for="{{ form.date_received.id_for_label }}">Datum ontvangen</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.date_deadline }}
+                    <label for="{{ form.date_deadline.id_for_label }}">Deadline</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.word_count }}
+                    <label for="{{ form.word_count.id_for_label }}">Woordenaantal</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.magazine }}
+                    <label for="{{ form.magazine.id_for_label }}">Magazine</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.magazine_number }}
+                    <label for="{{ form.magazine_number.id_for_label }}">Magazinenummer</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.word_price }}
+                    <label for="{{ form.word_price.id_for_label }}">Woordprijs</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.briefing }}
+                    <label for="{{ form.briefing.id_for_label }}">Briefing</label>
+                </div>
+                <p style="margin-left:10px">
+                    {{ form.paid }}
+                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
+                </p>
+                <p style="margin-left:10px">
+                    {{ form.done }}
+                    <label for="{{ form.done.id_for_label }}">Klaar</label>
+                </p>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">
+            {% if edit %}
+                Bewerken
+            {% else %}
+                Toevoegen
+            {% endif %}
+            <i class="mdi-content-send left"></i>
+        </button>
+
+        <a href="/">Annuleren</a>
+    </form>
+    </div>
+    <script type="text/javascript">$('.datepicker').pickadate({
+        monthsFull: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+		monthsShort: [ 'jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+		weekdaysFull: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+		weekdaysShort: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+		today: 'Vandaag',
+		clear: 'Legen',
+		close: 'Sluit',
+		firstDay: 1,
+		format: 'dd-mm-yyyy',
+		formatSubmit: 'yyyy/mm/dd',
+		selectMonths: true,
+	    selectYears: 15
+  });
+    var dateTypeVar = $('#datepicker').datepicker('getDate');
+    $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
+    </script>
+{% endblock %}

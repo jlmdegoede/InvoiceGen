@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+
+    <h4>{{ article.title }}</h4>
+    <table class="striped">
+    <tr>
+        <td>Datum ontvangen</td>
+        <td><b>{{ article.date_received }}</b></td>
+    </tr>
+    <tr>
+        <td>Deadline</td>
+        <td><b>{{ article.date_deadline }}</b></td>
+    </tr>
+    <tr>
+        <td>Woordenaantal</td>
+        <td><b>{{ article.word_count }}</b></td>
+    </tr>
+    <tr>
+        <td>Magazine</td>
+        <td><b>{{ article.magazine }}</b> in nummer <b>{{ article.magazine_number }}</b></td>
+    </tr>
+    <tr>
+        <td>Woordprijs</td>
+        <td><b>{{ article.word_price }}</b></td>
+    </tr>
+    <tr>
+        <td>Betaald</td>
+        <td>{{ article.paid }}</td>
+    </tr>
+    <tr>
+        <td>Gefactureerd</td>
+        <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %}</td>
+    </tr>
+    <tr>
+        <td>Briefing</td>
+        <td><b>{{ article.briefing }}</b></td>
+    </tr>
+    </table>

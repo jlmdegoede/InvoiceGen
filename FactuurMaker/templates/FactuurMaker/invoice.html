@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factuur</title>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+
+</head>
+<body>
+
+<nav>
+    <div class="nav-wrapper blue-grey lighten-3">
+      <a href="#" class="brand-logo center">Factuur {{ today }}</a>
+    </div>
+  </nav>
+<div class="container">
+
+    <h4>Freelancer {{ naam }}</h4>
+    <br />
+
+    <h5>Gegevens factuur</h5>
+<div class="card-panel">
+    <table>
+        <tr>
+            <td style="width:200px;">Volgnummer</td>
+            <td>{{ volgnummer }}</td>
+        </tr>
+        <tr>
+            <td>Datum</td>
+            <td>{{ today }}</td>
+        </tr>
+    </table>
+</div>
+
+    <br />
+
+    <h5>Gegevens leverancier</h5>
+<div class="card-panel">
+    <table>
+        <tr>
+            <td style="width:200px;">Naam:</td>
+            <td>{{ naam }}</td>
+        </tr>
+        <tr>
+            <td>Adres
+            <td>{{ adres }}</td>
+        </tr>
+        <tr>
+            <td>Woonplaats
+            <td>{{ woonplaats }}</td>
+        </tr>
+        <tr>
+            <td>E-mailadres
+            <td>{{ emailadres }}</td>
+        </tr>
+        <tr>
+            <td>IBAN
+            <td>{{ IBAN }}</td>
+        </tr>
+    </table>
+</div>
+
+    <br />
+
+    <h5>Gegevens afnemer</h5>
+<div class="card-panel">
+    <table>
+        <tr>
+            <td style="width:200px;">Bedrijfsnaam</td>
+            <td>{{ bedrijfsnaam }}</td>
+        </tr>
+        <tr>
+            <td>Adres</td>
+            <td>{{ bedrijfsadres }}</td>
+        </tr>
+        <tr>
+            <td>Plaats</td>
+            <td>{{ bedrijfsplaats }}</td>
+        </tr>
+    </table>
+</div>
+
+    <br />
+
+    <h5>Geleverd</h5>
+<div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+    <table>
+        <thead>
+        <th>Artikel</th>
+        <th>Blad / Nummer</th>
+        <th>Kwantiteit</th>
+        <th>Prijs</th>
+        </thead>
+        {% for article in articles %}
+            <tr>
+                <td> {{ article.title }}</td>
+                <td> {{ article.magazine }} / {{ article.magazine_number }}</td>
+                <td> {{ article.word_count }}</td>
+                <td> {{ article.price }}</td>
+            </tr>
+        {% endfor %}
+
+
+    </table>
+            </div>
+<div class="card-action">
+               <a href="#">Totaal te voldoen: €{{ totaalbedrag }}</a>
+            </div>
+</div>
+</div>
+</body>
+</html>
