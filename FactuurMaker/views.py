@@ -298,7 +298,7 @@ def generate_invoice(request):
         for articleId in request.POST.getlist('articles[]'):
             article = Article.objects.get(id=articleId)
             articles.append(article)
-            totaalbedrag += article.word_count * 0.25
+            totaalbedrag += article.word_count * article.word_price
 
         today = datetime.date.today()
         today = today.strftime("%d-%m-%Y")

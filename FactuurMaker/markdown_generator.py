@@ -50,7 +50,7 @@ def create_markdown_file(naam, bedrijf, date, articles, volgnummer):
     if (not isinstance(articles, list)):
         articles = articles.all()
     for article in articles:
-        totaalbedrag += article.word_count * 0.25
-        markdown_file = markdown_file + "|"+ article.title +"|"+ article.magazine + "/" + str(article.magazine_number) + "|" + str(article.word_count) + " woorden| &#8364;" + str(article.word_count * 0.25) + "|\n"
+        totaalbedrag += article.word_count * article.word_price
+        markdown_file = markdown_file + "|"+ article.title +"|"+ article.magazine + "/" + str(article.magazine_number) + "|" + str(article.word_count) + " woorden| &#8364;" + str(article.word_count * article.word_price) + "|\n"
     markdown_file = markdown_file + "Totaal te voldoen: &#8364;" + str(totaalbedrag)
     return markdown_file
