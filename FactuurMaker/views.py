@@ -95,7 +95,6 @@ def get_invoices(request):
     invoices = {}
     yearList = []
     years = Invoice.objects.values("date_created").distinct()
-    print(years)
     for dict in years:
         year = dict['date_created'].year
         if year not in yearList:
@@ -115,7 +114,6 @@ def get_invoices(request):
 def view_markdown(request, invoice_id):
     # try:
     invoice = Invoice.objects.get(id=invoice_id)
-    print(invoice.contents)
     return render(request, 'FactuurMaker/markdown.html', {'invoice_id': invoice.id,
                                                           'html': markdown.markdown(invoice.contents, extensions=[
                                                               'markdown.extensions.tables',

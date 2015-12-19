@@ -8,6 +8,7 @@ class Invoice(models.Model):
     contents = models.TextField()
     invoice_number = models.IntegerField()
     total_amount = models.IntegerField()
+    paid = models.BooleanField(default=False)
 
 
 class Article(models.Model):
@@ -18,7 +19,6 @@ class Article(models.Model):
     magazine = models.CharField(max_length=40)
     magazine_number = models.IntegerField()
     invoice = models.ForeignKey(Invoice, null=True, blank=True)
-    paid = models.BooleanField(default=False)
     briefing = models.TextField(blank=True)
     done = models.BooleanField(default=False)
     word_price = models.FloatField(default=0.25)
