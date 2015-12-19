@@ -2,10 +2,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
-from forms import *
+from FactuurMaker.forms import *
 from datetime import date
 import datetime
-import markdown_generator
 import markdown
 from django.http import HttpResponse
 # Create your views here.
@@ -31,6 +30,7 @@ def index(request):
         toast = request.session.get('toast')
         del request.session['toast']
 
+    yearList.sort(reverse=True)
     active_articles = Article.objects.filter(done=False)
     currentYear = date.today().year
     return render(request, 'FactuurMaker/index.html',
@@ -72,7 +72,7 @@ def view_statistics(request):
 
 
 def get_yearly_stats(year):
-    print year
+    print(year)
     nr_of_articles = 0
     totale_inkomsten = 0
     nr_of_words = 0
@@ -95,7 +95,7 @@ def get_invoices(request):
     invoices = {}
     yearList = []
     years = Invoice.objects.values("date_created").distinct()
-    print years
+    print(years)
     for dict in years:
         year = dict['date_created'].year
         if year not in yearList:
@@ -115,7 +115,7 @@ def get_invoices(request):
 def view_markdown(request, invoice_id):
     # try:
     invoice = Invoice.objects.get(id=invoice_id)
-    print invoice.contents
+    print(invoice.contents)
     return render(request, 'FactuurMaker/markdown.html', {'invoice_id': invoice.id,
                                                           'html': markdown.markdown(invoice.contents, extensions=[
                                                               'markdown.extensions.tables',
@@ -235,7 +235,7 @@ def edit_invoice(request, invoiceid=-1):
 
 @login_required
 def add_article_to_invoice(request):
-    print request
+    print(request)
     if request.method == 'POST':
         invoice = Invoice.objects.get(id=request.POST.get('invoiceid'))
         article = Article.objects.get(title=request.POST.get('article'))

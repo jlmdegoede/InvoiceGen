@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    FactuurMaker: Magazines
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <h1>Magazines</h1>
+    <div class="row">
+
+        <div id="openstaand" class="col s12">
+                {% csrf_token %}
+            <table  class="striped">
+                <thead>
+                        <th data-field="select"></th>
+                        <th data-field="id">Titel</th>
+                        <th data-field="word_count">Volgende verschijningsdatum</th>
+                        <th data-field="paid"></th>
+                    </thead>
+                    <tbody>
+
+                        {% for magazine in magazines %}
+                            <tr>
+                                <td>{{ magazine.titel }}</td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+            </table>
+            <br />
+            <a class="btn-floating btn-large waves-effect waves-light red right" href="add"><i class="mdi-content-add"></i></a>
+        </div>
+    </div>
+{% endblock %}

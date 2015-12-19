@@ -45,3 +45,5 @@ class CompanySetting(models.Model):
     bedrijfsnaam = models.CharField(max_length=200)
     bedrijfsadres = models.CharField(max_length=200)
     bedrijfsplaats = models.CharField(max_length=200)
+
+
