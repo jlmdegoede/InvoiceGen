@@ -7,7 +7,9 @@ from datetime import date
 import datetime
 import markdown
 from django.http import HttpResponse
+import FactuurMaker.markdown_generator
 # Create your views here.
+
 
 @login_required
 def index(request):
@@ -20,10 +22,6 @@ def index(request):
             yearList.append(year)
             articles[year] = Article.objects.filter(date_deadline__contains=year, done=True)
             for article in articles[year]:
-                if article.paid == False:
-                    article.paid = 'Nee'
-                else:
-                    article.paid = 'Ja'
                 article.clean_url_title = article.title.replace(' ', '-').lower()
     toast = None
     if request.session.get('toast'):
@@ -42,10 +40,6 @@ def index(request):
 def view_article(request, articleid):
     try:
         article = Article.objects.get(id=articleid)
-        if article.paid == False:
-            article.paid = 'Nee'
-        else:
-            article.paid = 'Ja'
         return render(request, 'FactuurMaker/view_article.html', {'article': article})
     except:
         request.session['toast'] = 'Artikel niet gevonden'
@@ -302,13 +296,12 @@ def generate_invoice(request):
         today = today.strftime("%d-%m-%Y")
         volgnummer = request.POST.get('volgnummer')
         # create invoice and save it
-        invoice.contents = markdown_generator.create_markdown_file(UserSetting.objects.get(naam='Jochem de Goede'),
-                                                                   CompanySetting.objects.get(
-                                                                       bedrijfsnaam='Reshift Digital'), today, articles,
+        invoice.contents = FactuurMaker.markdown_generator.create_markdown_file(UserSetting.objects.first(),
+                                                                   CompanySetting.objects.first(), today, articles,
                                                                    volgnummer)
         invoice.date_created = datetime.date.today()
-        invoice.from_address = "jochem@degoede.email"
-        invoice.to_address = "factuur@reshift.nl"
+        invoice.from_address = "TBD"
+        invoice.to_address = "TBD"
         invoice.invoice_number = volgnummer
         invoice.total_amount = totaalbedrag
         invoice.save()
@@ -340,11 +333,11 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
         else:
-            print("Ongeldige inloggegevens: {0}, {1}".format(username, password))
             return render_to_response('FactuurMaker/login.html', {'error': "Ongeldige inloggegevens"}, context)
     else:
         form = UserForm()
         return render_to_response('FactuurMaker/login.html', {'form': form}, context)
+
 
 @login_required
 def settings(request):

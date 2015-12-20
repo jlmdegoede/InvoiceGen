@@ -23,10 +23,6 @@
         <td><b>{{ article.word_price }}</b></td>
     </tr>
     <tr>
-        <td>Betaald</td>
-        <td>{{ article.paid }}</td>
-    </tr>
-    <tr>
         <td>Gefactureerd</td>
         <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %}</td>
     </tr>

@@ -3,9 +3,17 @@ from Magazine.models import *
 
 
 class MagazineForm(forms.ModelForm):
-    title = forms.CharField()
+    titel = forms.CharField()
 
     class Meta:
         model = Magazine
-        fields = ('title',)
+        fields = ('titel',)
+
+
+class MagazineUitgaveForm(forms.ModelForm):
+    verschijningsdatum = forms.DateField(label="Verschijningsdatum", input_formats=['%d-%m-%Y'], widget=forms.widgets.DateInput(format="%d-%m-%Y",attrs={'class':'datepicker'}))
+
+    class Meta:
+        model = MagazineUitgave
+        fields = ('nummer','verschijningsdatum')
 

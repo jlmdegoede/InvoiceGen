@@ -1,0 +1,11 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+
+<h4>Magazine-uitgaves voor {{ magazine.titel }}</h4>
+<table class="striped">
+{% for uitgave in magazine_uitgaves %}
+    <tr>
+        <td>Nummer: {{ uitgave.nummer }}, verschijningsdatum: <b>{{ uitgave.verschijningsdatum }}</b></td>
+        <td><b></b></td>
+    </tr>
+{% endfor %}
+    </table>

@@ -16,17 +16,23 @@
                 {% csrf_token %}
             <table  class="striped">
                 <thead>
-                        <th data-field="select"></th>
-                        <th data-field="id">Titel</th>
-                        <th data-field="word_count">Volgende verschijningsdatum</th>
-                        <th data-field="paid"></th>
+                        <th data-field="title">Titel</th>
+                        <th data-field="next_date" width="400px">Volgende verschijningsdatum</th>
+                        <th data-field="options" width="200px"></th>
+                        <th data-field="options" width="100px"></th>
                     </thead>
                     <tbody>
 
                         {% for magazine in magazines %}
                             <tr>
-                                <td>{{ magazine.titel }}</td>
-                                <td></td>
+                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ magazine.id }}">{{ magazine.titel }}</a></td>
+                                <td> {{ magazine.volgende.verschijningsdatum }}</td>
+                                <td>
+                                    <a href="/magazines/edition/add/{{ magazine.id }}">Uitgaves toevoegen</a></td>
+                                <td>
+                                    <a href="/magazines/edit/{{ magazine.id }}"><i class="small mdi-editor-mode-edit"></i></a>
+                                    <br />
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -35,4 +41,29 @@
             <a class="btn-floating btn-large waves-effect waves-light red right" href="add"><i class="mdi-content-add"></i></a>
         </div>
     </div>
+     <div id="modal-uitgave" class="modal" style="height:600px">
+    <div class="modal-content" style="height:500px">
+      <iframe class="magazine-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal-trigger').click(function (event) {
+            if ($(this).hasClass("dialog-trigger")) {
+                var page = "/magazines/editions/" + $(this).attr('value');
+                $('.magazine-iframe').attr('src', page)
+                $('#modal-uitgave').openModal();
+            }
+        });
+  });
+
+    function getId(id) {
+        return $('.modal-trigger').attr("value")
+    }
+    </script>
 {% endblock %}

@@ -27,6 +27,9 @@ urlpatterns = [
     url(r'^statistics/$', FactuurMaker.views.view_statistics, name='statistics'),
     url(r'^magazines/$', Magazine.views.magazines, name='magazines'),
     url(r'^magazines/add$', Magazine.views.add_magazine, name='add_magazine'),
+    url(r'^magazines/edit/(?P<magazine_id>\d+)', Magazine.views.edit_magazine, name='edit_magazine'),
+    url(r'^magazines/edition/add/(?P<magazine_id>\d+)', Magazine.views.add_magazine_uitgave, name='add_magazine_uitgave'),
+    url(r'^magazines/editions/(?P<magazine_id>\d+)', Magazine.views.view_magazine_uitgaves, name='view_magazine_uitgaves'),
 
     url(r'^data/articles/$', RestApi.views.get_json_article_list, name='get_json_article_list'),
     url(r'^data/article/(?P<article_id>\d+)$', RestApi.views.get_json_article, name='get_json_article'),

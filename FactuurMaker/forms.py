@@ -4,12 +4,16 @@ from django import forms
 from FactuurMaker.models import *
 from datetime import date
 
+
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField()
+    username.help_text = ""
 
     class Meta:
         model = User
         fields = ('username', 'password')
+
 
 class ArticleForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)
@@ -20,12 +24,12 @@ class ArticleForm(forms.ModelForm):
     magazine_number = forms.IntegerField(label="Magazinenummer")
     word_price = forms.DecimalField(label="Woordprijs")
     briefing = forms.CharField(widget=forms.Textarea(attrs={'class':'materialize-textarea'}), required=False)
-    paid = forms.BooleanField(label="Betaald", required=False)
     done = forms.BooleanField(label="Klaar", required=False)
 
     class Meta:
         model = Article
-        fields = ('title', 'date_received', 'date_deadline', 'word_count', 'magazine', 'magazine_number', 'word_price', 'briefing', 'paid', 'done')
+        fields = ('title', 'date_received', 'date_deadline', 'word_count', 'magazine', 'magazine_number', 'word_price', 'briefing', 'done')
+
 
 class InvoiceForm(forms.ModelForm):
     date_created = forms.DateField(label="Aangemaakt op", input_formats=['%d-%m-%Y'], initial=date.today(), widget=forms.widgets.DateInput(format="%d-%m-%Y",attrs={'class':'datepicker'}))
@@ -40,11 +44,13 @@ class InvoiceForm(forms.ModelForm):
         model = Invoice
         fields = '__all__'
 
+
 class UserSettingForm(forms.ModelForm):
 
     class Meta:
         model = UserSetting
         fields = '__all__'
+
 
 class CompanySettingForm(forms.ModelForm):
 
