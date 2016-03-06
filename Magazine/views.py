@@ -2,6 +2,7 @@ from django.shortcuts import *
 from Magazine.forms import *
 from django.forms import *
 from django.contrib.auth.decorators import login_required
+from datetime import date
 # Create your views here.
 
 
@@ -11,7 +12,8 @@ def magazines(request):
     for magazine in magazines:
         uitgave = MagazineUitgave.objects.filter(magazine=magazine.id)
         if uitgave:
-            magazine.volgende = uitgave.latest('verschijningsdatum')
+            today = date.today()
+            magazine.volgende = uitgave.filter(verschijningsdatum__gte=today)[0]
     return render(request, 'magazines.html',
                   {'magazines': magazines})
 
