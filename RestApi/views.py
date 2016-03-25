@@ -7,13 +7,14 @@ from django.contrib.auth import authenticate
 from RestApi.models import *
 from datetime import date
 import django.utils.crypto
+from Magazine.models import *
 from FactuurMaker.views import get_yearly_stats
 # Create your views here.
 
 @csrf_exempt
 def get_json_article_list(request):
     if check_session_id(request.POST["session_id"]):
-        title_list = map(Article.serialize, Article.objects.all())
+        title_list = map(Article.serialize, Article.objects.all().order_by('-date_deadline'))
         return JsonResponse(list(title_list), content_type="application/json", safe=False)
     return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
 
@@ -23,6 +24,21 @@ def get_json_article(request, article_id):
     if check_session_id(request.POST["session_id"]):
         article = map(Article.serialize, Article.objects.filter(id=article_id))
         return JsonResponse(list(article), content_type="application/json", safe=False)
+    return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
+
+
+@csrf_exempt
+def get_json_magazine_list(request):
+    if check_session_id(request.POST["session_id"]):
+        magazines = map(Magazine.serialize, Magazine.objects.all())
+        return JsonResponse(list(magazines), content_type="application/json", safe=False)
+    return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
+
+@csrf_exempt
+def get_json_magazine(request, magazine_id):
+    if check_session_id(request.POST["session_id"]):
+        magazine = map(MagazineUitgave.serialize, MagazineUitgave.filter(id=magazine_id))
+        return JsonResponse(list(magazine), content_type="application/json", safe=False)
     return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
 
 
