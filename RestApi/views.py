@@ -22,7 +22,7 @@ def get_json_article_list(request):
 def get_json_article(request, article_id):
     if check_session_id(request.POST["session_id"]):
         article = map(Article.serialize, Article.objects.filter(id=article_id))
-        return JsonResponse(article, content_type="application/json", safe=False)
+        return JsonResponse(list(article), content_type="application/json", safe=False)
     return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
 
 

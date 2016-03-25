@@ -29,8 +29,7 @@ class Article(models.Model):
     def serialize(self):
         return {"title": self.title, "date": str(self.date_received), "deadline": str(self.date_deadline),
             "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
-            "article_id": self.id, "wordcount": self.word_count, "briefing": self.briefing,
-            "invoice_sent": self.invoice is not None}
+            "article_id": self.id, "wordcount": self.word_count, "briefing": self.briefing}
 
 
 class UserSetting(models.Model):
