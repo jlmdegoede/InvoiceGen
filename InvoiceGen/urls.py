@@ -35,5 +35,6 @@ urlpatterns = [
     url(r'^data/article/(?P<article_id>\d+)$', RestApi.views.get_json_article, name='get_json_article'),
     url(r'^data/save/article/$', RestApi.views.save_json_article, name='save_json_article'),
     url(r'^data/session_id/$', RestApi.views.get_session_id, name='get_session_id'),
-    url(r'^data/nr_of_articles/$', RestApi.views.view_statistics, name='view_statistics'),
+    url(r'^data/magazines/$', RestApi.views.get_json_magazine_list, name='get_json_magazine_list'),
+    url(r'^data/magazine/(?P<magazine_id>\d+)$', RestApi.views.get_json_magazine, name='get_json_magazine'),
 ]

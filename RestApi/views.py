@@ -37,7 +37,7 @@ def get_json_magazine_list(request):
 @csrf_exempt
 def get_json_magazine(request, magazine_id):
     if check_session_id(request.POST["session_id"]):
-        magazine = map(MagazineUitgave.serialize, MagazineUitgave.filter(id=magazine_id))
+        magazine = map(MagazineUitgave.serialize, MagazineUitgave.objects.filter(id=magazine_id))
         return JsonResponse(list(magazine), content_type="application/json", safe=False)
     return JsonResponse({"error": "Invalid session ID supplied"}, content_type="application/json", safe=False)
 

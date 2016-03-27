@@ -7,7 +7,7 @@ class Magazine(models.Model):
     titel = models.CharField(max_length=200)
 
     def serialize(self):
-        return {"title": self.titel, "id": self.id}
+        return {"title": self.titel, "server_id": self.id}
 
 
 class MagazineUitgave(models.Model):
@@ -16,5 +16,5 @@ class MagazineUitgave(models.Model):
     verschijningsdatum = models.DateField()
 
     def serialize(self):
-        return {"nummer": self.nummer, "magazine": self.magazine,
-                "verschijningsdatum": self.verschijningsdatum, "id":self.id}
+        return {"nummer": self.nummer, "magazine": self.magazine.id,
+                "verschijningsdatum": self.verschijningsdatum, "server_id": self.id}
