@@ -35,7 +35,7 @@ class Article(models.Model):
 class UserSetting(models.Model):
     naam = models.CharField(max_length=200)
     adres = models.CharField(max_length=200)
-    woonplaats = models.CharField(max_length=200)
+    plaats_en_postcode = models.CharField(max_length=200)
     emailadres = models.CharField(max_length=200)
     iban = models.CharField(max_length=200)
 
@@ -43,6 +43,6 @@ class UserSetting(models.Model):
 class CompanySetting(models.Model):
     bedrijfsnaam = models.CharField(max_length=200)
     bedrijfsadres = models.CharField(max_length=200)
-    bedrijfsplaats = models.CharField(max_length=200)
+    bedrijfsplaats_en_postcode = models.CharField(max_length=200)
 
 

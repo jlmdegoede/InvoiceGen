@@ -7,6 +7,7 @@ from datetime import date
 import datetime
 import markdown
 from django.http import HttpResponse
+from AgreementModule.models import Agreement
 import FactuurMaker.markdown_generator
 # Create your views here.
 
@@ -40,6 +41,7 @@ def index(request):
 def view_article(request, articleid):
     try:
         article = Article.objects.get(id=articleid)
+        article.agreement = Agreement.objects.filter(article_concerned=article)[0]
         return render(request, 'FactuurMaker/view_article.html', {'article': article})
     except:
         request.session['toast'] = 'Artikel niet gevonden'
@@ -353,12 +355,12 @@ def settings(request):
             company = CompanySetting()
         user.naam = request.POST['naam']
         user.emailadres = request.POST['emailadres']
-        user.woonplaats = request.POST['woonplaats']
+        user.plaats_en_postcode = request.POST['woonplaats']
         user.adres = request.POST['adres']
         user.iban = request.POST['iban']
         user.save()
 
-        company.bedrijfsplaats = request.POST['bedrijfsplaats']
+        company.bedrijfsplaats_en_postcode = request.POST['bedrijfsplaats']
         company.bedrijfsadres = request.POST['bedrijfsadres']
         company.bedrijfsnaam = request.POST['bedrijfsnaam']
         company.save()

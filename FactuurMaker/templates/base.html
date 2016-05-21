@@ -9,16 +9,16 @@
 
     <!-- Compiled and minified JavaScript -->
     <!--Import jQuery before materialize.js-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
 
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+     <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
 
 </head>
 
@@ -28,14 +28,17 @@
     <div class="container">
         <div class="nav-wrapper">
             <a href="/" class="brand-logo">FactuurMaker</a>
+            {% if user.is_authenticated %}
             <ul class="right hide-on-med-and-down">
-                <li><a href="/">Artikelen</a></li>
+                <li><a href="/">Artikels</a></li>
+                <li><a href="/agreements">Overeenkomsten</a></li>
                 <li><a href="/invoices">Facturen</a></li>
                 <li><a href="/magazines">Magazines</a></li>
                 <li><a href="/statistics">Statistieken</a></li>
                 <li><a href="/settings">Instellingen</a></li>
                 <li><a href="/logout">Afmelden</a></li>
             </ul>
+            {% endif %}
         </div>
     </div>
 </nav>

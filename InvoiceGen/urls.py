@@ -2,7 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import FactuurMaker.views
 import Magazine.views
-import RestApi.views
+import AgreementModule.views
+# import RestApi.views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -31,10 +32,19 @@ urlpatterns = [
     url(r'^magazines/edition/add/(?P<magazine_id>\d+)', Magazine.views.add_magazine_uitgave, name='add_magazine_uitgave'),
     url(r'^magazines/editions/(?P<magazine_id>\d+)', Magazine.views.view_magazine_uitgaves, name='view_magazine_uitgaves'),
 
-    url(r'^data/articles/$', RestApi.views.get_json_article_list, name='get_json_article_list'),
-    url(r'^data/article/(?P<article_id>\d+)$', RestApi.views.get_json_article, name='get_json_article'),
-    url(r'^data/save/article/$', RestApi.views.save_json_article, name='save_json_article'),
-    url(r'^data/session_id/$', RestApi.views.get_session_id, name='get_session_id'),
-    url(r'^data/magazines/$', RestApi.views.get_json_magazine_list, name='get_json_magazine_list'),
-    url(r'^data/magazine/(?P<magazine_id>\d+)$', RestApi.views.get_json_magazine, name='get_json_magazine'),
+    url(r'^agreements/$', AgreementModule.views.agreement_index,
+        name='agreement_index'),
+    url(r'^agreements/new-model-agreement/$', AgreementModule.views.add_agreement_text,
+        name='add_agreement_text'),
+    url(r'^agreements/new-agreement/$', AgreementModule.views.add_agreement,
+        name='add_agreement'),
+    url(r'^agreements/view-sign-agreement/(?P<url>\w+)$', AgreementModule.views.view_agreement,
+        name='view_agreement'),
+
+    # url(r'^data/articles/$', RestApi.views.get_json_article_list, name='get_json_article_list'),
+    # url(r'^data/article/(?P<article_id>\d+)$', RestApi.views.get_json_article, name='get_json_article'),
+    # url(r'^data/save/article/$', RestApi.views.save_json_article, name='save_json_article'),
+    # url(r'^data/session_id/$', RestApi.views.get_session_id, name='get_session_id'),
+    # url(r'^data/magazines/$', RestApi.views.get_json_magazine_list, name='get_json_magazine_list'),
+    # url(r'^data/magazine/(?P<magazine_id>\d+)$', RestApi.views.get_json_magazine, name='get_json_magazine'),
 ]
