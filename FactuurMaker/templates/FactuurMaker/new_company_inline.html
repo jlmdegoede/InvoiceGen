@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+    <form id="company_form" class="col s12" method="post" action="/client/add/inline/">
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.bedrijfsnaam }}
+                    <label for="{{ form.bedrijfsnaam.id_for_label }}">Naam</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.bedrijfsadres }}
+                    <label for="{{ form.bedrijfsadres.id_for_label }}">Adres</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.bedrijfsplaats_en_postcode }}
+                    <label for="{{ form.bedrijfsplaats_en_postcode.id_for_label }}">Plaats en postcode</label>
+                </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Toevoegen
+            <i class="mdi-content-send left"></i>
+        </button>
+    </form>
+
+<script type="text/javascript">
+    $('#company_form').submit(function(e) {
+        e.preventDefault();
+        var data = $('form').serialize();
+        $.post('/client/add/inline/', data, function(response) {
+            alert(response);
+            window.parent.closeModal(response.company_name, response.company_id);
+        });
+    });
+</script>

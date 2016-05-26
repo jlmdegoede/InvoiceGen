@@ -6,7 +6,7 @@ from FactuurMaker.forms import *
 from datetime import date
 import datetime
 import markdown
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from AgreementModule.models import Agreement
 import FactuurMaker.markdown_generator
 # Create your views here.
@@ -41,9 +41,11 @@ def index(request):
 def view_article(request, articleid):
     try:
         article = Product.objects.get(id=articleid)
-        article.agreement = Agreement.objects.filter(article_concerned=article)[0]
+        if Agreement.objects.filter(article_concerned=article).count() != 0:
+            article.agreement = Agreement.objects.filter(article_concerned=article)[0]
         return render(request, 'FactuurMaker/view_article.html', {'article': article})
-    except:
+    except Exception as err:
+        print(err)
         request.session['toast'] = 'Product niet gevonden'
         return redirect('/')
 
@@ -75,8 +77,8 @@ def get_yearly_stats(year):
     all_articles = Product.objects.filter(done=True)
     for article in all_articles:
         if (article.date_deadline.year == int(year)):
-            totale_inkomsten += article.word_count * 0.25
-            nr_of_words += article.word_count
+            totale_inkomsten += article.quantity * article.price_per_quantity
+            nr_of_words += article.quantity
             nr_of_articles += 1
     not_yet_invoiced = 0
     not_yet_invoiced_articles = Product.objects.filter(done=False)
@@ -101,6 +103,13 @@ def get_invoices(request):
         toast = request.session.get('toast')
         del request.session['toast']
 
+    for year in yearList:
+        for invoice_obj in invoices[year]:
+            products = Product.objects.filter(invoice=invoice_obj)
+            invoice_obj.product_set = []
+            for product in products:
+                invoice_obj.product_set.append(product)
+
     currentYear = date.today().year
     return render(request, 'FactuurMaker/invoice_table.html',
                   {'invoices': invoices, 'toast': toast, 'years': yearList, 'currentYear': currentYear})
@@ -117,6 +126,21 @@ def view_markdown(request, invoice_id):
     # except:
     #    request.session['toast'] = 'Factuur niet gevonden'
     #   return redirect('/invoices')
+
+
+@login_required
+def add_company_inline(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        company = Company()
+        f = CompanyForm(request.POST, instance=company)
+        if f.is_valid():
+            company.save()
+            request.session['toast'] = 'Bedrijf toegevoegd'
+            return JsonResponse({'company_id': company.id, 'company_name': company.bedrijfsnaam})
+    if request.method == 'GET':
+        form = CompanyForm()
+        return render_to_response('FactuurMaker/new_company_inline.html', {'form': form}, context)
 
 
 @login_required
@@ -158,7 +182,7 @@ def edit_article(request, articleid=-1):
             return render_to_response('FactuurMaker/new_edit_article.html',
                                       {'form': f, 'edit': True, 'articleid': articleid}, context)
         except:
-            request.session['toast'] = 'Artikel niet gevonden'
+            request.session['toast'] = 'Opdracht niet gevonden'
             return redirect('/')
     elif request.method == 'POST':
         article = Product.objects.get(id=articleid)
@@ -166,7 +190,7 @@ def edit_article(request, articleid=-1):
 
         if f.is_valid():
             f.save()
-            request.session['toast'] = 'Artikel gewijzigd'
+            request.session['toast'] = 'Opdracht gewijzigd'
             return redirect('/')
         else:
             return render_to_response('FactuurMaker/new_edit_article.html',
@@ -222,6 +246,7 @@ def edit_invoice(request, invoiceid=-1):
             request.session['toast'] = 'Factuur gewijzigd'
             return redirect('/invoices')
         else:
+            print(f.errors)
             return render_to_response('FactuurMaker/new_edit_invoice.html',
                                       {'form': f, 'articles': articles, 'invoceid': invoice.id, 'edit': True,
                                        'invoiceid': invoiceid, 'toast': "Formulier ongeldig!"}, context)
@@ -292,25 +317,24 @@ def generate_invoice(request):
         for articleId in request.POST.getlist('articles[]'):
             article = Product.objects.get(id=articleId)
             articles.append(article)
-            totaalbedrag += article.word_count * article.word_price
+            totaalbedrag += article.quantity * article.price_per_quantity
 
         today = datetime.date.today()
         today = today.strftime("%d-%m-%Y")
         volgnummer = request.POST.get('volgnummer')
         # create invoice and save it
         invoice.contents = FactuurMaker.markdown_generator.create_markdown_file(UserSetting.objects.first(),
-                                                                    Company.objects.first(), today, articles,
+                                                                    articles[0].from_company, today, articles,
                                                                     volgnummer)
         invoice.date_created = datetime.date.today()
-        invoice.from_address = "TBD"
-        invoice.to_address = "TBD"
+        invoice.title = "Factuur " + str(today)
+        invoice.to_company = articles[0].from_company
         invoice.invoice_number = volgnummer
         invoice.total_amount = totaalbedrag
         invoice.save()
 
         for article in articles:
             article.invoice = invoice
-            invoice.article_set.add(article)
             article.save()
     return redirect('/')
 
@@ -349,32 +373,20 @@ def settings(request):
             user = UserSetting.objects.get(id=1)
         except:
             user = UserSetting()
-        try:
-            company = Company.objects.get(id=1)
-        except:
-            company = Company()
         user.naam = request.POST['naam']
         user.emailadres = request.POST['emailadres']
-        user.plaats_en_postcode = request.POST['woonplaats']
+        user.plaats_en_postcode = request.POST['plaats_en_postcode']
         user.adres = request.POST['adres']
         user.iban = request.POST['iban']
         user.save()
-
-        company.bedrijfsplaats_en_postcode = request.POST['bedrijfsplaats']
-        company.bedrijfsadres = request.POST['bedrijfsadres']
-        company.bedrijfsnaam = request.POST['bedrijfsnaam']
-        company.save()
 
         toast = 'Instellingen opgeslagen'
     user_i = UserSetting.objects.all().first()
     company_i = Company.objects.first()
     if not user_i:
         user_i = UserSetting()
-    if not company_i:
-        company_i = Company()
     user = UserSettingForm(instance=user_i)
-    company = CompanySettingForm(instance=company_i)
 
     return render(request, 'FactuurMaker/settings.html',
-                  {'user': user, 'company': company, 'toast': toast})
+                  {'user': user, 'toast': toast})
 

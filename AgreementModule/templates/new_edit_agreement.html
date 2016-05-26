@@ -24,22 +24,27 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/agreements/new-agreement/{{ articleid }}/">
+        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/{{ articleid }}/">
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/agreements/new-agreement/">
+        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/">
     {% endif %}
         {% csrf_token %}
 
             <div class="row">
 
                 <div class="input-field col s12">
+                    {{ form.company }}
+                    <label for="{{ form.copmany.id_for_label }}">Opdrachtgever</label>
+                </div>
+
+                <div class="input-field col s12">
                     {{ form.client_name }}
-                    <label for="{{ form.client_name.id_for_label }}">Naam opdrachtgever</label>
+                    <label for="{{ form.client_name.id_for_label }}">Naam contactpersoon opdrachtgever</label>
                 </div>
 
                 <div class="input-field col s12">
                     {{ form.client_emailaddress }}
-                    <label for="{{ form.client_emailaddress.id_for_label }}">E-mailadres opdrachtgever</label>
+                    <label for="{{ form.client_emailaddress.id_for_label }}">E-mailadres contactpersoon</label>
                 </div>
 
                 <div class="input-field col s12">
@@ -50,7 +55,7 @@
 
                 <div class="input-field col s12">
                     {{ form.article_concerned }}
-                    <label for="{{ form.article_concerned.id_for_label }}">Artikel</label>
+                    <label for="{{ form.article_concerned.id_for_label }}">Opdrachten</label>
                 </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">
@@ -84,6 +89,7 @@
     $(document).ready(function() {
         $('#id_agree_text').material_select();
         $('#id_article_concerned').material_select();
+        $('#id_company').material_select();
     });
     </script>
 {% endblock %}

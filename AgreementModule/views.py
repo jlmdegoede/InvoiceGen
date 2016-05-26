@@ -1,6 +1,3 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
 from AgreementModule.models import *
@@ -11,16 +8,16 @@ import random
 from FactuurMaker.models import UserSetting, Company
 
 # Create your views here.
-CLIENT_NAME_CONSTANT = '[CLIENT_NAME]'
-CLIENT_CITY_ZIPCODE_CONSTANT = '[CLIENT_CITY_ZIPCODE]'
-CLIENT_ADDRESS_CONSTANT = '[CLIENT_ADDRESS]'
-CLIENT_COMPANY_NAME_CONSTANT = '[CLIENT_COMPANY_NAME]'
+CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
+CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
+CLIENT_ADDRESS_CONSTANT = '<ADRES_OPDRACHTGEVER>'
+CLIENT_COMPANY_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
 
-CONTRACTOR_NAME_CONSTANT = '[CONTRACTOR_NAME]'
-CONTRACTOR_CITY_ZIPCODE_CONSTANT = '[CONTRACTOR_CITY_ZIPCODE]'
-CONTRACTOR_ADDRESS_CONSTANT = '[CONTRACTOR_ADDRESS]'
+CONTRACTOR_NAME_CONSTANT = '<MIJN_NAAM>'
+CONTRACTOR_CITY_ZIPCODE_CONSTANT = '<MIJN_POSTCODE_EN_WOONPLAATS>'
+CONTRACTOR_ADDRESS_CONSTANT = '<MIJN_ADRES>'
 
-OPDRACHT_OMSCHRIJVING_CONSTANT = '[OPDRACHT-OMSCHRIJVING]'
+OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
 
 AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 
@@ -56,6 +53,7 @@ def add_agreement(request):
             agreement.created = datetime.datetime.now()
             agreement.url = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(7))
             agreement.agreement_text_copy = replace_text(agreement.agree_text.text, data['article_concerned'])
+            agreement.company = data['company']
             agreement.save()
             for article in data['article_concerned']:
                 agreement.article_concerned.add(article)
@@ -97,6 +95,20 @@ def view_agreement(request, url):
                 return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)
 
 
+
+@login_required
+def delete_agreement(request, agreement_id=-1):
+    try:
+        agreement_to_delete = Agreement.objects.get(id=agreement_id)
+        agreement_to_delete.delete()
+        request.session['toast'] = 'Overeenkomst verwijderd'
+        return redirect('/agreements')
+    except:
+        request.session['toast'] = 'Verwijderen mislukt'
+        return redirect('/agreements')
+
+
+
 def replace_text(agree_text, products):
     user = UserSetting.objects.first()
     company = Company.objects.first()
@@ -110,7 +122,7 @@ def replace_text(agree_text, products):
 
     article_text = "\n"
     for product in products:
-        article_text += "Opdracht " + product.title + " met een hoeveelheid van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.bedrijfsnaam + "\n"
+        article_text += "Opdracht " + product.title + " met een kwantieit van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.bedrijfsnaam + "\n"
 
     agree_text = agree_text.replace(OPDRACHT_OMSCHRIJVING_CONSTANT, article_text)
     agree_text = agree_text.replace(CLIENT_NAME_CONSTANT, client_name)

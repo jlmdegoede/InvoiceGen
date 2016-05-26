@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    FactuurMaker
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    {% if edit %}
+        <h1>Opdrachtgever bewerken</h1>
+    {% else %}
+        <h1>Nieuwe opdrachtgever toevoegen</h1>
+    {% endif %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <form id="article_form" class="col s12" method="post" action="/client/edit/{{ clientid }}/">
+    {% else %}
+        <form id="article_form" class="col s12" method="post" action="/client/add/">
+    {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.title }}
+                    <label for="{{ form.title.id_for_label }}">Naam</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.date_received }}
+                    <label for="{{ form.date_received.id_for_label }}">Adres</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.date_deadline }}
+                    <label for="{{ form.date_deadline.id_for_label }}">Plaats en postcode</label>
+                </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">
+            {% if edit %}
+                Bewerken
+            {% else %}
+                Toevoegen
+            {% endif %}
+            <i class="mdi-content-send left"></i>
+        </button>
+
+        <a href="/">Annuleren</a>
+    </form>
+    </div>
+    <script type="text/javascript">
+        $('.datepicker').pickadate({
+        monthsFull: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+		monthsShort: [ 'jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+		weekdaysFull: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+		weekdaysShort: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+		today: 'Vandaag',
+		clear: 'Legen',
+		close: 'Sluit',
+		firstDay: 1,
+		format: 'dd-mm-yyyy',
+		formatSubmit: 'yyyy/mm/dd',
+		selectMonths: true,
+	    selectYears: 15
+  });
+
+    $(document).ready(function() {
+        $('#id_from_company').material_select();
+    });
+
+
+    var dateTypeVar = $('#datepicker').datepicker('getDate');
+    $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
+    </script>
+{% endblock %}

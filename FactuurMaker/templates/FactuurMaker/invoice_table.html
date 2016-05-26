@@ -29,7 +29,7 @@
                     <thead>
                         <th data-field="id">Nummer</th>
                         <th data-field="word_count">Aangemaakt op</th>
-                        <th data-field="magazine_number">Voor producten</th>
+                        <th data-field="magazine_number">Voor opdrachten</th>
                         <th data-field="magazine_number">PDF</th>
                         <th data-field="magazine_number"></th>
                     </thead>
@@ -39,8 +39,8 @@
                             <tr>
                                 <td>{{ invoice.invoice_number }}</td>
                                 <td>{{ invoice.date_created }}</td>
-                                <td>{% for article in invoice.article_set.all %}
-                                      {{ article.title }}
+                                <td>{% for product in invoice.product_set.all %}
+                                      {{ product.title }}
                                     {% endfor %} </td>
                                 <td><a href="/markdown/{{ invoice.id }}">Inzien</a></td>
                                 <td>

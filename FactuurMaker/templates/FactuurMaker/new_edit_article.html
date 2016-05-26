@@ -44,13 +44,11 @@
                     <label for="{{ form.date_deadline.id_for_label }}">Deadline</label>
                 </div>
                 <div class="input-field col s12">
-                    {{ form.quantity }}
-                    <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
-                </div>
-                <div class="input-field col s12">
                     {{ form.from_company }}
-                    <label for="{{ form.from_company.id_for_label }}">Bedrijf</label>
+                    <label for="{{ form.from_company.id_for_label }}">Opdrachtgever</label>
                 </div>
+                <a href="#" class="modal-trigger">Nieuwe opdrachtgever toevoegen</a>
+
                 <div class="input-field col s12">
                     {{ form.identification_number }}
                     <label for="{{ form.identification_number.id_for_label }}">Identificatienummer</label>
@@ -58,6 +56,10 @@
                 <div class="input-field col s12">
                     {{ form.price_per_quantity }}
                     <label for="{{ form.price_per_quantity.id_for_label }}">Prijs per eenheid</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.quantity }}
+                    <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
                 </div>
                 <div class="input-field col s12">
                     {{ form.briefing }}
@@ -80,6 +82,16 @@
         <a href="/">Annuleren</a>
     </form>
     </div>
+
+
+ <div id="modal-client" class="modal" style="height:600px">
+    <div class="modal-content" style="height:500px">
+      <iframe class="client-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+    </div>
+  </div>
     <script type="text/javascript">
         $('.datepicker').pickadate({
         monthsFull: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
@@ -95,7 +107,31 @@
 		selectMonths: true,
 	    selectYears: 15
   });
+
+    $(document).ready(function() {
+        $('#id_from_company').material_select();
+
+        $('.modal-trigger').click(function (event) {
+            var page = "/client/add/inline/";
+            $('.client-iframe').attr('src', page)
+            $('#modal-client').openModal();
+        });
+    });
+    window.closeModal = function(company_name, company_id){
+        $('#modal-client').closeModal();
+        $('#id_from_company').append($('<option/>', {
+            value: company_id,
+            text : company_name
+        }));
+        $(".dropdown-content").append('<li class="active"><span>' + company_name + '</span></li>');
+        $('#id_from_company').material_select();
+        $("select").closest('.input-field').children('span.caret').remove();
+
+
+    };
+
     var dateTypeVar = $('#datepicker').datepicker('getDate');
     $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
     </script>
 {% endblock %}
+

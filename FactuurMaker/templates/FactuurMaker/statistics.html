@@ -12,7 +12,7 @@
 <h1>Statistieken {{ year }}</h1>
     <table class="striped">
         <tr>
-            <td width="350px">Totaalaantal artikelen</td>
+            <td width="350px">Totaalaantal opdrachten</td>
             <td>{{ nr_of_articles|last }}</td>
         </tr>
         <tr>
@@ -20,23 +20,23 @@
             <td>&#8364;{{ totale_inkomsten|last }}</td>
         </tr>
         <tr>
-            <td>Totaalaantal geschreven woorden
+            <td>Totaalaantal kwantiteit
             <td>{{ nr_of_words|last }}</td>
         </tr>
         <tr>
-            <td>Openstaande artikelen
+            <td>Openstaande opdrachten
             <td>&#8364;{{ not_yet_invoiced|last }}</td>
         </tr>
     </table>
     <h4>Afgelopen 5 jaar</h4>
     <div class="row">
         <div class="col s4">
-            <h5>Totaalaantal artikelen</h5>
+            <h5>Totaalaantal opdrachten</h5>
             <canvas id="yoy_nr_of_articles" width="400" height="400"></canvas>
         </div>
 
         <div class="col s4">
-            <h5>Totaalaantal woorden</h5>
+            <h5>Totaalaantal kwantiteit</h5>
             <canvas id="yoy_nr_of_words" width="400" height="400"></canvas>
         </div>
 

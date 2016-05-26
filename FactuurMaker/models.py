@@ -6,6 +6,9 @@ class Company(models.Model):
     bedrijfsadres = models.CharField(max_length=200)
     bedrijfsplaats_en_postcode = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.bedrijfsnaam
+
 
 class Invoice(models.Model):
     title = models.CharField(max_length=200)
@@ -15,6 +18,9 @@ class Invoice(models.Model):
     invoice_number = models.IntegerField()
     total_amount = models.IntegerField()
     paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.Invoice
 
 
 class Product(models.Model):

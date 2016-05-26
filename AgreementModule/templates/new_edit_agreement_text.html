@@ -14,6 +14,22 @@
     {% else %}
         <h1>Modelovereenkomst toevoegen</h1>
     {% endif %}
+
+    <p>
+    Voer hieronder de tekst van de modelovereenkomst in.
+    Je kunt de volgende variabelen in de modelovereenkomst gebruiken:
+    <ul>
+        <li>{% filter force_escape %}<NAAM_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<POSTCODE_PLAATS_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<ADRES_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<NAAM_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_NAAM>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_POSTCODE_EN_WOONPLAATS>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_ADRES>{% endfilter %}</li>
+        <li>{% filter force_escape %}<OMSCHRIJVING_OPDRACHT>{% endfilter %}</li>
+    </ul>
+
+    Zodra je een nieuwe overeenkomst aanmaakt, worden deze variabelen automatisch ingevuld met de relevante informatie, zoals de opdrachtgever en de opdrachten voor die overeenkomst.</p>
     {% if error %}
         {{ error }}
     {% endif %}
@@ -24,9 +40,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/agreement/edit/{{ articleid }}/">
+        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/bewerken/{{ agreementid }}/">
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/agreements/new-model-agreement/">
+        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuwe-modelovereenkomst/">
     {% endif %}
         {% csrf_token %}
 

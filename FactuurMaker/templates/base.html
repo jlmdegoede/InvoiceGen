@@ -9,7 +9,7 @@
 
     <!-- Compiled and minified JavaScript -->
     <!--Import jQuery before materialize.js-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
 
@@ -30,8 +30,8 @@
             <a href="/" class="brand-logo">FactuurMaker</a>
             {% if user.is_authenticated %}
             <ul class="right hide-on-med-and-down">
-                <li><a href="/">Artikels</a></li>
-                <li><a href="/agreements">Overeenkomsten</a></li>
+                <li><a href="/">Opdrachten</a></li>
+                <li><a href="/overeenkomsten">Overeenkomsten</a></li>
                 <li><a href="/invoices">Facturen</a></li>
                 <li><a href="/statistics">Statistieken</a></li>
                 <li><a href="/settings">Instellingen</a></li>
@@ -59,13 +59,15 @@
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
-                <h5 class="white-text">FactuurMaker</h5>
-                <p class="grey-text text-lighten-4">Een initiatief van JochemEnterprises.nl.</p>
+                <h5 class="white-text">InvoiceGen Facturen & Overeenkomsten</h5>
+                <p class="grey-text text-lighten-4">BETAVERSIE. Build 20160526. Problemen gevonden? Meld het ons!</p>
             </div>
             <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
-                    <li><a class="grey-text text-lighten-3" href="#!">Servicestatus</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/">InvoiceGen</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/status">Servicestatus</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/contact">Vragen of opmerkingen? Mail ons!</a></li>
                 </ul>
             </div>
         </div>

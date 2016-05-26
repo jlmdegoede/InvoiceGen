@@ -24,45 +24,14 @@
         {% csrf_token %}
 
             <div class="row">
-                <div class="input-field col s12">
-                    {{ form.date_created }}
-                    <label for="{{ form.date_created.id_for_label }}">Aangemaakt op</label>
-                </div>
-                <div class="input-field col s12">
-                    {{ form.from_address }}
-                    <label for="{{ form.from_address.id_for_label }}">Van</label>
-                </div>
-                <div class="input-field col s12">
-                    {{ form.to_address }}
-                    <label for="{{ form.to_address.id_for_label }}">Aan</label>
-                </div>
-                <div class="input-field col s12">
-                    {{ form.file_path }}
-                    <label for="{{ form.file_path.id_for_label }}">Bestand</label>
-                </div>
 
                 <div class="input-field col s12">
-                    <ul id="articleList">
-                    {% for article in articles %}
-                        <li id="article{{ article.id }}">
-                    <i class="mdi-action-delete delete" value="{{ article.id }}"></i> {{ article.title }}</li>
-                    {%  endfor %}
-                    </ul>
-
                     {{ form.articles }}
-                    <label for="{{ form.articles.id_for_label }}">Producten</label>
-
-                    <a href="#" class="btn waves-effect waves-light left add-article" style="z-index:0;">Product toevoegen aan factuur
-                    </a>
-
+                    <label for="{{ form.articles.id_for_label }}">Opdrachten</label>
                 </div>
                 <div class="input-field col s12">
                     {{ form.invoice_number }}
                     <label for="{{ form.invoice_number.id_for_label }}">Volgnummer</label>
-                </div>
-                <div class="input-field col s12">
-                    {{ form.total_amount }}
-                    <label for="{{ form.total_amount.id_for_label }}">Totaalbedrag</label>
                 </div>
             </div>
             <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
@@ -73,28 +42,6 @@
     <script type="text/javascript">
     $(document).ready(function() {
         $('select').material_select();
-
-        // do an ajax post to save articles
-        $('.add-article').click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/invoices/add/article/",
-                data: {article: $('.select-dropdown').val(), invoiceid: {{ invoceid }}, csrfmiddlewaretoken: '{{ csrf_token }}'},
-                success: $('#articleList').append("<li><i class=\"mdi-action-delete\"></i> " + $('.select-dropdown').val() + "</li>")
-            });
-        });
-
-        $('.delete').click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/invoices/delete/article/",
-                data: {articleid: $(this).attr("value"), invoiceid: {{ invoceid }}, csrfmiddlewaretoken: '{{ csrf_token }}'},
-                success: $('#article' + $(this).attr("value")).remove()
-            });
-        });
-
-        // and one to delete
     });
-
     </script>
 {% endblock %}
