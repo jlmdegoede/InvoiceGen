@@ -8,7 +8,7 @@ from AgreementModule.forms import AgreementTextForm, AgreementForm
 import datetime
 import string
 import random
-from FactuurMaker.models import UserSetting, CompanySetting
+from FactuurMaker.models import UserSetting, Company
 
 # Create your views here.
 CLIENT_NAME_CONSTANT = '[CLIENT_NAME]'
@@ -67,7 +67,7 @@ def add_agreement(request):
                                       {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form}, context)
     else:
         form = AgreementForm()
-        articles = Article.objects.filter(done=False)
+        articles = Product.objects.filter(done=False)
         return render_to_response('new_edit_agreement.html', {'form': form, 'articles': articles,}, context)
 
 
@@ -97,9 +97,9 @@ def view_agreement(request, url):
                 return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)
 
 
-def replace_text(agree_text, articles):
+def replace_text(agree_text, products):
     user = UserSetting.objects.first()
-    company = CompanySetting.objects.first()
+    company = Company.objects.first()
     client_name = company.bedrijfsnaam
     client_city_zipcode = company.bedrijfsplaats_en_postcode
     client_company_name = company.bedrijfsnaam
@@ -109,8 +109,8 @@ def replace_text(agree_text, articles):
     contractor_address = user.adres
 
     article_text = "\n"
-    for article in articles:
-        article_text += "Artikel " + article.title + " met een lengte van " + str(article.word_count) + " woorden en een prijs van " + str(article.word_price) + " euro per woord voor tijdschrift " + article.magazine + "\n"
+    for product in products:
+        article_text += "Opdracht " + product.title + " met een hoeveelheid van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.bedrijfsnaam + "\n"
 
     agree_text = agree_text.replace(OPDRACHT_OMSCHRIJVING_CONSTANT, article_text)
     agree_text = agree_text.replace(CLIENT_NAME_CONSTANT, client_name)

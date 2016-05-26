@@ -10,9 +10,9 @@
 
 {% block content %}
     {% if edit %}
-        <h1>Artikel bewerken</h1>
+        <h1>Opdracht bewerken</h1>
     {% else %}
-        <h1>Nieuw artikel toevoegen</h1>
+        <h1>Nieuwe opdracht toevoegen</h1>
     {% endif %}
     {% if error %}
         {{ error }}
@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="input-field col s12">
                     {{ form.title }}
-                    <label for="{{ form.title.id_for_label }}">Titel</label>
+                    <label for="{{ form.title.id_for_label }}">Opdracht</label>
                 </div>
                 <div class="input-field col s12">
                     {{ form.date_received }}
@@ -44,20 +44,20 @@
                     <label for="{{ form.date_deadline.id_for_label }}">Deadline</label>
                 </div>
                 <div class="input-field col s12">
-                    {{ form.word_count }}
-                    <label for="{{ form.word_count.id_for_label }}">Woordenaantal</label>
+                    {{ form.quantity }}
+                    <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
                 </div>
                 <div class="input-field col s12">
-                    {{ form.magazine }}
-                    <label for="{{ form.magazine.id_for_label }}">Magazine</label>
+                    {{ form.from_company }}
+                    <label for="{{ form.from_company.id_for_label }}">Bedrijf</label>
                 </div>
                 <div class="input-field col s12">
-                    {{ form.magazine_number }}
-                    <label for="{{ form.magazine_number.id_for_label }}">Magazinenummer</label>
+                    {{ form.identification_number }}
+                    <label for="{{ form.identification_number.id_for_label }}">Identificatienummer</label>
                 </div>
                 <div class="input-field col s12">
-                    {{ form.word_price }}
-                    <label for="{{ form.word_price.id_for_label }}">Woordprijs</label>
+                    {{ form.price_per_quantity }}
+                    <label for="{{ form.price_per_quantity.id_for_label }}">Prijs per eenheid</label>
                 </div>
                 <div class="input-field col s12">
                     {{ form.briefing }}

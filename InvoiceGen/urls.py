@@ -26,11 +26,6 @@ urlpatterns = [
     url(r'^settings/$', FactuurMaker.views.settings, name='settings'),
     url(r'^settings/user/(?P<userid>\d+)/company/(?P<companyid>\d+)$', FactuurMaker.views.settings, name='settings'),
     url(r'^statistics/$', FactuurMaker.views.view_statistics, name='statistics'),
-    url(r'^magazines/$', Magazine.views.magazines, name='magazines'),
-    url(r'^magazines/add$', Magazine.views.add_magazine, name='add_magazine'),
-    url(r'^magazines/edit/(?P<magazine_id>\d+)', Magazine.views.edit_magazine, name='edit_magazine'),
-    url(r'^magazines/edition/add/(?P<magazine_id>\d+)', Magazine.views.add_magazine_uitgave, name='add_magazine_uitgave'),
-    url(r'^magazines/editions/(?P<magazine_id>\d+)', Magazine.views.view_magazine_uitgaves, name='view_magazine_uitgaves'),
 
     url(r'^agreements/$', AgreementModule.views.agreement_index,
         name='agreement_index'),

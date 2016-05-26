@@ -1,5 +1,5 @@
 from django.db import models
-from FactuurMaker.models import Article
+from FactuurMaker.models import Product
 # Create your models here.
 
 
@@ -18,7 +18,7 @@ class Agreement(models.Model):
     signed_by_client_at = models.DateTimeField(null=True)
     client_name = models.CharField(max_length=200)
     client_emailaddress = models.CharField(max_length=200)
-    article_concerned = models.ManyToManyField(to=Article)
+    article_concerned = models.ManyToManyField(to=Product)
     agreement_text_copy = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=50)
