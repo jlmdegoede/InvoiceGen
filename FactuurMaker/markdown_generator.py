@@ -1,5 +1,5 @@
 
-def create_markdown_file(naam, bedrijf, date, articles, volgnummer):
+def create_markdown_file(naam, bedrijf, date, articles, volgnummer, with_tax_rate):
     markdown_file = "# Factuur " + str(date) + "\n"
     markdown_file += "## Freelancer " + naam.naam + "\n"
     markdown_file += "### Gegevens factuur\n"
@@ -17,9 +17,15 @@ def create_markdown_file(naam, bedrijf, date, articles, volgnummer):
 
     if not isinstance(articles, list):
         articles = articles.all()
-    for article in articles:
-        totaalbedrag += article.quantity * article.price_per_quantity
-        markdown_file = markdown_file + "|"+ article.title +"|"+ str(article.identification_number) + "|" + str(article.quantity) +  "| &#8364;" + str(article.quantity * article.price_per_quantity) + "|\n\n"
-    markdown_file = markdown_file + "Totaal te voldoen: &#8364;" + str(totaalbedrag)
+    if with_tax_rate:
+        for article in articles:
+            totaalbedrag += article.quantity * article.price_per_quantity
+            markdown_file = markdown_file + "|"+ article.title +"|"+ str(article.identification_number) + "|" + str(article.quantity) +  "| &#8364;" + str(article.quantity * article.price_per_quantity) + "|\n\n"
+        markdown_file = markdown_file + "Totaal te voldoen: &#8364;" + str(totaalbedrag)
+    else:
+        for article in articles:
+            totaalbedrag += article.quantity * article.price_per_quantity * (1 + float(article.tax_rate / 100))
+            markdown_file = markdown_file + "|"+ article.title +"|"+ str(article.identification_number) + "|" + str(article.quantity) +  "| &#8364;" + str(article.quantity * article.price_per_quantity) + "|\n\n"
+        markdown_file = markdown_file + "Totaal te voldoen: &#8364;" + str(totaalbedrag)
 
     return markdown_file

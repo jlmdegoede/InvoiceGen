@@ -58,6 +58,10 @@
                     <label for="{{ form.price_per_quantity.id_for_label }}">Prijs per eenheid</label>
                 </div>
                 <div class="input-field col s12">
+                    {{ form.tax_rate }}
+                    <label for="{{ form.tax_rate.id_for_label }}">BTW-tarief percentage (0 als geen BTW)</label>
+                </div>
+                <div class="input-field col s12">
                     {{ form.quantity }}
                     <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
                 </div>

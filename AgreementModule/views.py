@@ -59,7 +59,7 @@ def add_agreement(request):
                 agreement.article_concerned.add(article)
             agreement.save()
             request.session['toast'] = 'Overeenkomst toegevoegd'
-            return redirect('/agreements/')
+            return redirect('/overeenkomsten/')
         else:
             return render_to_response('new_edit_agreement.html',
                                       {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form}, context)
@@ -102,10 +102,10 @@ def delete_agreement(request, agreement_id=-1):
         agreement_to_delete = Agreement.objects.get(id=agreement_id)
         agreement_to_delete.delete()
         request.session['toast'] = 'Overeenkomst verwijderd'
-        return redirect('/agreements')
+        return redirect('/overeenkomsten')
     except:
         request.session['toast'] = 'Verwijderen mislukt'
-        return redirect('/agreements')
+        return redirect('/overeenkomsten')
 
 
 

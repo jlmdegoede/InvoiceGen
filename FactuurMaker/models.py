@@ -33,7 +33,8 @@ class Product(models.Model):
     invoice = models.ForeignKey(Invoice, null=True, blank=True)
     briefing = models.TextField(blank=True)
     done = models.BooleanField(default=False)
-    price_per_quantity = models.FloatField(default=0.25)
+    price_per_quantity = models.FloatField()
+    tax_rate = models.IntegerField()
 
     def __str__(self):
         return self.title

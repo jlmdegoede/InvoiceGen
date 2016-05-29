@@ -323,9 +323,10 @@ def generate_invoice(request):
         today = today.strftime("%d-%m-%Y")
         volgnummer = request.POST.get('volgnummer')
         # create invoice and save it
+        with_tax_rate = articles[0].tax_rate != 0
         invoice.contents = FactuurMaker.markdown_generator.create_markdown_file(UserSetting.objects.first(),
                                                                     articles[0].from_company, today, articles,
-                                                                    volgnummer)
+                                                                    volgnummer, with_tax_rate)
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur " + str(today)
         invoice.to_company = articles[0].from_company
@@ -382,7 +383,6 @@ def settings(request):
 
         toast = 'Instellingen opgeslagen'
     user_i = UserSetting.objects.all().first()
-    company_i = Company.objects.first()
     if not user_i:
         user_i = UserSetting()
     user = UserSettingForm(instance=user_i)
