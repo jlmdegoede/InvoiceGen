@@ -29,7 +29,6 @@
         e.preventDefault();
         var data = $('form').serialize();
         $.post('/client/add/inline/', data, function(response) {
-            alert(response);
             window.parent.closeModal(response.company_name, response.company_id);
         });
     });

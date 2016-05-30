@@ -25,7 +25,7 @@ def index(request):
             for article in articles[year]:
                 article.clean_url_title = article.title.replace(' ', '-').lower()
                 agreements = Agreement.objects.filter(article_concerned=article)
-                if agreements is not None:
+                if agreements.count() != 0:
                     article.agreement = agreements[0]
     toast = None
     if request.session.get('toast'):
@@ -91,32 +91,6 @@ def get_yearly_stats(year):
     return (nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced)
 
 
-@login_required
-def get_invoices(request):
-    invoices = {}
-    yearList = []
-    years = Invoice.objects.values("date_created").distinct()
-    for dict in years:
-        year = dict['date_created'].year
-        if year not in yearList:
-            yearList.append(year)
-            invoices[year] = Invoice.objects.filter(date_created__contains=year)
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
-    for year in yearList:
-        for invoice_obj in invoices[year]:
-            products = Product.objects.filter(invoice=invoice_obj)
-            invoice_obj.product_set = []
-            for product in products:
-                invoice_obj.product_set.append(product)
-
-    currentYear = date.today().year
-    return render(request, 'FactuurMaker/invoice_table.html',
-                  {'invoices': invoices, 'toast': toast, 'years': yearList, 'currentYear': currentYear})
-
 
 @login_required
 def view_markdown(request, invoice_id):
@@ -155,7 +129,7 @@ def add_article(request):
         article.invoice = None
         if f.is_valid():
             article.save()
-            request.session['toast'] = 'Artikel toegevoegd'
+            request.session['toast'] = 'Opdracht toegevoegd'
             return redirect('/')
         else:
             return render_to_response('FactuurMaker/new_edit_article.html',
@@ -202,87 +176,6 @@ def edit_article(request, articleid=-1):
 
 
 @login_required
-def add_invoice(request):
-    context = RequestContext(request)
-    if request.method == 'GET':
-        invoice = Invoice()
-        f = InvoiceForm(instance=invoice)
-
-        return render_to_response('FactuurMaker/new_edit_invoice.html',
-                                  {'form': f, 'invoceid': invoice.id, 'edit': False}, context)
-    elif request.method == 'POST':
-        invoice = Invoice()
-        f = InvoiceForm(request.POST, instance=invoice)
-
-        if f.is_valid():
-            f.save()
-            request.session['toast'] = 'Factuur aangemaakt'
-            return redirect('/invoices')
-        else:
-            return render_to_response('FactuurMaker/new_edit_invoice.html',
-                                      {'form': f, 'invoceid': invoice.id, 'edit': False,
-                                       'toast': "Formulier ongeldig!"}, context)
-
-
-@login_required
-def edit_invoice(request, invoiceid=-1):
-    context = RequestContext(request)
-    if request.method == 'GET':
-        try:
-            invoice = Invoice.objects.get(id=invoiceid)
-            f = InvoiceForm(instance=invoice)
-            articles = Product.objects.filter(invoice=invoice)
-
-            return render_to_response('FactuurMaker/new_edit_invoice.html',
-                                      {'form': f, 'articles': articles, 'invoceid': invoice.id, 'edit': True,
-                                       'invoiceid': invoiceid}, context)
-        except:
-            request.session['toast'] = 'Factuur niet gevonden'
-            return redirect('/invoices')
-    elif request.method == 'POST':
-        invoice = Invoice.objects.get(id=invoiceid)
-        f = InvoiceForm(request.POST, instance=invoice)
-        articles = Product.objects.filter(invoice=invoice)
-
-        if f.is_valid():
-            f.save()
-            request.session['toast'] = 'Factuur gewijzigd'
-            return redirect('/invoices')
-        else:
-            print(f.errors)
-            return render_to_response('FactuurMaker/new_edit_invoice.html',
-                                      {'form': f, 'articles': articles, 'invoceid': invoice.id, 'edit': True,
-                                       'invoiceid': invoiceid, 'toast': "Formulier ongeldig!"}, context)
-
-
-@login_required
-def add_article_to_invoice(request):
-    print(request)
-    if request.method == 'POST':
-        invoice = Invoice.objects.get(id=request.POST.get('invoiceid'))
-        article = Product.objects.get(title=request.POST.get('article'))
-        if article.invoice == None:
-            article.invoice = invoice
-            article.save()
-            return HttpResponse("success")
-        else:
-            return HttpResponse("fail")
-
-
-@login_required
-def delete_article_from_invoice(request):
-    if request.method == 'POST':
-        invoice = Invoice.objects.get(id=request.POST.get('invoiceid'))
-        article = Product.objects.get(id=request.POST.get('articleid'))
-        if article.invoice == invoice:
-            article.invoice = None
-            article.save()
-            return HttpResponse("success")
-        else:
-            return HttpResponse("fail")
-
-
-@login_required
 def delete_article(request, articleid=-1):
     try:
         article_to_delete = Product.objects.get(id=articleid)
@@ -293,54 +186,6 @@ def delete_article(request, articleid=-1):
         request.session['toast'] = 'Verwijderen mislukt'
         return redirect('/')
 
-
-@login_required
-def delete_invoice(request, invoiceid=-1):
-    try:
-        invoice = Invoice.objects.get(id=invoiceid)
-        articles = Product.objects.filter(invoice=invoice)
-        for article in articles:
-            article.invoice = None
-            article.save()
-
-        invoice.delete()
-        request.session['toast'] = 'Verwijderen factuur gelukt'
-        return redirect('/invoices')
-    except:
-        request.session['toast'] = 'Verwijderen factuur mislukt'
-        return redirect('/invoices')
-
-
-@login_required
-def generate_invoice(request):
-    if request.method == 'POST':
-        articles = []
-        totaalbedrag = 0
-        invoice = Invoice()
-        for articleId in request.POST.getlist('articles[]'):
-            article = Product.objects.get(id=articleId)
-            articles.append(article)
-            totaalbedrag += article.quantity * article.price_per_quantity
-
-        today = datetime.date.today()
-        today = today.strftime("%d-%m-%Y")
-        volgnummer = request.POST.get('volgnummer')
-        # create invoice and save it
-        with_tax_rate = articles[0].tax_rate != 0
-        invoice.contents = FactuurMaker.markdown_generator.create_markdown_file(UserSetting.objects.first(),
-                                                                    articles[0].from_company, today, articles,
-                                                                    volgnummer, with_tax_rate)
-        invoice.date_created = datetime.date.today()
-        invoice.title = "Factuur " + str(today)
-        invoice.to_company = articles[0].from_company
-        invoice.invoice_number = volgnummer
-        invoice.total_amount = totaalbedrag
-        invoice.save()
-
-        for article in articles:
-            article.invoice = invoice
-            article.save()
-    return redirect('/')
 
 
 @login_required
@@ -388,8 +233,8 @@ def settings(request):
     user_i = UserSetting.objects.all().first()
     if not user_i:
         user_i = UserSetting()
-    user = UserSettingForm(instance=user_i)
+    form = UserSettingForm(instance=user_i)
 
     return render(request, 'FactuurMaker/settings.html',
-                  {'user': user, 'toast': toast})
+                  {'form': form, 'toast': toast})
 

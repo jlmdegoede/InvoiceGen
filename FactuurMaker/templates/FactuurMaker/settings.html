@@ -13,10 +13,43 @@
     {% if error %}
         <h4>{{ error }}</h4>
     {% endif %}
-    <form id="login_form" method="post" action="/settings/">
+    <form id="login_form" method="post" action="/instellingen/">
         {% csrf_token %}
+        <div class="row">
+            <div class="input-field col s12">
+                {{ form.naam }}
+                <label for="{{ form.naam.id_for_label }}">Naam</label>
+                {{ error.title }}
+            </div>
 
-        {{ user }}
+
+            <div class="input-field col s12">
+                {{ form.adres }}
+                <label for="{{ form.adres.id_for_label }}">Adres</label>
+                {{ error.title }}
+            </div>
+
+
+            <div class="input-field col s12">
+                {{ form.plaats_en_postcode }}
+                <label for="{{ form.plaats_en_postcode.id_for_label }}">Plaats en postcode</label>
+                {{ error.title }}
+            </div>
+
+
+            <div class="input-field col s12">
+                {{ form.emailadres }}
+                <label for="{{ form.emailadres.id_for_label }}">E-mailadres</label>
+                {{ error.title }}
+            </div>
+
+
+            <div class="input-field col s12">
+                {{ form.iban }}
+                <label for="{{ form.iban.id_for_label }}">IBAN</label>
+                {{ error.title }}
+            </div>
+        </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
             <i class="mdi-content-send right"></i>

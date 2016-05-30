@@ -23,9 +23,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/article/edit/{{ articleid }}/">
+        <form id="article_form" class="col s12" method="post" action="/opdracht/wijzigen/{{ articleid }}/">
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/article/add/">
+        <form id="article_form" class="col s12" method="post" action="/opdracht/toevoegen/">
     {% endif %}
         {% csrf_token %}
 

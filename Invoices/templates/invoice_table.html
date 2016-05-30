@@ -44,7 +44,7 @@
                                     {% endfor %} </td>
                                 <td><a href="/markdown/{{ invoice.id }}">Inzien</a></td>
                                 <td>
-                                    <a href="/invoice/edit/{{ invoice.id }}"><i class="small mdi-editor-mode-edit"></i></a>
+                                    <a href="/facturen/wijzigen/{{ invoice.id }}"><i class="small mdi-editor-mode-edit"></i></a>
                                     <a href="#modal1" class="modal-trigger" value="{{ invoice.id }}"><i class="small mdi-action-delete"></i></a>
                                 </td>
                             </tr>
@@ -54,7 +54,7 @@
             </div>
         {% endfor %}
 
-             <a class="btn-floating btn-large waves-effect waves-light red right" href="/invoice/add"><i class="mdi-content-add"></i></a>
+             <a class="btn-floating btn-large waves-effect waves-light red right" href="/facturen/toevoegen"><i class="mdi-content-add"></i></a>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)
@@ -84,7 +84,7 @@
         $('.modal-trigger').click(function (event) {
             id = $(this).attr('value');
             title = $(this).attr('name');
-            $('#deleteLink').attr('href', "/invoice/delete/" + id);
+            $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
             $('#confirmText').text("Weet je zeker dat je het artikel " + title + " wilt verwijderen?");
             $('#modal1').openModal();
         });

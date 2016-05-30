@@ -43,7 +43,7 @@
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/article/edit/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
+                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="small mdi-action-delete"></i></a>
                                 </td>
                             </tr>
@@ -76,7 +76,7 @@
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/article/edit/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
+                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="small mdi-action-delete"></i></a>
                                 </td>
                             </tr>
@@ -88,7 +88,7 @@
             </div>
         {% endfor %}
 
-            <a class="btn-floating btn-large waves-effect waves-light red right" href="article/add"><i class="mdi-content-add"></i></a>
+            <a class="btn-floating btn-large waves-effect waves-light red right" href="opdracht/toevoegen"><i class="mdi-content-add"></i></a>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)
@@ -143,11 +143,11 @@
             if ($(this).hasClass("delete")) {
                 id = $(this).attr('value');
                 title = $(this).attr('name');
-                $('#deleteLink').attr('href', "article/delete/" + id);
-                $('#confirmText').text("Weet je zeker dat je het artikel " + title + " wilt verwijderen?");
+                $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
+                $('#confirmText').text("Weet je zeker dat je de opdracht " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
             } else if ($(this).hasClass("dialog-trigger")) {
-                var page = "/article/" + $(this).attr('value');
+                var page = "/opdracht/" + $(this).attr('value');
                 $('.article-iframe').attr('src', page)
                 $('#modal-article').openModal();
             } else {

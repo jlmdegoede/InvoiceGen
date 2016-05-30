@@ -30,17 +30,6 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('title', 'date_received', 'date_deadline', 'quantity', 'from_company', 'identification_number', 'tax_rate', 'price_per_quantity', 'briefing', 'done')
-
-
-class InvoiceForm(forms.ModelForm):
-    invoice_number = forms.IntegerField(label="Volgnummer")
-    articles = forms.ModelMultipleChoiceField(queryset=Product.objects.all())
-
-    class Meta:
-        model = Invoice
-        fields = ('invoice_number',)
-
-
 class UserSettingForm(forms.ModelForm):
 
     class Meta:
