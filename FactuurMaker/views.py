@@ -218,18 +218,18 @@ def user_login(request):
 def settings(request):
     toast = ''
     if request.method == 'POST':
+
         try:
             user = UserSetting.objects.get(id=1)
         except:
             user = UserSetting()
-        user.naam = request.POST['naam']
-        user.emailadres = request.POST['emailadres']
-        user.plaats_en_postcode = request.POST['plaats_en_postcode']
-        user.adres = request.POST['adres']
-        user.iban = request.POST['iban']
-        user.save()
-
-        toast = 'Instellingen opgeslagen'
+        form = UserSettingForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            toast = 'Instellingen opgeslagen'
+        else:
+            return render(request, 'FactuurMaker/settings.html',
+                          {'form': form, 'toast': toast, 'errors': form.errors})
     user_i = UserSetting.objects.all().first()
     if not user_i:
         user_i = UserSetting()

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-    FactuurMaker: Instellingen
+    Instellingen
 {% endblock %}
 
 {% block header %}
@@ -47,6 +47,14 @@
             <div class="input-field col s12">
                 {{ form.iban }}
                 <label for="{{ form.iban.id_for_label }}">IBAN</label>
+                {{ error.title }}
+            </div>
+
+
+
+            <div class="input-field col s12">
+                {{ form.site_name }}
+                <label for="{{ form.site_name.id_for_label }}">Websitenaam</label>
                 {{ error.title }}
             </div>
         </div>

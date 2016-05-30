@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{{ site_name }} {% block title %}{% endblock %}</title>
 
     <!-- Compiled and minified JavaScript -->
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-
 
      <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
@@ -27,7 +26,7 @@
 <nav role="navigation" class="blue-grey">
     <div class="container">
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo">FactuurMaker</a>
+            <a href="/" class="brand-logo">{{ site_name }}</a>
             {% if user.is_authenticated %}
             <ul class="right hide-on-med-and-down">
                 <li><a href="/">Opdrachten</a></li>
@@ -59,14 +58,15 @@
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
-                <h5 class="white-text">InvoiceGen Facturen & Overeenkomsten</h5>
-                <p class="grey-text text-lighten-4">BETAVERSIE. Build 20160526. Problemen gevonden? Meld het ons!</p>
+                <h5 class="white-text">InvoiceGen</h5>
+                <p class="grey-text text-lighten-4">Betaversie: build 20160530. Problemen gevonden? <a href="mailto:invoicenl@gmail.com" class="grey-text text-lighten-3">Meld het ons!</a></p>
             </div>
             <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/">InvoiceGen</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/status">Servicestatus</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/blog">Blog</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/contact">Vragen of opmerkingen? Mail ons!</a></li>
                 </ul>
             </div>

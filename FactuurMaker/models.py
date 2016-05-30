@@ -29,5 +29,6 @@ class UserSetting(models.Model):
     plaats_en_postcode = models.CharField(max_length=200)
     emailadres = models.CharField(max_length=200)
     iban = models.CharField(max_length=200)
+    site_name = models.CharField(max_length=50, default='InvoiceGen')
 
 
