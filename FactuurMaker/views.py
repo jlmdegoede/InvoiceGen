@@ -24,6 +24,9 @@ def index(request):
             articles[year] = Product.objects.filter(date_deadline__contains=year, done=True)
             for article in articles[year]:
                 article.clean_url_title = article.title.replace(' ', '-').lower()
+                agreements = Agreement.objects.filter(article_concerned=article)
+                if agreements is not None:
+                    article.agreement = agreements[0]
     toast = None
     if request.session.get('toast'):
         toast = request.session.get('toast')
@@ -349,6 +352,7 @@ def user_logout(request):
 
 def user_login(request):
     context = RequestContext(request)
+    form = UserForm()
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -360,9 +364,8 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
         else:
-            return render_to_response('FactuurMaker/login.html', {'error': "Ongeldige inloggegevens"}, context)
+            return render_to_response('FactuurMaker/login.html', {'error': "Ongeldige inloggegevens", 'form': form}, context)
     else:
-        form = UserForm()
         return render_to_response('FactuurMaker/login.html', {'form': form}, context)
 
 

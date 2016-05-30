@@ -6,8 +6,8 @@ from datetime import date
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    username = forms.CharField()
+    password = forms.CharField(label="Wachtwoord", widget=forms.PasswordInput())
+    username = forms.CharField(label="E-mailadres")
     username.help_text = ""
 
     class Meta:
