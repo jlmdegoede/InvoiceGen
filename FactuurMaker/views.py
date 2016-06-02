@@ -41,7 +41,9 @@ def index(request):
 def view_article(request, articleid):
     try:
         article = Article.objects.get(id=articleid)
-        article.agreement = Agreement.objects.filter(article_concerned=article)[0]
+        agreements = Agreement.objects.filter(article_concerned=article)
+        if agreements.count() != 0:
+            article.agreement = Agreement.objects.filter(article_concerned=article)[0]
         return render(request, 'FactuurMaker/view_article.html', {'article': article})
     except:
         request.session['toast'] = 'Artikel niet gevonden'
@@ -75,7 +77,7 @@ def get_yearly_stats(year):
     all_articles = Article.objects.filter(done=True)
     for article in all_articles:
         if (article.date_deadline.year == int(year)):
-            totale_inkomsten += article.word_count * 0.25
+            totale_inkomsten += article.word_count * article.word_price
             nr_of_words += article.word_count
             nr_of_articles += 1
     not_yet_invoiced = 0
@@ -355,12 +357,12 @@ def settings(request):
             company = CompanySetting()
         user.naam = request.POST['naam']
         user.emailadres = request.POST['emailadres']
-        user.plaats_en_postcode = request.POST['woonplaats']
+        user.plaats_en_postcode = request.POST['plaats_en_postcode']
         user.adres = request.POST['adres']
         user.iban = request.POST['iban']
         user.save()
 
-        company.bedrijfsplaats_en_postcode = request.POST['bedrijfsplaats']
+        company.bedrijfsplaats_en_postcode = request.POST['bedrijfsplaats_en_postcode']
         company.bedrijfsadres = request.POST['bedrijfsadres']
         company.bedrijfsnaam = request.POST['bedrijfsnaam']
         company.save()
