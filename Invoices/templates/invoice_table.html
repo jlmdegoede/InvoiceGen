@@ -39,7 +39,7 @@
                             <tr>
                                 <td>{{ invoice.invoice_number }}</td>
                                 <td>{{ invoice.date_created }}</td>
-                                <td>{% for product in invoice.product_set.all %}
+                                <td>{% for product in invoice.products %}
                                       {{ product.title }}
                                     {% endfor %} </td>
                                 <td><a href="/markdown/{{ invoice.id }}">Inzien</a></td>

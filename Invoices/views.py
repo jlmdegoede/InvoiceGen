@@ -25,9 +25,7 @@ def get_invoices(request):
     for year in yearList:
         for invoice_obj in invoices[year]:
             products = Product.objects.filter(invoice=invoice_obj)
-            invoice_obj.product_set = []
-            for product in products:
-                invoice_obj.product_set.append(product)
+            invoice_obj.products = products
 
     currentYear = date.today().year
     return render(request, 'invoice_table.html',
@@ -50,7 +48,6 @@ def add_invoice(request):
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = datetime.datetime.now()
-
             invoice.total_amount = 0
             articles =  f.cleaned_data['articles']
             for article in articles:
@@ -63,6 +60,10 @@ def add_invoice(request):
                                                                                     articles,
                                                                                     f.cleaned_data['invoice_number'], with_tax_rate)
             invoice.save()
+
+            for article in articles:
+                article.invoice = invoice
+                article.save()
 
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen')
