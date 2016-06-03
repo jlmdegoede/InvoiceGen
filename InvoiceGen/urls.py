@@ -23,7 +23,11 @@ urlpatterns = [
     url(r'^facturen/verwijderen/(?P<invoiceid>\d+)/$', Invoices.views.delete_invoice, name='delete_invoice'),
     url(r'^markdown/(?P<invoice_id>\d+)/', Orders.views.view_markdown, name='view_markdown'),
     url(r'^download/md/(?P<invoice_id>\d+)/', Orders.views.download_markdown, name='download_markdown'),
+
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
+    url(r'^instellingen/kleuren/$', Settings.views.set_colors, name='set_colors'),
+    url(r'^instellingen/reset-kleuren/$', Settings.views.reset_colors, name='reset_colors'),
+
     url(r'^statistieken/$', Orders.views.view_statistics, name='statistics'),
 
     url(r'^opdrachtgevers/$', Companies.views.index, name='company_index'),

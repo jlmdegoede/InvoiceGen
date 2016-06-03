@@ -49,11 +49,53 @@
                 <label for="{{ form.iban.id_for_label }}">IBAN</label>
                 {{ error.title }}
             </div>
-        </div>
+
+            <div class="input-field col s12">
+                {{ form.site_name }}
+                <label for="{{ form.site_name.id_for_label }}">Websitenaam</label>
+                {{ error.site_name }}
+            </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
             <i class="mdi-content-send right"></i>
         </button>
+    </form>
+
+    <form method="post" action="/instellingen/kleuren/">
+        {% csrf_token %}
+        <div class="row">
+
+            <div class="input-field col s12">
+                <label for="{{ color_form.color_up.id_for_label }}">Kleur boven</label>
+                <br />
+                <br />
+                Huidige kleur: {{ color_up }}
+                <br />
+                <br />
+                {{ color_form.color_up }}
+                {{ error.color_up }}
+            </div>
+
+
+            <div class="input-field col s12">
+                <label for="{{ color_form.color_down.id_for_label }}">Kleur onder</label>
+                <br />
+                <br />
+                Huidige kleur: {{ color_down }}
+                <br />
+                <br />
+                {{ color_form.color_down }}
+                {{ error.color_down }}
+            </div>
+            <br />
+        </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Kleuren aanpassen
+            <i class="mdi-content-send right"></i>
+        </button>
+        <br />
+        <br />
+            <a href="/instellingen/reset-kleuren">Standaardkleuren herstellen</a>
     </form>
     {% if toast %}
         <script type="text/javascript">
