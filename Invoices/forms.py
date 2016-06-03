@@ -1,5 +1,5 @@
 from django import forms
-from FactuurMaker.models import *
+from Orders.models import *
 
 
 class InvoiceForm(forms.ModelForm):

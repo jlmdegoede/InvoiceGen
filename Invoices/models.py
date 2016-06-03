@@ -1,5 +1,5 @@
 from django.db import models
-from Company.models import *
+from Companies.models import *
 
 
 class Invoice(models.Model):
