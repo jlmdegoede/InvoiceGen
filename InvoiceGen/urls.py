@@ -41,4 +41,8 @@ urlpatterns = [
         name='view_agreement'),
     url(r'^overeenkomsten/verwijderen/(?P<agreement_id>\d+)/$', AgreementModule.views.delete_agreement,
         name='delete_agreement'),
+    url(r'^overeenkomsten/modelovereenkomsten/$', AgreementModule.views.index_model_agreements,
+        name='index_model_agreements'),
+    url(r'^overeenkomsten/modelovereenkomsten-bewerken/(?P<model_agreement_id>\d+)/$', AgreementModule.views.edit_model_agreement,
+        name='edit_model_agreement'),
 ]

@@ -22,26 +22,6 @@ OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
 AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 
 @login_required
-def add_agreement_text(request):
-    context = RequestContext(request)
-    if request.method == 'POST':
-        agree_text = AgreementText()
-        agree_text_form = AgreementTextForm(request.POST, instance=agree_text)
-        if agree_text_form.is_valid():
-            agree_text_form.save(commit=False)
-            agree_text.edited_at = datetime.datetime.now()
-            agree_text.save()
-            request.session['toast'] = 'Modelovereenkomst toegevoegd'
-            return redirect('/')
-        else:
-            return render_to_response('new_edit_agreement_text.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form}, context)
-    else:
-        form = AgreementTextForm()
-        return render_to_response('new_edit_agreement_text.html', {'form': form}, context)
-
-
-@login_required
 def add_agreement(request):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -108,21 +88,20 @@ def delete_agreement(request, agreement_id=-1):
         return redirect('/overeenkomsten')
 
 
-
 def replace_text(agree_text, products):
     user = UserSetting.objects.first()
     company = Company.objects.first()
-    client_name = company.bedrijfsnaam
-    client_city_zipcode = company.bedrijfsplaats_en_postcode
-    client_company_name = company.bedrijfsnaam
-    client_address = company.bedrijfsadres
+    client_name = company.company_name
+    client_city_zipcode = company.company_city_and_zipcode
+    client_company_name = company.company_name
+    client_address = company.company_address
     contractor_name = user.naam
     contractor_city_zipcode = user.plaats_en_postcode
     contractor_address = user.adres
 
     article_text = "\n"
     for product in products:
-        article_text += "Opdracht " + product.title + " met een kwantieit van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.bedrijfsnaam + "\n"
+        article_text += "Opdracht " + product.title + " met een kwantieit van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.company_name + "\n"
 
     agree_text = agree_text.replace(OPDRACHT_OMSCHRIJVING_CONSTANT, article_text)
     agree_text = agree_text.replace(CLIENT_NAME_CONSTANT, client_name)
@@ -133,3 +112,51 @@ def replace_text(agree_text, products):
     agree_text = agree_text.replace(CONTRACTOR_CITY_ZIPCODE_CONSTANT, contractor_city_zipcode)
     agree_text = agree_text.replace(CONTRACTOR_NAME_CONSTANT, contractor_name)
     return agree_text
+
+
+@login_required
+def index_model_agreements(request):
+    context = RequestContext(request)
+    model_agreements = AgreementText.objects.all()
+    return render_to_response('model_agreements.html', {'model_agreements': model_agreements}, context)
+
+
+@login_required
+def edit_model_agreement(request, model_agreement_id):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        model_agreement = AgreementText.objects.get(id=model_agreement_id)
+        form = AgreementTextForm(request.POST, instance=model_agreement)
+        if form.is_valid():
+            form.save()
+            return redirect('/overeenkomsten')
+        else:
+            return render_to_response('new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors, 'model_agreement_id': model_agreement.id}, context)
+    else:
+        try:
+            model_agreement = AgreementText.objects.get(id=model_agreement_id)
+            form = AgreementTextForm(instance=model_agreement)
+            return render_to_response('new_edit_agreement_text.html', {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id}, context)
+        except:
+            return redirect(to=index_model_agreements)
+
+
+@login_required
+def add_agreement_text(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        agree_text = AgreementText()
+        agree_text_form = AgreementTextForm(request.POST, instance=agree_text)
+        if agree_text_form.is_valid():
+            agree_text_form.save(commit=False)
+            agree_text.edited_at = datetime.datetime.now()
+            agree_text.save()
+            request.session['toast'] = 'Modelovereenkomst toegevoegd'
+            return redirect('/overeenkomsten')
+        else:
+            return render_to_response('new_edit_agreement_text.html',
+                                      {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form, 'error': agree_text_form.errors}, context)
+    else:
+        form = AgreementTextForm()
+        return render_to_response('new_edit_agreement_text.html', {'form': form}, context)
+
