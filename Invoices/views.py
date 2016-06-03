@@ -150,6 +150,7 @@ def generate_invoice(request):
             article.save()
     return redirect('/')
 
+
 def get_today_string():
     today = datetime.date.today()
     today = today.strftime("%d-%m-%Y")

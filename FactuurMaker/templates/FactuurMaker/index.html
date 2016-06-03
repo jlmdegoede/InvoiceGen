@@ -10,6 +10,7 @@
 
 {% block content %}
     <h1>Opdrachten</h1>
+    <a href="/opdrachtgevers/nieuw">Nieuwe opdrachtgever toevoegen</a> | <a href="/opdrachtgevers">Opdrachtgevers beheren</a>
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
@@ -117,7 +118,7 @@
   <div id="modal1" class="modal">
     <div class="modal-content">
       <h4>Artikel verwijderen</h4>
-      <p id="confirmText">Weet je zeker dat je dit artikel wilt verwijderen?</p>
+      <p id="confirmText">Weet u zeker dat u deze opdracht wilt verwijderen?</p>
     </div>
     <div class="modal-footer">
       <a href="#" id="deleteLink" class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
@@ -144,7 +145,7 @@
                 id = $(this).attr('value');
                 title = $(this).attr('name');
                 $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
-                $('#confirmText').text("Weet je zeker dat je de opdracht " + title + " wilt verwijderen?");
+                $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
             } else if ($(this).hasClass("dialog-trigger")) {
                 var page = "/opdracht/" + $(this).attr('value');

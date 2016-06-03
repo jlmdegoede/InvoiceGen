@@ -3,6 +3,7 @@ from django.contrib import admin
 import FactuurMaker.views
 import AgreementModule.views
 import Invoices.views
+import Company.views
 # import RestApi.views
 
 urlpatterns = [
@@ -22,8 +23,12 @@ urlpatterns = [
     url(r'^markdown/(?P<invoice_id>\d+)/', FactuurMaker.views.view_markdown, name='view_markdown'),
     url(r'^download/md/(?P<invoice_id>\d+)/', FactuurMaker.views.download_markdown, name='download_markdown'),
     url(r'^instellingen/$', FactuurMaker.views.settings, name='settings'),
-    url(r'^instellingen/gebruiker/(?P<userid>\d+)/company/(?P<companyid>\d+)$', FactuurMaker.views.settings, name='settings'),
     url(r'^statistieken/$', FactuurMaker.views.view_statistics, name='statistics'),
+
+    url(r'^opdrachtgevers/$', Company.views.index, name='company_index'),
+    url(r'^opdrachtgevers/nieuw$', Company.views.add_company, name='company_add'),
+    url(r'^opdrachtgevers/wijzigen/(?P<company_id>\d+)/$', Company.views.edit_company, name='company_edit'),
+    url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Company.views.delete_company, name='company_delete'),
     url(r'^client/add/inline/$', FactuurMaker.views.add_company_inline, name='add_company_inline'),
 
     url(r'^overeenkomsten/$', AgreementModule.views.agreement_index,

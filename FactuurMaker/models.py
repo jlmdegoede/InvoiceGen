@@ -1,5 +1,7 @@
 from django.db import models
-from Invoices.models import Invoice, Company
+from Invoices.models import Invoice
+from Company.models import Company
+
 
 class Product(models.Model):
     title = models.CharField(max_length=200)

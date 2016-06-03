@@ -30,15 +30,9 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('title', 'date_received', 'date_deadline', 'quantity', 'from_company', 'identification_number', 'tax_rate', 'price_per_quantity', 'briefing', 'done')
-class UserSettingForm(forms.ModelForm):
 
+
+class UserSettingForm(forms.ModelForm):
     class Meta:
         model = UserSetting
-        fields = '__all__'
-
-
-class CompanyForm(forms.ModelForm):
-
-    class Meta:
-        model = Company
         fields = '__all__'

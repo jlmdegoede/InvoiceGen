@@ -1,5 +1,6 @@
 from django.db import models
-from FactuurMaker.models import Product, Company
+from FactuurMaker.models import Product
+from Company.models import Company
 # Create your models here.
 
 

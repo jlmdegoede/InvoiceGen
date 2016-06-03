@@ -8,6 +8,8 @@ import datetime
 import markdown
 from django.http import HttpResponse, JsonResponse
 from AgreementModule.models import Agreement
+from Company.models import Company
+from Company.forms import CompanyForm
 import FactuurMaker.markdown_generator
 # Create your views here.
 
@@ -91,7 +93,6 @@ def get_yearly_stats(year):
     return (nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced)
 
 
-
 @login_required
 def view_markdown(request, invoice_id):
     # try:
@@ -114,7 +115,7 @@ def add_company_inline(request):
         if f.is_valid():
             company.save()
             request.session['toast'] = 'Bedrijf toegevoegd'
-            return JsonResponse({'company_id': company.id, 'company_name': company.bedrijfsnaam})
+            return JsonResponse({'company_id': company.id, 'company_name': company.company_name})
     if request.method == 'GET':
         form = CompanyForm()
         return render_to_response('FactuurMaker/new_company_inline.html', {'form': form}, context)
@@ -180,7 +181,7 @@ def delete_article(request, articleid=-1):
     try:
         article_to_delete = Product.objects.get(id=articleid)
         article_to_delete.delete()
-        request.session['toast'] = 'Artikel verwijderd'
+        request.session['toast'] = 'Opdracht verwijderd'
         return redirect('/')
     except:
         request.session['toast'] = 'Verwijderen mislukt'
