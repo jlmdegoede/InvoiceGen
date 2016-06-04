@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Companies.views.delete_company, name='company_delete'),
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
 
+    url(r'^zoeken/$', Orders.views.search, name='search_orders'),
+
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),
     url(r'^overeenkomsten/nieuwe-modelovereenkomst/$', Agreements.views.add_agreement_text,

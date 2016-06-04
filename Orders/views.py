@@ -10,6 +10,7 @@ from Agreements.models import Agreement
 from Companies.models import Company
 from Companies.forms import CompanyForm
 import Orders.markdown_generator
+from Utils.search_query import get_query
 # Create your views here.
 
 
@@ -213,3 +214,27 @@ def user_login(request):
     else:
         return render_to_response('login.html', {'form': form}, context)
 
+
+@login_required
+def search(request):
+    query_string = ''
+    found_products = None
+    found_agreements = None
+    found_invoices = None
+    found_companies = None
+    if ('q' in request.GET) and request.GET['q'].strip():
+        query_string = request.GET['q']
+
+        product_query = get_query(query_string, ['title', 'briefing'])
+        agreement_query = get_query(query_string, ['agreement_text_copy', 'client_name', 'client_emailaddress',])
+        invoice_query = get_query(query_string, ['title', 'contents', ])
+        companies_query =  get_query(query_string, ['company_name', 'company_address', 'company_city_and_zipcode'])
+
+        found_products = Product.objects.filter(product_query).order_by('-date_received')
+        found_agreements = Agreement.objects.filter(agreement_query).order_by('-created')
+        found_invoices = Invoice.objects.filter(invoice_query).order_by('-date_created')
+        found_companies = Company.objects.filter(companies_query)
+
+    return render_to_response('search_results.html',
+                              {'query_string': query_string, 'found_products': found_products, 'found_agreements': found_agreements, 'found_invoices': found_invoices, 'found_companies': found_companies},
+                              context_instance=RequestContext(request))

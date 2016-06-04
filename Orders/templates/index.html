@@ -44,8 +44,8 @@
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="small mdi-action-delete"></i></a>
+                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -77,8 +77,8 @@
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="small mdi-action-delete"></i></a>
+                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -89,7 +89,7 @@
             </div>
         {% endfor %}
 
-            <a class="btn-floating btn-large waves-effect waves-light red right" href="opdracht/toevoegen"><i class="mdi-content-add"></i></a>
+            <a class="btn-floating btn-large waves-effect waves-light red right" href="opdracht/toevoegen"><i class="material-icons">add</i></a>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)

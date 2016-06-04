@@ -9,33 +9,47 @@
 
     <!-- Compiled and minified JavaScript -->
     <!--Import jQuery before materialize.js-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
      <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 
   <!-- Compiled and minified JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
 
 </head>
 
 <body>
 
+<ul id="dropdown1" class="dropdown-content">
+  <li><a href="/statistieken">Statistieken</a></li>
+  <li><a href="/instellingen">Instellingen</a></li>
+  <li class="divider"></li>
+  <li><a href="/logout">Afmelden</a></li>
+</ul>
 <nav role="navigation" style="background-color: {{ color_up }} !important;">
     <div class="container">
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo">{{ site_name }}</a>
+            <a href="/" class="brand-logo right">{{ site_name }}</a>
             {% if user.is_authenticated %}
-            <ul class="right hide-on-med-and-down">
-                <li><a href="/">Opdrachten</a></li>
-                <li><a href="/overeenkomsten">Overeenkomsten</a></li>
-                <li><a href="/facturen">Facturen</a></li>
-                <li><a href="/statistieken">Statistieken</a></li>
-                <li><a href="/instellingen">Instellingen</a></li>
-                <li><a href="/logout">Afmelden</a></li>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="left hide-on-med-and-down">
+                <li><a href="/zoeken"><i class="material-icons">search</i></a></li>
+                <li><a href="/"><i class="material-icons left">work</i>Opdrachten</a></li>
+                <li><a href="/overeenkomsten"><i class="material-icons left">group_work</i>Overeenkomst.</a></li>
+                <li><a href="/facturen"><i class="material-icons left">credit_card</i>Facturen</a></li>
+                <li><a class="dropdown-button"  href="#!" data-activates="dropdown1"><i class="material-icons left">arrow_drop_down</i>Meer</a></li>
             </ul>
+              <ul class="side-nav" id="mobile-demo">
+                <li><a href="/"><i class="material-icons left">work</i>Opdrachten</a></li>
+                <li><a href="/overeenkomsten"><i class="material-icons left">group_work</i>Overeenkomsten</a></li>
+                <li><a href="/facturen"><i class="material-icons left">credit_card</i>Facturen</a></li>
+                <li><a href="/statistieken"><i class="material-icons left">assessment</i>Statistieken</a></li>
+                <li><a href="/instellingen"><i class="material-icons left">settings</i>Instellingen</a></li>
+                <li><a href="/logout">Afmelden</a></li>
+              </ul>
             {% endif %}
         </div>
     </div>
@@ -58,13 +72,13 @@
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
-                <h5 class="white-text">InvoiceGen</h5>
-                <p class="grey-text text-lighten-4">Betaversie: build 20160603. Problemen gevonden? <a href="mailto:invoicenl@gmail.com" class="grey-text text-lighten-3">Meld het ons!</a></p>
+                <h5 class="white-text">{{ site_name }}</h5>
+                <p class="grey-text text-lighten-4">Betaversie: build 201606. Problemen gevonden? <a href="mailto:invoicenl@gmail.com" class="grey-text text-lighten-3">Meld het ons!</a></p>
             </div>
             <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
-                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/">InvoiceGen</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/">InvoiceGen.nl</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/status">Servicestatus</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/blog">Blog</a></li>
                     <li><a class="grey-text text-lighten-3" href="https://invoicegen.nl/contact">Vragen of opmerkingen? Mail ons!</a></li>
@@ -79,5 +93,11 @@
     </div>
 </footer>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+          $(".button-collapse").sideNav();
+            $(".dropdown-button").dropdown();
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h2>Zoeken</h2>
+
+    <form method="get" action="/zoeken/">
+    <div class="row">
+        <div class="input-field  col s12">
+          <input id="search" type="search" name="q" required value="{{ query_string }}">
+          <label for="search"><i class="material-icons left">search</i> Zoeken</label>
+          <i class="material-icons">close</i>
+        </div>
+        </div>
+      </form>
+
+    {% if query_string != "" %}
+        <ul class="collection with-header">
+            <li class="collection-header"><h4>Gevonden opdrachten</h4></li>
+        {% if found_products.count != 0 %}
+                {% for entry in found_products %}
+                    <li  class="collection-item"><a href="/opdracht/wijzigen/{{ entry.id }}">{{ entry }}</a></li>
+                {% endfor %}
+        {% else %}
+            <li  class="collection-item">Geen resultaten</li>
+        {% endif %}
+            <li class="collection-header"><h4>Gevonden facturen</h4></li>
+        {% if found_invoices.count != 0 %}
+                {% for entry in found_invoices %}
+                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                {% endfor %}
+        {% else %}
+            <li  class="collection-item">Geen resultaten</li>
+        {% endif %}
+
+            <li class="collection-header"><h4>Gevonden overeenkomsten</h4></li>
+        {% if found_agreements.count != 0 %}
+                {% for entry in found_agreements %}
+                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                {% endfor %}
+        {% else %}
+            <li  class="collection-item">Geen resultaten</li>
+        {% endif %}
+
+
+            <li class="collection-header"><h4>Gevonden opdrachtgevers</h4></li>
+        {% if found_companies.count != 0 %}
+                {% for entry in found_companies %}
+                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                {% endfor %}
+
+        {% else %}
+            <li  class="collection-item">Geen resultaten</li>
+        {% endif %}
+          </ul>
+    {% endif %}
+{% endblock %}
