@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,11 +37,11 @@
             {% if user.is_authenticated %}
                 <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul class="left hide-on-med-and-down">
-                <li><a href="/zoeken"><i class="material-icons">search</i></a></li>
-                <li><a href="/"><i class="material-icons left">work</i>Opdrachten</a></li>
-                <li><a href="/overeenkomsten"><i class="material-icons left">group_work</i>Overeenkomst.</a></li>
-                <li><a href="/facturen"><i class="material-icons left">credit_card</i>Facturen</a></li>
-                <li><a class="dropdown-button"  href="#!" data-activates="dropdown1"><i class="material-icons left">arrow_drop_down</i>Meer</a></li>
+                <li class="{% block search_active %}{% endblock %}"><a href="/zoeken"><i class="left material-icons" style="margin-right:-5px;">search</i>&nbsp;</a></li>
+                <li class="{% block orders_active %}{% endblock %}"><a href="/"><i class="material-icons left">work</i>Opdrachten</a></li>
+                <li class="{% block agreements_active %}{% endblock %}"><a href="/overeenkomsten"><i class="material-icons left">group_work</i>Overeenkomst.</a></li>
+                <li class="{% block invoices_active %}{% endblock %}"><a href="/facturen"><i class="material-icons left">credit_card</i>Facturen</a></li>
+                <li class="{% block more_active %}{% endblock %}"><a class="dropdown-button"  href="#!" data-activates="dropdown1"><i class="material-icons left">arrow_drop_down</i>Meer</a></li>
             </ul>
               <ul class="side-nav" id="mobile-demo">
                 <li><a href="/"><i class="material-icons left">work</i>Opdrachten</a></li>
@@ -62,7 +63,12 @@
 
 <main>
 <div class="container">
-        {% block content %}{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+{% block content %}{% endblock %}
 </div>
 
 {% block content2 %}{% endblock %}
@@ -73,7 +79,7 @@
         <div class="row">
             <div class="col l6 s12">
                 <h5 class="white-text">{{ site_name }}</h5>
-                <p class="grey-text text-lighten-4">Betaversie: build 201606. Problemen gevonden? <a href="mailto:invoicenl@gmail.com" class="grey-text text-lighten-3">Meld het ons!</a></p>
+                <p class="grey-text text-lighten-4">Betaversie: build 20160605. Problemen gevonden? <a href="mailto:invoicenl@gmail.com" class="grey-text text-lighten-3">Meld het ons!</a></p>
             </div>
             <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>

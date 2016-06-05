@@ -1,16 +1,19 @@
+from datetime import date
+
+import markdown
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import *
-from Orders.forms import *
-from datetime import date
-import markdown
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import *
+
 from Agreements.models import Agreement
-from Companies.models import Company
 from Companies.forms import CompanyForm
-import Orders.markdown_generator
+from Companies.models import Company
+from Orders.forms import *
 from Utils.search_query import get_query
+
+
 # Create your views here.
 
 

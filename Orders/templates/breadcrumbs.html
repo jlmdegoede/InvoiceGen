@@ -1,0 +1,13 @@
+<nav class="no-box-shadow transparent hide-on-med-and-down">
+    <div class="nav-wrapper " style="margin-left:10px;">
+        <div class="col s12 grey-text">
+        {% for url, label in breadcrumbs %}
+                {% ifnotequal forloop.counter breadcrumbs_total %}
+                    <a href="{{ url }}" class="breadcrumb blue-grey-text">{{ label|safe }}</a>
+                {% else %}
+                    <span class="breadcrumb grey-text">{{ label|safe }}</span>
+                {% endifnotequal %}
+        {% endfor %}
+        </div>
+    </div>
+</nav>

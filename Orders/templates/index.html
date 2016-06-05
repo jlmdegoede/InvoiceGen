@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load django_bootstrap_breadcrumbs %}
 {% load staticfiles %}
-
+{% block orders_active %}active{% endblock %}
 {% block title %}
     Opdrachten
 {% endblock %}
@@ -8,8 +9,13 @@
 {% block header %}
 {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachten" "index" %}
+{% endblock %}
+
 {% block content %}
-    <h1>Opdrachten</h1>
+    <h1>Opdrachten beheren</h1>
     <a href="/opdrachtgevers/nieuw">Nieuwe opdrachtgever toevoegen</a> | <a href="/opdrachtgevers">Opdrachtgevers beheren</a>
     <div class="row">
         <div class="col s12">

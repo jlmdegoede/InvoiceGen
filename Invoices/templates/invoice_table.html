@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
 
 {% block title %}
     Facturen
@@ -8,8 +10,13 @@
 {% block header %}
 {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Facturen" "get_invoices" %}
+{% endblock %}
+
 {% block content %}
-    <h1>Aangemaakte facturen</h1>
+    <h1>Facturen beheren</h1>
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
@@ -30,7 +37,7 @@
                         <th data-field="id">Nummer</th>
                         <th data-field="word_count">Aangemaakt op</th>
                         <th data-field="magazine_number">Voor opdrachten</th>
-                        <th data-field="magazine_number">PDF</th>
+                        <th data-field="magazine_number"></th>
                         <th data-field="magazine_number"></th>
                     </thead>
 
@@ -44,8 +51,8 @@
                                     {% endfor %} </td>
                                 <td><a href="/markdown/{{ invoice.id }}">Inzien</a></td>
                                 <td>
-                                    <a href="/facturen/wijzigen/{{ invoice.id }}"><i class="small mdi-editor-mode-edit"></i></a>
-                                    <a href="#modal1" class="modal-trigger" value="{{ invoice.id }}"><i class="small mdi-action-delete"></i></a>
+                                    <a href="/facturen/wijzigen/{{ invoice.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger" value="{{ invoice.id }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                             {% endfor %}

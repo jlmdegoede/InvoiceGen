@@ -1,12 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'index_companies.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block orders_active %}active{% endblock %}
 
 {% block title %}
-    Opdrachtgever toevoegen/wijzigen
+    Opdrachtgever toevoegen/bewerken
 {% endblock %}
 
 {% block header %}
 {% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachtgever toevoegen/bewerken" "" %}
+{% endblock %}
+
 
 {% block content %}
     {% if edit %}

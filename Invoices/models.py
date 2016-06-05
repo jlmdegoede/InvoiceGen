@@ -12,4 +12,4 @@ class Invoice(models.Model):
     paid = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.Invoice
+        return self.title

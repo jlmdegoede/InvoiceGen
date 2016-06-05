@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'agreements.html' %}
+{% load django_bootstrap_breadcrumbs %}
 {% load staticfiles %}
+{% block agreements_active %}active{% endblock %}
 
 {% block title %}
-    FactuurMaker: Modelovereenkomsten
+     Modelovereenkomsten
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Modelovereenkomsten" "index_model_agreements" %}
 {% endblock %}
 
 {% block content %}
@@ -23,8 +30,8 @@
                         <tr>
                             <td>{{ model.title }}</td>
                             <td>
-                                <a href="/overeenkomsten/modelovereenkomsten-bewerken/{{ model.id }}"><i class="small mdi-editor-mode-edit"></i></a>
-                                <a href="#modal1" class="modal-trigger delete" value="{{ model.id }}" name="{{ model.title }}"><i class="small mdi-action-delete"></i></a>
+                                <a href="/overeenkomsten/modelovereenkomsten-bewerken/{{ model.id }}"><i class="material-icons">edit</i></a>
+                                <a href="#modal1" class="modal-trigger delete" value="{{ model.id }}" name="{{ model.title }}"><i class="material-icons">delete</i></a>
                             </td>
                         </tr>
                     {% endfor %}

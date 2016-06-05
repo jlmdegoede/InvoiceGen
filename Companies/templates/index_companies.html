@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block orders_active %}active{% endblock %}
 
 {% block title %}
     Opdrachtgevers
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachtgevers beheren" "company_index" %}
 {% endblock %}
 
 {% block content %}
@@ -28,8 +35,8 @@
                                 <td>{{ company.company_city_and_zipcode }}</td>
                                 <td>{% for product in company.recent_products %} <a href="#" value="{{ product.id }}" class="modal-trigger dialog-trigger">{{ product.title }}</a> {% endfor %}</td>
                                 <td>
-                                    <a href="/opdrachtgevers/wijzigen/{{ company.id }}"><i class="small mdi-editor-mode-edit"></i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ company.id }}" name="{{ company.company_name }}"><i class="small mdi-action-delete"></i></a>
+                                    <a href="/opdrachtgevers/wijzigen/{{ company.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ company.id }}" name="{{ company.company_name }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                         {% endfor %}

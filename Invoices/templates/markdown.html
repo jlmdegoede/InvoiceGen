@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'invoice_table.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
 
 {% block title %}
-    FactuurMaker | factuur inzien
+    Factuur inzien
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
 {% endblock %}
 
 {% block content %}

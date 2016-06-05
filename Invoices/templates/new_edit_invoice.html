@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'invoice_table.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
 
 {% block title %}
     FactuurMaker
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur toevoegen/bewerken" "" %}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +22,11 @@
             Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
          </script>
     {% endif %}
-    <h1>Factuur aanpassen</h1>
+    {% if edit %}
+        <h1>Factuur bewerken</h1>
+    {% else %}
+        <h1>Factuur toevoegen</h1>
+    {% endif %}
         {%  if edit %}
             <form id="invoice_form" class="col s12" method="post" action="/facturen/wijzigen/{{ invoceid }}/">
         {% else %}

@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
+{% load django_bootstrap_breadcrumbs %}
 {% load staticfiles %}
+{% block orders_active %}active{% endblock %}
 
 {% block title %}
     Opdracht toevoegen/wijzigen
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdracht toevoegen/wijzigen" ""  %}
 {% endblock %}
 
 {% block content %}

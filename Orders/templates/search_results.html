@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-
-
+{% block search_active %}active{% endblock %}
 {% block content %}
     <h2>Zoeken</h2>
 
@@ -27,7 +26,7 @@
             <li class="collection-header"><h4>Gevonden facturen</h4></li>
         {% if found_invoices.count != 0 %}
                 {% for entry in found_invoices %}
-                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                    <li  class="collection-item"><a href="/markdown/{{ entry.id }}">{{ entry }}</a></li>
                 {% endfor %}
         {% else %}
             <li  class="collection-item">Geen resultaten</li>
@@ -36,7 +35,7 @@
             <li class="collection-header"><h4>Gevonden overeenkomsten</h4></li>
         {% if found_agreements.count != 0 %}
                 {% for entry in found_agreements %}
-                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                    <li  class="collection-item"><a href="/overeenkomsten/ondertekenen/{{ entry.url }}">{{ entry }}</a></li>
                 {% endfor %}
         {% else %}
             <li  class="collection-item">Geen resultaten</li>
@@ -46,7 +45,7 @@
             <li class="collection-header"><h4>Gevonden opdrachtgevers</h4></li>
         {% if found_companies.count != 0 %}
                 {% for entry in found_companies %}
-                    <li  class="collection-item"><a href="#">{{ entry }}</a></li>
+                    <li  class="collection-item"><a href="/opdrachtgevers/wijzigen/{{ entry.id }}">{{ entry }}</a></li>
                 {% endfor %}
 
         {% else %}
