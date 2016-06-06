@@ -22,6 +22,7 @@ OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
 
 AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 
+
 @login_required
 def add_agreement(request):
     context = RequestContext(request)
@@ -61,7 +62,7 @@ def view_agreement(request, url):
     context = RequestContext(request)
     agreement = Agreement.objects.get(url=url)
     if request.method == 'GET':
-        return render_to_response('view_sign_agreement.html', {'agreement': agreement }, context)
+        return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
     if request.method == 'POST':
         if 'emailaddress' in request.POST and 'agreed' in request.POST:
             agreed_text = request.POST['agreed']
@@ -70,7 +71,7 @@ def view_agreement(request, url):
                 agreement.signed_by_client = True
                 agreement.signed_by_client_at = datetime.datetime.now()
                 agreement.save()
-                return render_to_response('view_sign_agreement.html', {'agreement': agreement }, context)
+                return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
             else:
 
                 return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)

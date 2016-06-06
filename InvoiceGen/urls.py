@@ -44,7 +44,7 @@ urlpatterns = [
         name='add_agreement_text'),
     url(r'^overeenkomsten/nieuw/$', Agreements.views.add_agreement,
         name='add_agreement'),
-    url(r'^overeenkomsten/ondertekenen/(?P<url>\w+)$', Agreements.views.view_agreement,
+    url(r'^overeenkomsten/ondertekenen/(?P<url>\w+)/$', Agreements.views.view_agreement,
         name='view_agreement'),
     url(r'^overeenkomsten/verwijderen/(?P<agreement_id>\d+)/$', Agreements.views.delete_agreement,
         name='delete_agreement'),
