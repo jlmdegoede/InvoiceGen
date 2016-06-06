@@ -1,12 +1,11 @@
 from django import forms
 from Orders.models import *
-import datetime
 from Agreements.models import AgreementText, Agreement
 
 
 class AgreementTextForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)
-    text = forms.CharField(widget=forms.Textarea(attrs={'class':'materialize-textarea'}), required=False)
+    text = forms.CharField(widget=forms.Textarea(attrs={'class': 'materialize-textarea'}), required=True)
 
     class Meta:
         model = Product

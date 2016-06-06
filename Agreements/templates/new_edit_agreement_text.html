@@ -44,10 +44,10 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/modelovereenkomsten-bewerken/{{ model_agreement_id }}/">
+        <form id="article_form" class="col s12" method="post" action="{% url "edit_model_agreement" model_agreement_id %}">
          Wijzigingen die u nu maakt zijn alleen van toepassing op nieuwe overeenkomsten.
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuwe-modelovereenkomst/">
+        <form id="article_form" class="col s12" method="post" action="{% url "add_agreement_text" %}">
     {% endif %}
         {% csrf_token %}
 

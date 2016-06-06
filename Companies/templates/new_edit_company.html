@@ -31,9 +31,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="company_form" class="col s12" method="post" action="/opdrachtgevers/wijzigen/{{ company_id }}/">
+        <form id="company_form" class="col s12" method="post" action="{% url "company_edit" company_id %}">
     {% else %}
-        <form id="company_form" class="col s12" method="post" action="/opdrachtgevers/nieuw">
+        <form id="company_form" class="col s12" method="post" action="{% url "company_add" %}">
     {% endif %}
         {% csrf_token %}
 

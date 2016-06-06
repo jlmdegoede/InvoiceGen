@@ -30,7 +30,7 @@
                         <tr>
                             <td>{{ model.title }}</td>
                             <td>
-                                <a href="/overeenkomsten/modelovereenkomsten-bewerken/{{ model.id }}"><i class="material-icons">edit</i></a>
+                                <a href="{% url "edit_model_agreement" model.id %}"><i class="material-icons">edit</i></a>
                                 <a href="#modal1" class="modal-trigger delete" value="{{ model.id }}" name="{{ model.title }}"><i class="material-icons">delete</i></a>
                             </td>
                         </tr>
@@ -39,7 +39,7 @@
                 </table>
             </form>
 
-             <a class="btn-floating btn-large waves-effect waves-light red right"  href="/overeenkomsten/nieuwe-modelovereenkomst/"><i class="material-icons">add</i></a>
+             <a class="btn-floating btn-large waves-effect waves-light red right"  href="{% url "add_agreement_text" %}"><i class="material-icons">add</i></a>
 
             {% if toast %}
                 <script type="text/javascript">

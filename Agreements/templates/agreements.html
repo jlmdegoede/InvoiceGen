@@ -17,8 +17,8 @@
 
 {% block content %}
     <h1>Overeenkomsten beheren</h1>
-    <a href="/overeenkomsten/nieuwe-modelovereenkomst">Nieuwe modelovereenkomst toevoegen</a> |
-    <a href="/overeenkomsten/modelovereenkomsten">Modelovereenkomsten beheren</a>
+    <a href="{% url "add_agreement_text" %}">Nieuwe modelovereenkomst toevoegen</a> |
+    <a href="{% url "index_model_agreements" %}">Modelovereenkomsten beheren</a>
             {% csrf_token %}
                 <table  class="striped">
                     <thead>
@@ -33,7 +33,7 @@
 
                     {% for agreement in agreements %}
                         <tr>
-                            <td><a href="/overeenkomsten/ondertekenen/{{ agreement.url }}">{{ agreement.created }}</a></td>
+                            <td><a href="{% url "view_agreement" agreement.url %}">{{ agreement.created }}</a></td>
                             <td>{% for article in agreement.article_concerned.all %}{{ article.title }} {% endfor %}</td>
                             <td>{{ agreement.article_concerned.first.date_deadline }}</td>
                             <td>{% if not agreement.signed_by_client_at == None %} Ja {% else %} Nee {% endif %}</td>

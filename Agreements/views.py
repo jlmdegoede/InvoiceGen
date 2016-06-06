@@ -48,7 +48,7 @@ def add_agreement(request):
     else:
         form = AgreementForm()
         articles = Product.objects.filter(done=False)
-        return render_to_response('new_edit_agreement.html', {'form': form, 'articles': articles,}, context)
+        return render_to_response('new_edit_agreement.html', {'form': form, 'articles': articles}, context)
 
 
 @login_required
@@ -67,7 +67,7 @@ def view_agreement(request, url):
         if 'emailaddress' in request.POST and 'agreed' in request.POST:
             agreed_text = request.POST['agreed']
             emailaddress = request.POST['emailaddress']
-            if agreement.client_emailaddress == emailaddress and agreed_text == AGREED_TEXT_CONSTANT:
+            if agreement.client_emailaddress == emailaddress and agreed_text.lower() == AGREED_TEXT_CONSTANT.lower():
                 agreement.signed_by_client = True
                 agreement.signed_by_client_at = datetime.datetime.now()
                 agreement.save()
@@ -87,6 +87,18 @@ def delete_agreement(request, agreement_id=-1):
     except:
         request.session['toast'] = 'Verwijderen mislukt'
         return redirect('/overeenkomsten')
+
+
+@login_required
+def delete_model_agreement(request, model_agreement_text_id=-1):
+    try:
+        agreement_text_to_delete = AgreementText.objects.get(id=model_agreement_text_id)
+        agreement_text_to_delete.delete()
+        request.session['toast'] = 'Modelvereenkomst verwijderd'
+        return redirect('/overeenkomsten/modelovereenkomsten')
+    except:
+        request.session['toast'] = 'Verwijderen mislukt'
+        return redirect('/overeenkomsten/modelovereenkomsten')
 
 
 def replace_text(agree_text, products):

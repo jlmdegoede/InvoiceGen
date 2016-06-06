@@ -4,7 +4,7 @@
 {% block invoices_active %}active{% endblock %}
 
 {% block title %}
-    FactuurMaker
+    Factuur toevoegen/bewerken
 {% endblock %}
 
 {% block header %}
@@ -28,9 +28,9 @@
         <h1>Factuur toevoegen</h1>
     {% endif %}
         {%  if edit %}
-            <form id="invoice_form" class="col s12" method="post" action="/facturen/wijzigen/{{ invoceid }}/">
+            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_invoice" invoiceid %}">
         {% else %}
-            <form id="invoice_form" class="col s12" method="post" action="/facturen/toevoegen/">
+            <form id="invoice_form" class="col s12" method="post" action="{% url "add_invoice" %}">
         {% endif %}
         {% csrf_token %}
 

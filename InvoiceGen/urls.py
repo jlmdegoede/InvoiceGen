@@ -12,10 +12,12 @@ urlpatterns = [
     url(r'^$', Orders.views.index, name='index'),
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
-    url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_article'),
-    url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_article'),
-    url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_article'),
-    url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_article'),
+
+    url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_product'),
+    url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
+    url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
+    url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
+
     url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
     url(r'^facturen/$', Invoices.views.get_invoices, name='get_invoices'),
     url(r'^facturen/toevoegen/$', Invoices.views.add_invoice, name='add_invoice'),
@@ -36,11 +38,11 @@ urlpatterns = [
     url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Companies.views.delete_company, name='company_delete'),
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
 
-    url(r'^zoeken/$', Orders.views.search, name='search_orders'),
+    url(r'^zoeken/$', Orders.views.search, name='search'),
 
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),
-    url(r'^overeenkomsten/nieuwe-modelovereenkomst/$', Agreements.views.add_agreement_text,
+    url(r'^overeenkomsten/modelovereenkomsten/nieuw/$', Agreements.views.add_agreement_text,
         name='add_agreement_text'),
     url(r'^overeenkomsten/nieuw/$', Agreements.views.add_agreement,
         name='add_agreement'),
@@ -50,6 +52,9 @@ urlpatterns = [
         name='delete_agreement'),
     url(r'^overeenkomsten/modelovereenkomsten/$', Agreements.views.index_model_agreements,
         name='index_model_agreements'),
-    url(r'^overeenkomsten/modelovereenkomsten-bewerken/(?P<model_agreement_id>\d+)/$', Agreements.views.edit_model_agreement,
+    url(r'^overeenkomsten/modelovereenkomsten/bewerken/(?P<model_agreement_id>\d+)/$', Agreements.views.edit_model_agreement,
         name='edit_model_agreement'),
+    url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
+        Agreements.views.delete_model_agreement,
+        name='delete_model_agreement'),
 ]

@@ -16,7 +16,7 @@
 
 {% block content %}
     <h1>Opdrachten beheren</h1>
-    <a href="/opdrachtgevers/nieuw">Nieuwe opdrachtgever toevoegen</a> | <a href="/opdrachtgevers">Opdrachtgevers beheren</a>
+    <a href="{% url "company_add" %}">Nieuwe opdrachtgever toevoegen</a> | <a href="{% url "company_index" %}">Opdrachtgevers beheren</a>
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
@@ -50,7 +50,7 @@
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
@@ -81,9 +81,9 @@
                                 <td>{{ article.quantity }}</td>
                                 <td>{{ article.from_company.bedrijfsnaam }}</td>
                                 <td>{{ article.date_deadline }}</td>
-                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
+                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="{% url "view_agreement" article.agreement.url %}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="/opdracht/wijzigen/{{ article.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
@@ -95,7 +95,7 @@
             </div>
         {% endfor %}
 
-            <a class="btn-floating btn-large waves-effect waves-light red right" href="opdracht/toevoegen"><i class="material-icons">add</i></a>
+            <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "add_product" %}"><i class="material-icons">add</i></a>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)
@@ -172,7 +172,7 @@
                             $('#modal-invoice').closeModal();
                             $.ajax({
                                 type: "POST",
-                                url: 'generate/invoice/',
+                                url: '{% url "generate_invoice" %}',
                                 data: {
                                     articles: clickedList,
                                     volgnummer: follower_number,

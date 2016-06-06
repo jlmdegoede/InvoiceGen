@@ -35,7 +35,7 @@
                                 <td>{{ company.company_city_and_zipcode }}</td>
                                 <td>{% for product in company.recent_products %} <a href="#" value="{{ product.id }}" class="modal-trigger dialog-trigger">{{ product.title }}</a> {% endfor %}</td>
                                 <td>
-                                    <a href="/opdrachtgevers/wijzigen/{{ company.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "company_edit" company.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ company.id }}" name="{{ company.company_name }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>

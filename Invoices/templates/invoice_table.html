@@ -49,9 +49,9 @@
                                 <td>{% for product in invoice.products %}
                                       {{ product.title }}
                                     {% endfor %} </td>
-                                <td><a href="/markdown/{{ invoice.id }}">Inzien</a></td>
+                                <td><a href="{% url "view_markdown" invoice.id %}">Inzien</a></td>
                                 <td>
-                                    <a href="/facturen/wijzigen/{{ invoice.id }}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "edit_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger" value="{{ invoice.id }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
@@ -61,7 +61,7 @@
             </div>
         {% endfor %}
 
-             <a class="btn-floating btn-large waves-effect waves-light red right" href="/facturen/toevoegen"><i class="material-icons">add</i></a>
+             <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "add_invoice" %}"><i class="material-icons">add</i></a>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)

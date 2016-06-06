@@ -23,8 +23,8 @@
 {% endautoescape %}
 
 <br /><br />
-<a href="/download/md/{{ invoice_id }}" class="btn waves-effect waves-light">Download Markdown</a>
-<a href="/download/pdf/{{ invoice_id }}" class="btn waves-effect waves-light">Download PDF</a>
+<a href="{% url "download_markdown" invoice_id %}" class="btn waves-effect waves-light">Download Markdown</a>
+<a href="#" class="btn waves-effect waves-light">Download PDF</a>
 </div>
 
 {% endblock %}

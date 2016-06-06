@@ -20,7 +20,7 @@
     {% if error %}
         <h4>{{ error }}</h4>
     {% endif %}
-    <form id="login_form" method="post" action="/instellingen/">
+    <form id="login_form" method="post" action="{% url "settings" %}">
         {% csrf_token %}
         <div class="row">
             <div class="input-field col s12">
@@ -68,7 +68,7 @@
         </button>
     </form>
 
-    <form method="post" action="/instellingen/kleuren/">
+    <form method="post" action="{% url "set_colors" %}">
         {% csrf_token %}
         <div class="row">
 
@@ -102,7 +102,7 @@
         </button>
         <br />
         <br />
-            <a href="/instellingen/reset-kleuren">Standaardkleuren herstellen</a>
+            <a href="{% url "reset_colors" %}">Standaardkleuren herstellen</a>
     </form>
     {% if toast %}
         <script type="text/javascript">

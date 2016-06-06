@@ -12,15 +12,11 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "Overeenkomsten toevoegen/bewerken" "" %}
+    {% breadcrumb "Overeenkomsten toevoegen" "" %}
 {% endblock %}
 
 {% block content %}
-    {% if edit %}
-        <h1>Overeenkomst bewerken</h1>
-    {% else %}
-        <h1>Overeenkomst toevoegen</h1>
-    {% endif %}
+    <h1>Overeenkomst toevoegen</h1>
     {% if error %}
         {{ error }}
     {% endif %}
@@ -30,11 +26,7 @@
             Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
          </script>
     {% endif %}
-    {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/{{ articleid }}/">
-    {% else %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/">
-    {% endif %}
+    <form id="article_form" class="col s12" method="post" action="{% url "add_agreement" %}">
         {% csrf_token %}
 
             <div class="row">
