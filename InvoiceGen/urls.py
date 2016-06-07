@@ -5,7 +5,7 @@ import Agreements.views
 import Invoices.views
 import Companies.views
 import Settings.views
-# import RestApi.views
+import Todo.views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -57,4 +57,7 @@ urlpatterns = [
     url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
+
+    url(r'^wunderlist/$', Todo.views.index, name='todo_index'),
+    url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
 ]
