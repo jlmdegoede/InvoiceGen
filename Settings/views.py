@@ -2,6 +2,7 @@ from django.shortcuts import *
 from Settings.models import *
 from Settings.forms import *
 from django.contrib.auth.decorators import login_required
+from Todo.models import *
 # Create your views here.
 
 
@@ -33,8 +34,15 @@ def settings(request):
         site_name = 'InvoiceGen'
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
     color_form = ColorForm()
+
+    todo = None
+    try:
+        todo = TodoAuth.objects.get(id=1)
+    except:
+        print("Geen Wunderlist-integratie")
+
     return render(request, 'settings.html',
-                  {'form': form, 'color_form': color_form, 'toast': toast})
+                  {'form': form, 'color_form': color_form, 'toast': toast, 'todo': todo})
 
 
 @login_required

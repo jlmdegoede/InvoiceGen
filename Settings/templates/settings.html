@@ -68,6 +68,11 @@
         </button>
     </form>
 
+    <h2>Wunderlist-integratie</h2>
+    Auth: {{ todo.auth_token }}
+    Gemaakt op: {{ todo.created }}
+    Voor gebruiker: {{ todo.user_id.username }}
+
     <form method="post" action="{% url "set_colors" %}">
         {% csrf_token %}
         <div class="row">
