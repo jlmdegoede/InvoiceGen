@@ -1,2 +1,3 @@
 django
 django-colorful
+django-bootstrap-breadcrumbs
