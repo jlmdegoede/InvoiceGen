@@ -1,0 +1,103 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block orders_active %}active{% endblock %}
+
+{% block title %}
+    Opdrachtgevers
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachtgevers beheren" "company_index" %}
+{% endblock %}
+
+{% block content %}
+    <h1>Opdrachtgevers</h1>
+    <div class="row">
+                <table class="striped">
+                    <thead>
+                        <th data-field="name">Naam</th>
+                        <th data-field="address">Adres</th>
+                        <th data-field="city_and_zipcode">Plaats en postcode</th>
+                        <th data-field="recent_assignments">Recente opdrachten</th>
+                        <th data-field="magazine_number"></th>
+                    </thead>
+
+                    <tbody>
+                    {% for company in companies%}
+                            <tr>
+                                <td>{{ company.company_name }}</td>
+                                <td>{{ company.company_address }}</td>
+                                <td>{{ company.company_city_and_zipcode }}</td>
+                                <td>{% for product in company.recent_products %} <a href="#" value="{{ product.id }}" class="modal-trigger dialog-trigger">{{ product.title }}</a> {% endfor %}</td>
+                                <td>
+                                    <a href="{% url "company_edit" company.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ company.id }}" name="{{ company.company_name }}"><i class="material-icons">delete</i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+             <a class="btn-floating btn-large waves-effect waves-light red right" href="/opdrachtgevers/nieuw"><i class="material-icons">add</i></a>
+            {% if toast %}
+                <script type="text/javascript">
+                    Materialize.toast('{{ toast }}', 4000)
+                </script>
+            {% endif %}
+
+
+    </div>
+
+
+     <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Opdrachtgever verwijderen</h4>
+      <p id="confirmText">Weet u zeker dat u deze opdrachtgever wilt verwijderen?</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="deleteLink" class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+    </div>
+  </div>
+
+ <div id="modal-article" class="modal" style="height:600px">
+    <div class="modal-content" style="height:500px">
+      <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+    </div>
+</div>
+
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal-trigger').click(function (event) {
+            if ($(this).hasClass("delete")) {
+                id = $(this).attr('value');
+                title = $(this).attr('name');
+                $('#deleteLink').attr('href', "/opdrachtgevers/verwijderen/" + id);
+                $('#confirmText').text("Weet u zeker dat u de opdrachtgever " + title + " wilt verwijderen?");
+                $('#modal1').openModal();
+            }
+            else if ($(this).hasClass("dialog-trigger")) {
+                var page = "/opdracht/" + $(this).attr('value');
+                $('.article-iframe').attr('src', page)
+                $('#modal-article').openModal();
+            }
+        });
+  });
+
+    function getId(id) {
+        return $('.modal-trigger').attr("value")
+    }
+    </script>
+{% endblock %}

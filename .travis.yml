@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install -r requirements.txt
+  - echo 'ALLOWED_HOSTS = ['test.invoicegen.nl']
+SECRET_KEY = "8w9eruajfhsdjfl3h4uihdfwekrw4t2rgergsergsetg"
+DEBUG = True'
+script: python3 manage.py test

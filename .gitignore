@@ -56,6 +56,5 @@ docs/_build/
 # PyBuilder
 target/
 
-InvoiceGen/settings.py
-
+InvoiceGen/site_settings.py
 db.sqlite3

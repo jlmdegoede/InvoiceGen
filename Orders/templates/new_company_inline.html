@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <form id="company_form" class="col s12" method="post" action="{% url "add_company_inline" %}">
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.company_name }}
+                    <label for="{{ form.company_name.id_for_label }}">Naam</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.company_address }}
+                    <label for="{{ form.company_address.id_for_label }}">Adres</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.company_city_and_zipcode }}
+                    <label for="{{ form.company_city_and_zipcode.id_for_label }}">Plaats en postcode</label>
+                </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Toevoegen
+            <i class="material-icons left">send</i>
+        </button>
+    </form>
+
+<script type="text/javascript">
+    $('#company_form').submit(function(e) {
+        e.preventDefault();
+        var data = $('form').serialize();
+        $.post('{% url "add_company_inline" %}', data, function(response) {
+            window.parent.closeModal(response.company_name, response.company_id);
+        });
+    });
+</script>

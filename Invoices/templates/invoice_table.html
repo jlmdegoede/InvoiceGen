@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Facturen
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Facturen" "get_invoices" %}
+{% endblock %}
+
+{% block content %}
+    <h1>Facturen beheren</h1>
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                {% for year in years %}
+                    {% if currentYear == year %}
+                        <li class="tab col s3"><a class="active" href="#{{year}}">{{ year }}</a></li>
+                    {% else %}
+                        <li class="tab col s3"><a href="#{{year}}">{{ year }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% for y, a in invoices.items %}
+            <div id="{{ y }}" class="col s12">
+                <table class="striped">
+                    <thead>
+                        <th data-field="id">Nummer</th>
+                        <th data-field="word_count">Aangemaakt op</th>
+                        <th data-field="magazine_number">Voor opdrachten</th>
+                        <th data-field="magazine_number"></th>
+                        <th data-field="magazine_number"></th>
+                    </thead>
+
+                    <tbody>
+                            {% for invoice in a %}
+                            <tr>
+                                <td>{{ invoice.invoice_number }}</td>
+                                <td>{{ invoice.date_created }}</td>
+                                <td>{% for product in invoice.products %}
+                                      {{ product.title }}
+                                    {% endfor %} </td>
+                                <td><a href="{% url "view_markdown" invoice.id %}">Inzien</a></td>
+                                <td>
+                                    <a href="{% url "edit_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger" value="{{ invoice.id }}"><i class="material-icons">delete</i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+             <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "add_invoice" %}"><i class="material-icons">add</i></a>
+            {% if toast %}
+                <script type="text/javascript">
+                    Materialize.toast('{{ toast }}', 4000)
+                </script>
+            {% endif %}
+
+
+    </div>
+
+
+     <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Factuur verwijderen</h4>
+      <p id="confirmText">Weet u zeker dat u deze factuur wilt verwijderen?</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="deleteLink" class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+    </div>
+  </div>
+
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal-trigger').click(function (event) {
+            id = $(this).attr('value');
+            title = $(this).attr('name');
+            $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
+            $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
+            $('#modal1').openModal();
+        });
+  });
+
+    function getId(id) {
+        return $('.modal-trigger').attr("value")
+    }
+    </script>
+{% endblock %}

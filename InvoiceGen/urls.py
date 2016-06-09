@@ -1,50 +1,60 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-import FactuurMaker.views
-import Magazine.views
-import AgreementModule.views
+import Orders.views
+import Agreements.views
+import Invoices.views
+import Companies.views
+import Settings.views
 # import RestApi.views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', FactuurMaker.views.index, name='index'),
-    url(r'^accounts/login/$', FactuurMaker.views.user_login, name='user_login'),
-    url(r'^logout/$', FactuurMaker.views.user_logout, name='logout'),
-    url(r'^article/(?P<articleid>\d+)/(.*)$', FactuurMaker.views.view_article, name='view_article'),
-    url(r'^article/add/$', FactuurMaker.views.add_article, name='add_article'),
-    url(r'^article/edit/(?P<articleid>\d+)/$', FactuurMaker.views.edit_article, name='edit_article'),
-    url(r'^article/delete/(?P<articleid>\d+)/$', FactuurMaker.views.delete_article, name='delete_article'),
-    url(r'^generate/invoice/$', FactuurMaker.views.generate_invoice, name='generate_invoice'),
-    url(r'^invoices/$', FactuurMaker.views.get_invoices, name='get_invoices'),
-    url(r'^invoices/add/article/$', FactuurMaker.views.add_article_to_invoice, name='add_article_to_invoice'),
-    url(r'^invoices/delete/article/$', FactuurMaker.views.delete_article_from_invoice, name='delete_article_from_invoice'),
-    url(r'^invoice/add/$', FactuurMaker.views.add_invoice, name='add_invoice'),
-    url(r'^invoice/edit/(?P<invoiceid>\d+)/$', FactuurMaker.views.edit_invoice, name='edit_invoice'),
-    url(r'^invoice/delete/(?P<invoiceid>\d+)/$', FactuurMaker.views.delete_invoice, name='delete_invoice'),
-    url(r'^markdown/(?P<invoice_id>\d+)/', FactuurMaker.views.view_markdown, name='view_markdown'),
-    url(r'^download/md/(?P<invoice_id>\d+)/', FactuurMaker.views.download_markdown, name='download_markdown'),
-    url(r'^settings/$', FactuurMaker.views.settings, name='settings'),
-    url(r'^settings/user/(?P<userid>\d+)/company/(?P<companyid>\d+)$', FactuurMaker.views.settings, name='settings'),
-    url(r'^statistics/$', FactuurMaker.views.view_statistics, name='statistics'),
-    url(r'^magazines/$', Magazine.views.magazines, name='magazines'),
-    url(r'^magazines/add$', Magazine.views.add_magazine, name='add_magazine'),
-    url(r'^magazines/edit/(?P<magazine_id>\d+)', Magazine.views.edit_magazine, name='edit_magazine'),
-    url(r'^magazines/edition/add/(?P<magazine_id>\d+)', Magazine.views.add_magazine_uitgave, name='add_magazine_uitgave'),
-    url(r'^magazines/editions/(?P<magazine_id>\d+)', Magazine.views.view_magazine_uitgaves, name='view_magazine_uitgaves'),
+    url(r'^$', Orders.views.index, name='index'),
+    url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
+    url(r'^logout/$', Orders.views.user_logout, name='logout'),
 
-    url(r'^agreements/$', AgreementModule.views.agreement_index,
+    url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_product'),
+    url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
+    url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
+    url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
+
+    url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
+    url(r'^facturen/$', Invoices.views.get_invoices, name='get_invoices'),
+    url(r'^facturen/toevoegen/$', Invoices.views.add_invoice, name='add_invoice'),
+    url(r'^facturen/wijzigen/(?P<invoiceid>\d+)/$', Invoices.views.edit_invoice, name='edit_invoice'),
+    url(r'^facturen/verwijderen/(?P<invoiceid>\d+)/$', Invoices.views.delete_invoice, name='delete_invoice'),
+    url(r'^markdown/(?P<invoice_id>\d+)/', Orders.views.view_markdown, name='view_markdown'),
+    url(r'^download/md/(?P<invoice_id>\d+)/', Orders.views.download_markdown, name='download_markdown'),
+
+    url(r'^instellingen/$', Settings.views.settings, name='settings'),
+    url(r'^instellingen/kleuren/$', Settings.views.set_colors, name='set_colors'),
+    url(r'^instellingen/reset-kleuren/$', Settings.views.reset_colors, name='reset_colors'),
+
+    url(r'^statistieken/$', Orders.views.view_statistics, name='statistics'),
+
+    url(r'^opdrachtgevers/$', Companies.views.index, name='company_index'),
+    url(r'^opdrachtgevers/nieuw$', Companies.views.add_company, name='company_add'),
+    url(r'^opdrachtgevers/wijzigen/(?P<company_id>\d+)/$', Companies.views.edit_company, name='company_edit'),
+    url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Companies.views.delete_company, name='company_delete'),
+    url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
+
+    url(r'^zoeken/$', Orders.views.search, name='search'),
+
+    url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),
-    url(r'^agreements/new-model-agreement/$', AgreementModule.views.add_agreement_text,
+    url(r'^overeenkomsten/modelovereenkomsten/nieuw/$', Agreements.views.add_agreement_text,
         name='add_agreement_text'),
-    url(r'^agreements/new-agreement/$', AgreementModule.views.add_agreement,
+    url(r'^overeenkomsten/nieuw/$', Agreements.views.add_agreement,
         name='add_agreement'),
-    url(r'^agreements/view-sign-agreement/(?P<url>\w+)$', AgreementModule.views.view_agreement,
+    url(r'^overeenkomsten/ondertekenen/(?P<url>\w+)/$', Agreements.views.view_agreement,
         name='view_agreement'),
-
-    # url(r'^data/articles/$', RestApi.views.get_json_article_list, name='get_json_article_list'),
-    # url(r'^data/article/(?P<article_id>\d+)$', RestApi.views.get_json_article, name='get_json_article'),
-    # url(r'^data/save/article/$', RestApi.views.save_json_article, name='save_json_article'),
-    # url(r'^data/session_id/$', RestApi.views.get_session_id, name='get_session_id'),
-    # url(r'^data/magazines/$', RestApi.views.get_json_magazine_list, name='get_json_magazine_list'),
-    # url(r'^data/magazine/(?P<magazine_id>\d+)$', RestApi.views.get_json_magazine, name='get_json_magazine'),
+    url(r'^overeenkomsten/verwijderen/(?P<agreement_id>\d+)/$', Agreements.views.delete_agreement,
+        name='delete_agreement'),
+    url(r'^overeenkomsten/modelovereenkomsten/$', Agreements.views.index_model_agreements,
+        name='index_model_agreements'),
+    url(r'^overeenkomsten/modelovereenkomsten/bewerken/(?P<model_agreement_id>\d+)/$', Agreements.views.edit_model_agreement,
+        name='edit_model_agreement'),
+    url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
+        Agreements.views.delete_model_agreement,
+        name='delete_model_agreement'),
 ]

@@ -1,0 +1,78 @@
+{% extends 'model_agreements.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block agreements_active %}active{% endblock %}
+
+{% block title %}
+    FactuurMaker
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Modelovereenkomst toevoegen/bewerken" "" %}
+{% endblock %}
+
+{% block content %}
+    {% if edit %}
+        <h1>Modelovereenkomst bewerken</h1>
+    {% else %}
+        <h1>Modelovereenkomst toevoegen</h1>
+    {% endif %}
+
+    <p>
+    Voer hieronder de tekst van de modelovereenkomst in.
+    Je kunt de volgende variabelen in de modelovereenkomst gebruiken:
+    <ul>
+        <li>{% filter force_escape %}<NAAM_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<POSTCODE_PLAATS_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<ADRES_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<NAAM_OPDRACHTGEVER>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_NAAM>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_POSTCODE_EN_WOONPLAATS>{% endfilter %}</li>
+        <li>{% filter force_escape %}<MIJN_ADRES>{% endfilter %}</li>
+        <li>{% filter force_escape %}<OMSCHRIJVING_OPDRACHT>{% endfilter %}</li>
+    </ul>
+
+    Zodra je een nieuwe overeenkomst aanmaakt, worden deze variabelen automatisch ingevuld met de relevante informatie, zoals de opdrachtgever en de opdrachten voor die overeenkomst.</p>
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <form id="article_form" class="col s12" method="post" action="{% url "edit_model_agreement" model_agreement_id %}">
+         Wijzigingen die u nu maakt zijn alleen van toepassing op nieuwe overeenkomsten.
+    {% else %}
+        <form id="article_form" class="col s12" method="post" action="{% url "add_agreement_text" %}">
+    {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.title }}
+                    <label for="{{ form.title.id_for_label }}">Titel</label>
+                    {{ error.title }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.text }}
+                    <label for="{{ form.text.id_for_label }}">Tekst</label>
+                    {{ error.text }}
+                </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">
+            {% if edit %}
+                Bewerken
+            {% else %}
+                Toevoegen
+            {% endif %}
+            <i class="material-icons left">send</i>
+        </button>
+
+        <a href="/agreements">Annuleren</a>
+    </form>
+    </div>
+{% endblock %}

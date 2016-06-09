@@ -1,0 +1,66 @@
+{% extends 'invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur toevoegen/bewerken
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur toevoegen/bewerken" "" %}
+{% endblock %}
+
+{% block content %}
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <h1>Factuur bewerken</h1>
+    {% else %}
+        <h1>Factuur toevoegen</h1>
+    {% endif %}
+        {%  if edit %}
+            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_invoice" invoiceid %}">
+        {% else %}
+            <form id="invoice_form" class="col s12" method="post" action="{% url "add_invoice" %}">
+        {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.title }}
+                    <label for="{{ form.title.id_for_label }}">Titel</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.articles }}
+                    <label for="{{ form.articles.id_for_label }}">Opdrachten</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.invoice_number }}
+                    <label for="{{ form.invoice_number.id_for_label }}">Volgnummer</label>
+                </div>
+
+                <p style="margin-left:10px">
+                    {{ form.paid }}
+                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
+                </p>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
+                <i class="material-icons left">send</i>
+            </button>
+        </form>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+    </script>
+{% endblock %}
