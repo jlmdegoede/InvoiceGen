@@ -22,3 +22,7 @@ class AgreementForm(forms.ModelForm):
     class Meta:
         model = Agreement
         fields = ('agree_text', 'article_concerned', 'client_name', 'client_emailaddress')
+
+class SignatureForm(forms.Form):
+    signature = forms.FileField(required=True)
+    signee_name = forms.CharField(label="Naam", required=True)

@@ -5,7 +5,8 @@ import Agreements.views
 import Invoices.views
 import Companies.views
 import Settings.views
-# import RestApi.views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -57,4 +58,4 @@ urlpatterns = [
     url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

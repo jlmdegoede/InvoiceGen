@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
 from Agreements.models import *
-from Agreements.forms import AgreementTextForm, AgreementForm
+from Agreements.forms import AgreementTextForm, AgreementForm, SignatureForm
 import datetime
 import string
 import random
 from Orders.models import Company
 from Settings.models import UserSetting
+from base64 import b64decode
+from django.core.files.base import ContentFile
 
 # Create your views here.
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
@@ -64,17 +66,20 @@ def view_agreement(request, url):
     if request.method == 'GET':
         return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
     if request.method == 'POST':
-        if 'emailaddress' in request.POST and 'agreed' in request.POST:
-            agreed_text = request.POST['agreed']
-            emailaddress = request.POST['emailaddress']
-            if agreement.client_emailaddress == emailaddress and agreed_text.lower() == AGREED_TEXT_CONSTANT.lower():
-                agreement.signed_by_client = True
-                agreement.signed_by_client_at = datetime.datetime.now()
-                agreement.save()
-                return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
-            else:
+        if 'signature' in request.POST and 'signee_name' in request.POST:
+            print(request.POST['signature'])
+            image_data = request.POST['signature'].split(',')
+            image_data = b64decode(image_data[1])
+            now = datetime.datetime.now()
+            file_name = 'signature-of-' + request.POST['signee_name'] + '-at-' + str(now) + '.png'
+            agreement.signature_file = ContentFile(image_data, file_name)
+            agreement.signed_by_client_at = now
+            agreement.signed_by_client = True
+            agreement.save()
+        return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
+    else:
 
-                return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)
+        return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)
 
 
 @login_required
