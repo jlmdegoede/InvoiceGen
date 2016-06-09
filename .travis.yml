@@ -3,5 +3,5 @@ python:
   - "3.4"
 install:
   - pip install -r requirements.txt
-  - sh build/setup.sh
+  - sh travis/setup.sh
 script: python3 manage.py test
