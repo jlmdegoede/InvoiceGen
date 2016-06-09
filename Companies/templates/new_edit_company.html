@@ -1,12 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'index_companies.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block orders_active %}active{% endblock %}
 
 {% block title %}
-    Opdrachtgever toevoegen/wijzigen
+    Opdrachtgever toevoegen/bewerken
 {% endblock %}
 
 {% block header %}
 {% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachtgever toevoegen/bewerken" "" %}
+{% endblock %}
+
 
 {% block content %}
     {% if edit %}
@@ -23,9 +31,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="company_form" class="col s12" method="post" action="/opdrachtgevers/wijzigen/{{ company_id }}/">
+        <form id="company_form" class="col s12" method="post" action="{% url "company_edit" company_id %}">
     {% else %}
-        <form id="company_form" class="col s12" method="post" action="/opdrachtgevers/nieuw">
+        <form id="company_form" class="col s12" method="post" action="{% url "company_add" %}">
     {% endif %}
         {% csrf_token %}
 
@@ -53,7 +61,7 @@
             {% else %}
                 Toevoegen
             {% endif %}
-            <i class="mdi-content-send left"></i>
+            <i class="material-icons left">send</i>
         </button>
 
         <a href="/">Annuleren</a>

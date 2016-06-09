@@ -1,5 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'agreements.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block agreements_active %}active{% endblock %}
 
 {% block title %}
     FactuurMaker
@@ -8,12 +10,13 @@
 {% block header %}
 {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Overeenkomsten toevoegen" "" %}
+{% endblock %}
+
 {% block content %}
-    {% if edit %}
-        <h1>Overeenkomst bewerken</h1>
-    {% else %}
-        <h1>Overeenkomst toevoegen</h1>
-    {% endif %}
+    <h1>Overeenkomst toevoegen</h1>
     {% if error %}
         {{ error }}
     {% endif %}
@@ -23,11 +26,7 @@
             Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
          </script>
     {% endif %}
-    {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/{{ articleid }}/">
-    {% else %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuw/">
-    {% endif %}
+    <form id="article_form" class="col s12" method="post" action="{% url "add_agreement" %}">
         {% csrf_token %}
 
             <div class="row">
@@ -64,7 +63,7 @@
             {% else %}
                 Toevoegen
             {% endif %}
-            <i class="mdi-content-send left"></i>
+            <i class="material-icons left">send</i>
         </button>
 
         <a href="/">Annuleren</a>

@@ -1,13 +1,12 @@
-
 def create_markdown_file(naam, bedrijf, date, articles, volgnummer, with_tax_rate):
     markdown_file = "# Factuur " + str(date) + "\n"
-    markdown_file += "## Freelancer " + naam.naam + "\n"
+    markdown_file += "## Freelancer " + naam.name + "\n"
     markdown_file += "### Gegevens factuur\n"
     markdown_file += "| | |\n"
     markdown_file += "|-|-|\n|Volgnummer|" + str(volgnummer) + "|\n" + "|Datum|"+ str(date) + "|\n"
     markdown_file += "\n\n### Opdrachtnemer\n"
     markdown_file += "| | |\n"
-    markdown_file += "|-|-|\n|Naam|" + naam.naam + "|\n" + "|Adres|"+ naam.adres + "|\n|Plaats en postcode|" + naam.plaats_en_postcode + "|\n|E-mailadres|" + naam.emailadres + "|\n|IBAN|"+ naam.iban + "|\n"
+    markdown_file += "|-|-|\n|Naam|" + naam.name + "|\n" + "|Adres|"+ naam.address + "|\n|Plaats en postcode|" + naam.city_and_zipcode + "|\n|E-mailadres|" + naam.email + "|\n|IBAN|"+ naam.iban + "|\n"
     markdown_file += "\n\n### Opdrachtgever\n"
     markdown_file += "\n| | |\n|-|-|\n" + "|Opdrachtgever|" + bedrijf.company_name + "|\n|Adres|" + bedrijf.company_address + " |\n|Plaats en postcode|" + bedrijf.company_city_and_zipcode + "|\n"
     markdown_file += "\n\n### Geleverd\n"

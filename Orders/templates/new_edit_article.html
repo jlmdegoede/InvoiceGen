@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
+{% load django_bootstrap_breadcrumbs %}
 {% load staticfiles %}
+{% block orders_active %}active{% endblock %}
 
 {% block title %}
     Opdracht toevoegen/wijzigen
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdracht toevoegen/wijzigen" ""  %}
 {% endblock %}
 
 {% block content %}
@@ -23,9 +30,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/opdracht/wijzigen/{{ articleid }}/">
+        <form id="article_form" class="col s12" method="post" action="{% url "edit_product" articleid %}">
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/opdracht/toevoegen/">
+        <form id="article_form" class="col s12" method="post" action="{% url "add_product" %}">
     {% endif %}
         {% csrf_token %}
 
@@ -88,7 +95,7 @@
             {% else %}
                 Toevoegen
             {% endif %}
-            <i class="mdi-content-send left"></i>
+            <i class="material-icons left">send</i>
         </button>
 
         <a href="/">Annuleren</a>
@@ -124,7 +131,7 @@
         $('#id_from_company').material_select();
 
         $('.modal-trigger').click(function (event) {
-            var page = "/client/add/inline/";
+            var page = "{% url "add_company_inline" %}";
             $('.client-iframe').attr('src', page)
             $('#modal-client').openModal();
         });

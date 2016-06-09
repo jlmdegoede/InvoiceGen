@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
 from Invoices.forms import *
 from datetime import date
-from django.http import HttpResponse
+from Settings.models import UserSetting
 import datetime
-import Orders
+import Invoices.markdown_generator
 # Create your views here.
 
 @login_required
@@ -55,7 +55,7 @@ def add_invoice(request):
                 invoice.to_company = article.from_company
 
             with_tax_rate = articles[0].tax_rate != 0
-            invoice.contents = Orders.markdown_generator.create_markdown_file(UserSetting.objects.first(),
+            invoice.contents = Invoices.markdown_generator.create_markdown_file(UserSetting.objects.first(),
                                                                                     articles[0].from_company, get_today_string(),
                                                                                     articles,
                                                                                     f.cleaned_data['invoice_number'], with_tax_rate)
@@ -136,7 +136,7 @@ def generate_invoice(request):
         volgnummer = request.POST.get('volgnummer')
         # create invoice and save it
         with_tax_rate = articles[0].tax_rate != 0
-        invoice.contents = Orders.markdown_generator.create_markdown_file(UserSetting.objects.first(),
+        invoice.contents = Invoices.markdown_generator.create_markdown_file(UserSetting.objects.first(),
                                                                     articles[0].from_company, today, articles,
                                                                     volgnummer, with_tax_rate)
         invoice.date_created = datetime.date.today()

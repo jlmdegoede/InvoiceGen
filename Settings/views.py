@@ -29,6 +29,8 @@ def settings(request):
     site_name = Setting.objects.filter(key='site_name')
     if site_name.count() is not 0:
         site_name = site_name[0].value
+    else:
+        site_name = 'InvoiceGen'
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
     color_form = ColorForm()
     return render(request, 'settings.html',

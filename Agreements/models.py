@@ -24,3 +24,6 @@ class Agreement(models.Model):
     agreement_text_copy = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=50)
+
+    def __str__(self):
+        return "Overeenkomst met " + self.company.company_name + " gemaakt op " + self.created.strftime('%m-%d-%Y')

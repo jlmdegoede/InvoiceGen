@@ -7,3 +7,11 @@
   main {
     flex: 1 0 auto;
   }
+
+  .breadcrumb::before {
+      color: gray !important;
+  }
+
+  .no-box-shadow {
+      box-shadow: none !important;
+  }

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block more_active %}active{% endblock %}
 
 {% block title %}
     Instellingen
@@ -8,12 +10,17 @@
 {% block header %}
 {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Instellingen" "settings" %}
+{% endblock %}
+
 {% block content %}
     <h1>Instellingen wijzigen</h1>
     {% if error %}
         <h4>{{ error }}</h4>
     {% endif %}
-    <form id="login_form" method="post" action="/instellingen/">
+    <form id="login_form" method="post" action="{% url "settings" %}">
         {% csrf_token %}
         <div class="row">
             <div class="input-field col s12">
@@ -57,11 +64,11 @@
             </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
-            <i class="mdi-content-send right"></i>
+            <i class="material-icons left">send</i>
         </button>
     </form>
 
-    <form method="post" action="/instellingen/kleuren/">
+    <form method="post" action="{% url "set_colors" %}">
         {% csrf_token %}
         <div class="row">
 
@@ -91,11 +98,11 @@
         </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Kleuren aanpassen
-            <i class="mdi-content-send right"></i>
+            <i class="material-icons left">send</i>
         </button>
         <br />
         <br />
-            <a href="/instellingen/reset-kleuren">Standaardkleuren herstellen</a>
+            <a href="{% url "reset_colors" %}">Standaardkleuren herstellen</a>
     </form>
     {% if toast %}
         <script type="text/javascript">

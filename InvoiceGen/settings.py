@@ -31,7 +31,8 @@ INSTALLED_APPS = (
     'Invoices',
     'Companies',
     'Settings',
-    'colorful'
+    'colorful',
+    'django_bootstrap_breadcrumbs'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,6 +82,7 @@ TEMPLATES = [
                 'InvoiceGen.context_processor.website_name',
                 'InvoiceGen.context_processor.color_up',
                 'InvoiceGen.context_processor.color_down',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -88,6 +90,7 @@ TEMPLATES = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
+BREADCRUMBS_TEMPLATE = "breadcrumbs.html"
 
 LANGUAGE_CODE = 'nl'
 

@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'agreements.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block agreements_active %}active{% endblock %}
 
 {% block title %}
     FactuurMaker
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+        {% breadcrumb "Overeenkomst ondertekenen" "" %}
 {% endblock %}
 
 {% block content %}
@@ -57,7 +64,7 @@ Contactpersoon: {{ agreement.client_name }}
 {% if not agreement.signed_by_client %}
 Indien akkoord, voer hieronder uw e-mailadres in en letterlijk de tekst 'Ik ga akkoord'  zonder aanhalingstekens.
 
-<form action="/agreements/view-sign-agreement/{{ agreement.url }}" method="post">
+<form action="{% url 'view_agreement' agreement.url %}" method="post">
     {% csrf_token %}
     <input type="text" name="emailaddress" placeholder="Uw e-mailadres" required />
     <input type="text" name="agreed" placeholder="Akkoordfrase" required />

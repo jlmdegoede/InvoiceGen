@@ -1,8 +1,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <form id="company_form" class="col s12" method="post" action="/client/add/inline/">
+    <form id="company_form" class="col s12" method="post" action="{% url "add_company_inline" %}">
         {% csrf_token %}
 
             <div class="row">
@@ -20,7 +21,7 @@
                 </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Toevoegen
-            <i class="mdi-content-send left"></i>
+            <i class="material-icons left">send</i>
         </button>
     </form>
 
@@ -28,7 +29,7 @@
     $('#company_form').submit(function(e) {
         e.preventDefault();
         var data = $('form').serialize();
-        $.post('/client/add/inline/', data, function(response) {
+        $.post('{% url "add_company_inline" %}', data, function(response) {
             window.parent.closeModal(response.company_name, response.company_id);
         });
     });

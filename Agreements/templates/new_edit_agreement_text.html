@@ -1,11 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'model_agreements.html' %}
 {% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block agreements_active %}active{% endblock %}
 
 {% block title %}
     FactuurMaker
 {% endblock %}
 
 {% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Modelovereenkomst toevoegen/bewerken" "" %}
 {% endblock %}
 
 {% block content %}
@@ -37,10 +44,10 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/modelovereenkomsten-bewerken/{{ model_agreement_id }}/">
+        <form id="article_form" class="col s12" method="post" action="{% url "edit_model_agreement" model_agreement_id %}">
          Wijzigingen die u nu maakt zijn alleen van toepassing op nieuwe overeenkomsten.
     {% else %}
-        <form id="article_form" class="col s12" method="post" action="/overeenkomsten/nieuwe-modelovereenkomst/">
+        <form id="article_form" class="col s12" method="post" action="{% url "add_agreement_text" %}">
     {% endif %}
         {% csrf_token %}
 
@@ -62,7 +69,7 @@
             {% else %}
                 Toevoegen
             {% endif %}
-            <i class="mdi-content-send left"></i>
+            <i class="material-icons left">send</i>
         </button>
 
         <a href="/agreements">Annuleren</a>
