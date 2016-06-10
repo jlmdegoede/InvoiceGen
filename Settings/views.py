@@ -34,17 +34,17 @@ def settings(request):
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
 
     color_form = ColorForm()
-    wunderlist_enabled = get_setting('auto_wunderlist', False)
     lists = None
     current_list = None
-    if wunderlist_enabled:
-        lists = get_wunderlist_lists()
-        current_list = get_setting('wunderlist', 0)
-
+    wunderlist_enabled = False
     todo = None
     wunderlist_dict = None
+
     try:
         todo = TodoAuth.objects.get(id=1)
+        lists = get_wunderlist_lists()
+        current_list = get_setting('wunderlist', 0)
+        wunderlist_enabled = get_setting('auto_wunderlist', False)
     except:
         print("Geen Wunderlist-integratie")
         wunderlist_dict = Todo.views.get_wunderlist_url(request)

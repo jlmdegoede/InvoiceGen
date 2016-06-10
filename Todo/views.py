@@ -37,7 +37,9 @@ def save_auth_token(request):
 
 def get_lists():
     req = requests.get('https://a.wunderlist.com/api/v1/lists', headers=get_headers())
+    print(req.text)
     return json.loads(req.text)
+
 
 def create_new_list(title):
     post_data = convert_to_json_utf8({'title': title,})
