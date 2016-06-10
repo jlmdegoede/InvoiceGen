@@ -3,10 +3,9 @@ from django.shortcuts import *
 from Agreements.models import *
 from Agreements.forms import AgreementTextForm, AgreementForm
 import datetime
-import string
-import random
 from Orders.models import Company
 from Settings.models import UserSetting
+from django.utils.crypto import get_random_string
 
 # Create your views here.
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
@@ -33,7 +32,7 @@ def add_agreement(request):
             data = agreement_form.cleaned_data
             agreement_form.save(commit=False)
             agreement.created = datetime.datetime.now()
-            agreement.url = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(9))
+            agreement.url = get_random_string(length=32)
             agreement.agreement_text_copy = replace_text(agreement.agree_text.text, data['article_concerned'])
             agreement.company = data['company']
             agreement.save()

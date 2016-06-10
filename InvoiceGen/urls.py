@@ -58,6 +58,7 @@ urlpatterns = [
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
 
-    url(r'^wunderlist/$', Todo.views.index, name='todo_index'),
     url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
+    url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
+    url(r'^wunderlist-instellingen/$', Settings.views.save_wunderlist_settings, name='save_wunderlist_settings'),
 ]
