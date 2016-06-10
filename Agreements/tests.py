@@ -38,19 +38,6 @@ class AgreementTestCase(TestCase):
         response = self.c.get(reverse('view_agreement', args=[self.agreement.url]))
         self.assertEqual(response.context['agreement'], self.agreement)
 
-    def test_sign_incorrect_email_view_agreement(self):
-        response = self.c.post(reverse('view_agreement', args=[self.agreement.url]), {'emailaddress': 'test@ttest.nl', 'agreed': 'Ik ga akkoord'})
-        self.assertIsNotNone(response.context['error'])
-
-    def test_sign_incorrect_agree_view_agreement(self):
-        response = self.c.post(reverse('view_agreement', args=[self.agreement.url]), {'emailaddress': 'test@test.nl', 'agreed': 'Ik ga niet akkoord'})
-        self.assertIsNotNone(response.context['error'])
-
-    def test_sign_capital_view_agreement(self):
-        response = self.c.post(reverse('view_agreement', args=[self.agreement.url]),
-                          {'emailaddress': 'test@test.nl', 'agreed': 'Ik GA akkoord'})
-        self.assertIsNotNone(response.context['agreement'].signed_by_client_at)
-
     def test_add_get_agreement_text(self):
         self.c.login(username='testuser', password='secret')
         response = self.c.get(reverse('add_agreement_text'))

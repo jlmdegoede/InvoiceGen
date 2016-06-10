@@ -1,11 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
 from Agreements.models import *
-from Agreements.forms import AgreementTextForm, AgreementForm
+from Agreements.forms import AgreementTextForm, AgreementForm, SignatureForm
 import datetime
 from Orders.models import Company
 from Settings.models import UserSetting
 from django.utils.crypto import get_random_string
+from django.http import JsonResponse
+from base64 import b64decode
+from django.core.files.base import ContentFile
+import InvoiceGen.site_settings
+import Settings.views
 
 # Create your views here.
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
@@ -60,20 +65,52 @@ def agreement_index(request):
 def view_agreement(request, url):
     context = RequestContext(request)
     agreement = Agreement.objects.get(url=url)
+    agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
+        0] + '/overeenkomsten/ondertekenen/' + agreement.url
+    agreement.full_name = Settings.views.get_user_fullname()
     if request.method == 'GET':
         return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
-    if request.method == 'POST':
-        if 'emailaddress' in request.POST and 'agreed' in request.POST:
-            agreed_text = request.POST['agreed']
-            emailaddress = request.POST['emailaddress']
-            if agreement.client_emailaddress == emailaddress and agreed_text.lower() == AGREED_TEXT_CONSTANT.lower():
-                agreement.signed_by_client = True
-                agreement.signed_by_client_at = datetime.datetime.now()
-                agreement.save()
-                return render_to_response('view_sign_agreement.html', {'agreement': agreement}, context)
-            else:
 
-                return render_to_response('view_sign_agreement.html', {'agreement': agreement, 'error': 'Incorrect e-mailadres/akkoordfrase'}, context)
+
+@login_required
+def sign_agreement_contractor(request, url):
+    context = RequestContext(request)
+    agreement = Agreement.objects.get(url=url)
+    if request.method == 'POST':
+        if 'signature' in request.POST and 'signee_name' in request.POST and request.POST[
+            'signee_name'].strip() and request.POST['signee_name'].strip():
+            image_data = request.POST['signature'].split(',')
+            image_data = b64decode(image_data[1])
+            now = datetime.datetime.now()
+            file_name = 'signature-of-' + request.POST['signee_name'] + '-at-' + str(now) + '.png'
+            agreement.signature_file_contractor = ContentFile(image_data, file_name)
+            agreement.signed_by_contractor_at = now
+            agreement.signed_by_contractor = True
+            agreement.save()
+            agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
+                0] + '/overeenkomsten/ondertekenen/' + agreement.url
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'error': 'Naam of handtekening ontbreekt'})
+
+
+def sign_agreement_client(request, url):
+    context = RequestContext(request)
+    agreement = Agreement.objects.get(url=url)
+    if request.method == 'POST':
+        if 'signature' in request.POST and 'signee_name' in request.POST and request.POST[
+            'signee_name'].strip() and request.POST['signee_name'].strip():
+            image_data = request.POST['signature'].split(',')
+            image_data = b64decode(image_data[1])
+            now = datetime.datetime.now()
+            file_name = 'signature-of-' + request.POST['signee_name'] + '-at-' + str(now) + '.png'
+            agreement.signature_file_client = ContentFile(image_data, file_name)
+            agreement.signed_by_client_at = now
+            agreement.signed_by_client = True
+            agreement.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'error': 'Naam of handtekening ontbreekt'})
 
 
 @login_required
@@ -113,7 +150,9 @@ def replace_text(agree_text, products):
 
     article_text = "\n"
     for product in products:
-        article_text += "Opdracht " + product.title + " met een kwantiteit van " + str(product.quantity) + " en een prijs van " + str(product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.company_name + "\n"
+        article_text += "Opdracht " + product.title + " met een kwantiteit van " + str(
+            product.quantity) + " en een prijs van " + str(
+            product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.company_name + "\n"
 
     agree_text = agree_text.replace(OPDRACHT_OMSCHRIJVING_CONSTANT, article_text)
     agree_text = agree_text.replace(CLIENT_NAME_CONSTANT, client_name)
@@ -143,12 +182,15 @@ def edit_model_agreement(request, model_agreement_id):
             form.save()
             return redirect('/overeenkomsten')
         else:
-            return render_to_response('new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors, 'model_agreement_id': model_agreement.id}, context)
+            return render_to_response('new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors,
+                                                                       'model_agreement_id': model_agreement.id},
+                                      context)
     else:
         try:
             model_agreement = AgreementText.objects.get(id=model_agreement_id)
             form = AgreementTextForm(instance=model_agreement)
-            return render_to_response('new_edit_agreement_text.html', {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id}, context)
+            return render_to_response('new_edit_agreement_text.html',
+                                      {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id}, context)
         except:
             return redirect(to=index_model_agreements)
 
@@ -167,8 +209,8 @@ def add_agreement_text(request):
             return redirect('/overeenkomsten')
         else:
             return render_to_response('new_edit_agreement_text.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form, 'error': agree_text_form.errors}, context)
+                                      {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form,
+                                       'error': agree_text_form.errors}, context)
     else:
         form = AgreementTextForm()
         return render_to_response('new_edit_agreement_text.html', {'form': form}, context)
-

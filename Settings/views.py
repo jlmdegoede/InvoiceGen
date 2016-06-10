@@ -56,6 +56,21 @@ def get_wunderlist_lists():
     return Todo.views.get_lists()
 
 
+def no_settings_created_yet():
+    try:
+        user = UserSetting.objects.get(id=1)
+        return False
+    except:
+        return True
+
+def get_user_fullname():
+    try:
+        user = UserSetting.objects.get(id=1)
+        return user.name
+    except:
+        return ""
+
+
 @login_required
 def save_wunderlist_settings(request):
     if request.method == 'POST':

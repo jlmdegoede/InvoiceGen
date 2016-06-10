@@ -58,3 +58,6 @@ target/
 
 InvoiceGen/site_settings.py
 db.sqlite3
+
+InvoiceGen/site_settings.py
+static/images

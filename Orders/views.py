@@ -15,6 +15,7 @@ from Utils.search_query import get_query
 from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import asyncio
+import Settings.views
 
 # Create your views here.
 
@@ -42,9 +43,10 @@ def index(request):
     yearList.sort(reverse=True)
     active_articles = Product.objects.filter(done=False)
     currentYear = date.today().year
+    no_settings = Settings.views.no_settings_created_yet()
     return render(request, 'index.html',
                   {'articles': articles, 'active_articles': active_articles, 'toast': toast, 'years': yearList,
-                   'currentYear': currentYear})
+                   'currentYear': currentYear, 'first_time': no_settings})
 
 
 @login_required

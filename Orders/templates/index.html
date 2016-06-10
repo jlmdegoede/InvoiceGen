@@ -15,6 +15,12 @@
 {% endblock %}
 
 {% block content %}
+    {% if first_time %}
+        <div class="card-panel green">
+            <b>Welkom bij InvoiceGen!</b> Voordat je begint met het maken van facturen, overeenkomsten en opdrachten, zorg ervoor dat je eerst even een bezoek brengt aan <a href="/instellingen" class="blue-grey-text text-darken-2">Instellingen</a> om je persoonlijke gegevens in te vullen.
+            Pas als je dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en een factuur te genereren. Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
+        </div>
+    {% endif %}
     <h1>Opdrachten beheren</h1>
     <a href="{% url "company_add" %}">Nieuwe opdrachtgever toevoegen</a> | <a href="{% url "company_index" %}">Opdrachtgevers beheren</a>
     <div class="row">

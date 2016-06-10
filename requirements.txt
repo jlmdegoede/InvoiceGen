@@ -1,0 +1,6 @@
+django
+django-colorful
+django-bootstrap-breadcrumbs
+markdown
+pillow
+requests
