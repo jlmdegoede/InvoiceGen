@@ -5,6 +5,8 @@ from datetime import date
 from Settings.models import UserSetting
 import datetime
 import Invoices.markdown_generator
+import markdown
+from Utils.pdf_generation import *
 # Create your views here.
 
 @login_required
@@ -72,6 +74,31 @@ def add_invoice(request):
                                       {'form': f, 'invoceid': invoice.id, 'edit': False,
                                        'toast': "Formulier ongeldig!"}, context)
 
+@login_required
+def view_markdown(request, invoice_id):
+    # try:
+    invoice = Invoice.objects.get(id=invoice_id)
+    return render(request, 'markdown.html', {'invoice_id': invoice.id,
+                                                          'html': markdown.markdown(invoice.contents, extensions=[
+                                                              'markdown.extensions.tables',
+                                                              'markdown.extensions.nl2br'])})
+    # except:
+    #    request.session['toast'] = 'Factuur niet gevonden'
+    #   return redirect('/invoices')
+
+
+@login_required
+def get_invoice_pdf(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+    products = Product.objects.filter(invoice=invoice)
+    user = UserSetting.objects.first()
+
+    pdf = generate_pdf(products, user, invoice)
+    response = HttpResponse(content_type='application/pdf')
+    filename = 'factuur-van-' + str(invoice.date_created) + '.pdf'
+    response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+    response.write(pdf)
+    return response
 
 @login_required
 def edit_invoice(request, invoiceid=-1):

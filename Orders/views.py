@@ -16,7 +16,6 @@ from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import asyncio
 import Settings.views
-
 # Create your views here.
 
 
@@ -99,18 +98,6 @@ def get_yearly_stats(year):
 
     return (nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced)
 
-
-@login_required
-def view_markdown(request, invoice_id):
-    # try:
-    invoice = Invoice.objects.get(id=invoice_id)
-    return render(request, 'markdown.html', {'invoice_id': invoice.id,
-                                                          'html': markdown.markdown(invoice.contents, extensions=[
-                                                              'markdown.extensions.tables',
-                                                              'markdown.extensions.nl2br'])})
-    # except:
-    #    request.session['toast'] = 'Factuur niet gevonden'
-    #   return redirect('/invoices')
 
 
 @login_required
