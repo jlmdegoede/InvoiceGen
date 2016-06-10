@@ -44,7 +44,7 @@ def settings(request):
     todo = None
     wunderlist_dict = None
     try:
-        todo = TodoAuth.objects.get(id=456)
+        todo = TodoAuth.objects.get(id=1)
     except:
         print("Geen Wunderlist-integratie")
         wunderlist_dict = Todo.views.get_wunderlist_url(request)

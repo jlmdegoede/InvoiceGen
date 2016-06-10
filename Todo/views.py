@@ -30,7 +30,6 @@ def save_auth_token(request):
         code = request.GET['code']
         auth_token = request.GET['auth_token']
         todo = TodoAuth.objects.filter(user_id=request.user, valid=True)[0]
-        # if state == todo.state:
         todo.auth_token = auth_token
         todo.save()
         return redirect(to='/')
