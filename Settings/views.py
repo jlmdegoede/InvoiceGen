@@ -34,9 +34,12 @@ def settings(request):
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
 
     color_form = ColorForm()
-    lists = get_wunderlist_lists()
-    current_list = get_setting('wunderlist', 0)
     wunderlist_enabled = get_setting('auto_wunderlist', False)
+    lists = None
+    current_list = None
+    if wunderlist_enabled:
+        lists = get_wunderlist_lists()
+        current_list = get_setting('wunderlist', 0)
 
     todo = None
     wunderlist_dict = None
