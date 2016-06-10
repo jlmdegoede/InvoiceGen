@@ -17,7 +17,7 @@ class AgreementForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=Company.objects.all(), widget=forms.Select())
     article_concerned = forms.ModelMultipleChoiceField(queryset=Product.objects.all())
     client_name = forms.CharField(label="Naam opdrachtgever", max_length=200)
-    client_emailaddress = forms.CharField(label="E-mailadres opdrachtgever", max_length=200)
+    client_emailaddress = forms.CharField(label="E-mailadres opdrachtgever", max_length=200, widget=forms.TextInput(attrs={'class': 'validate', 'type': 'email'}))
 
     class Meta:
         model = Agreement

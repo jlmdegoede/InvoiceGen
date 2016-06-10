@@ -32,7 +32,8 @@ INSTALLED_APPS = (
     'Companies',
     'Settings',
     'colorful',
-    'django_bootstrap_breadcrumbs'
+    'django_bootstrap_breadcrumbs',
+    'Todo'
 )
 
 MIDDLEWARE_CLASSES = (

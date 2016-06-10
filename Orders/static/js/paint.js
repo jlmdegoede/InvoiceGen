@@ -1,3 +1,5 @@
+window.signatureDrawn = false;
+
 (function() {
 
 	// Get a regular interval for drawing to the screen
@@ -25,6 +27,7 @@
 	canvas.addEventListener("mousedown", function (e) {
 		drawing = true;
 		lastPos = getMousePos(canvas, e);
+		window.signatureDrawn = true;
 	}, false);
 	canvas.addEventListener("mouseup", function (e) {
 		drawing = false;

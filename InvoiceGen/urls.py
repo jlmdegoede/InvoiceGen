@@ -5,6 +5,7 @@ import Agreements.views
 import Invoices.views
 import Companies.views
 import Settings.views
+import Todo.views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -49,6 +50,10 @@ urlpatterns = [
         name='add_agreement'),
     url(r'^overeenkomsten/ondertekenen/(?P<url>\w+)/$', Agreements.views.view_agreement,
         name='view_agreement'),
+    url(r'^overeenkomsten/ondertekenen/contractor/(?P<url>\w+)/$', Agreements.views.sign_agreement_contractor,
+      name='sign_contractor'),
+    url(r'^overeenkomsten/ondertekenen/client/(?P<url>\w+)/$', Agreements.views.sign_agreement_client,
+      name='sign_client'),
     url(r'^overeenkomsten/verwijderen/(?P<agreement_id>\d+)/$', Agreements.views.delete_agreement,
         name='delete_agreement'),
     url(r'^overeenkomsten/modelovereenkomsten/$', Agreements.views.index_model_agreements,
@@ -58,4 +63,8 @@ urlpatterns = [
     url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
+
+    url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
+    url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
+    url(r'^wunderlist-instellingen/$', Settings.views.save_wunderlist_settings, name='save_wunderlist_settings'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

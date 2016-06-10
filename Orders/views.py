@@ -12,7 +12,10 @@ from Companies.forms import CompanyForm
 from Companies.models import Company
 from Orders.forms import *
 from Utils.search_query import get_query
-
+from Todo.views import create_task_from_order
+from Settings.views import get_setting
+import asyncio
+import Settings.views
 
 # Create your views here.
 
@@ -40,9 +43,10 @@ def index(request):
     yearList.sort(reverse=True)
     active_articles = Product.objects.filter(done=False)
     currentYear = date.today().year
+    no_settings = Settings.views.no_settings_created_yet()
     return render(request, 'index.html',
                   {'articles': articles, 'active_articles': active_articles, 'toast': toast, 'years': yearList,
-                   'currentYear': currentYear})
+                   'currentYear': currentYear, 'first_time': no_settings})
 
 
 @login_required
@@ -134,6 +138,11 @@ def add_article(request):
         if f.is_valid():
             article.save()
             request.session['toast'] = 'Opdracht toegevoegd'
+            if get_setting('auto_wunderlist', False):
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(create_task_from_order(article))
+                loop.close()
             return redirect('/')
         else:
             return render_to_response('new_edit_article.html',
@@ -189,7 +198,6 @@ def delete_article(request, articleid=-1):
     except:
         request.session['toast'] = 'Verwijderen mislukt'
         return redirect('/')
-
 
 
 @login_required

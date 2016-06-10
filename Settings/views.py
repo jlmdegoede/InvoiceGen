@@ -2,6 +2,10 @@ from django.shortcuts import *
 from Settings.models import *
 from Settings.forms import *
 from django.contrib.auth.decorators import login_required
+from Todo.models import *
+import Todo.views
+
+
 # Create your views here.
 
 
@@ -26,15 +30,81 @@ def settings(request):
     if not user_i:
         user_i = UserSetting()
 
-    site_name = Setting.objects.filter(key='site_name')
-    if site_name.count() is not 0:
-        site_name = site_name[0].value
-    else:
-        site_name = 'InvoiceGen'
+    site_name = get_setting('site_name', 'InvoiceGen')
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
+
     color_form = ColorForm()
+    lists = get_wunderlist_lists()
+    current_list = get_setting('wunderlist', 0)
+    wunderlist_enabled = get_setting('auto_wunderlist', False)
+
+    todo = None
+    wunderlist_dict = None
+    try:
+        todo = TodoAuth.objects.get(id=456)
+    except:
+        print("Geen Wunderlist-integratie")
+        wunderlist_dict = Todo.views.get_wunderlist_url(request)
+
     return render(request, 'settings.html',
-                  {'form': form, 'color_form': color_form, 'toast': toast})
+                  {'form': form, 'color_form': color_form, 'toast': toast, 'todo': todo, 'lists': lists,
+                   'wunderlist_dict': wunderlist_dict,
+                   'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled})
+
+
+def get_wunderlist_lists():
+    return Todo.views.get_lists()
+
+
+def no_settings_created_yet():
+    try:
+        user = UserSetting.objects.get(id=1)
+        return False
+    except:
+        return True
+
+def get_user_fullname():
+    try:
+        user = UserSetting.objects.get(id=1)
+        return user.name
+    except:
+        return ""
+
+
+@login_required
+def save_wunderlist_settings(request):
+    if request.method == 'POST':
+        if 'new_list' in request.POST and request.POST['new_list'] != "":
+            # create new list
+            json = Todo.views.create_new_list(request.POST['new_list'])
+            save_setting('wunderlist', json['id'])
+        else:
+            selected_list = request.POST['existing_list']
+            save_setting('wunderlist', selected_list)
+        save_setting('auto_wunderlist', request.POST['auto_add_to_wunderlist'] == 'on')
+    return redirect(to=settings)
+
+
+def get_setting(key, default_value):
+    setting = Setting.objects.filter(key=key)
+    if setting.count() is not 0:
+        setting = setting[0].value
+    else:
+        setting = default_value
+    return setting
+
+
+def save_setting(key, value):
+    setting = Setting.objects.filter(key=key)
+    if setting.count() is not 0:
+        setting = setting[0]
+        setting.value = value
+    else:
+        setting = Setting()
+        setting.key = key
+        setting.value = value
+    setting.save()
+    return setting
 
 
 @login_required
