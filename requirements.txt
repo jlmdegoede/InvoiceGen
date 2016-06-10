@@ -4,3 +4,4 @@ django-bootstrap-breadcrumbs
 markdown
 pillow
 requests
+fpdf
