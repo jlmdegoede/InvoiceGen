@@ -60,6 +60,18 @@ def view_article(request, articleid):
         request.session['toast'] = 'Product niet gevonden'
         return redirect('/')
 
+@login_required
+def mark_products_as_done(request):
+    if request.method == 'POST':
+        products = []
+        for productId in request.POST.getlist('products[]'):
+            product = Product.objects.get(id=productId)
+            product.done = True
+            product.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+
 
 @login_required
 def view_statistics(request):

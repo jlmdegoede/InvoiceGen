@@ -100,6 +100,7 @@ def get_invoice_pdf(request, invoice_id):
     response.write(pdf)
     return response
 
+
 @login_required
 def edit_invoice(request, invoiceid=-1):
     context = RequestContext(request)

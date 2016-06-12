@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
     url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
     url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
+    url(r'^opdracht/afronden/$', Orders.views.mark_products_as_done, name='mark_products_as_done'),
 
     url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
     url(r'^facturen/$', Invoices.views.get_invoices, name='get_invoices'),

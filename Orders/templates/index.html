@@ -17,8 +17,8 @@
 {% block content %}
     {% if first_time %}
         <div class="card-panel green">
-            <b>Welkom bij InvoiceGen!</b> Voordat je begint met het maken van facturen, overeenkomsten en opdrachten, zorg ervoor dat je eerst even een bezoek brengt aan <a href="/instellingen" class="blue-grey-text text-darken-2">Instellingen</a> om je persoonlijke gegevens in te vullen.
-            Pas als je dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en een factuur te genereren. Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
+            <b>Welkom bij InvoiceGen!</b> Voordat u begint met het maken van facturen, overeenkomsten en opdrachten, zorg ervoor dat u eerst even een bezoek brengt aan <a href="/instellingen" class="blue-grey-text text-darken-2">Instellingen</a> om uw persoonlijke gegevens in te vullen.
+            Pas als u dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en facturen te genereren. Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
         </div>
     {% endif %}
     <h1>Opdrachten beheren</h1>
@@ -52,7 +52,7 @@
                                 <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
                                 <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
                                 <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.bedrijfsnaam }}</td>
+                                <td>{{ article.from_company.company_name }}</td>
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
@@ -63,6 +63,8 @@
                         {% endfor %}
                     </tbody>
             </table>
+        <p>
+            <a href="#" class="waves-effect waves-light btn done-button">Opdrachten afgerond</a></p>
         </div>
 
         {% for y, a in articles.items %}
@@ -85,7 +87,7 @@
                                 <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
                                 <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
                                 <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.bedrijfsnaam }}</td>
+                                <td>{{ article.from_company.company_name }}</td>
                                 <td>{{ article.date_deadline }}</td>
                                 <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="{% url "view_agreement" article.agreement.url %}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
@@ -96,7 +98,11 @@
                             {% endfor %}
                     </tbody>
                 </table>
-                <a href="#modal2" class="modal-trigger waves-effect waves-light btn">Factureren</a>
+            <div>
+                <p>
+                    <a href="#modal2" class="modal-trigger waves-effect waves-light btn">Factureren</a>
+                </p>
+                </div>
             </form>
             </div>
         {% endfor %}
@@ -152,6 +158,21 @@
 
     $(document).ready(function(){
          // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.done-button').click(function(e) {
+            var clickedDoneList = []
+                $('input[type="checkbox"]:checked').each(function() {
+                    clickedDoneList[clickedDoneList.length] = $(this).val();
+                });
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "mark_products_as_done" %}',
+                    data: {
+                        products: clickedDoneList,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: location.reload(),
+                });
+        });
         $('.modal-trigger').click(function (event) {
             if ($(this).hasClass("delete")) {
                 id = $(this).attr('value');
@@ -169,7 +190,7 @@
                     var clickedList = []
                     $('input[type="checkbox"]:checked').each(function() {
                         clickedList[clickedList.length] = $(this).val();
-                    })
+                    });
 
                     // bind callback to a href link
                     $('#factureren').click(function() {
