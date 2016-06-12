@@ -7,6 +7,7 @@ import datetime
 import Invoices.markdown_generator
 import markdown
 from Utils.pdf_generation import *
+from Utils.date_helper import *
 # Create your views here.
 
 @login_required
@@ -179,7 +180,3 @@ def generate_invoice(request):
     return redirect('/')
 
 
-def get_today_string():
-    today = datetime.date.today()
-    today = today.strftime("%d-%m-%Y")
-    return today
