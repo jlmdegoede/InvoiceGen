@@ -106,7 +106,7 @@ def get_yearly_stats(year):
     not_yet_invoiced = 0
     not_yet_invoiced_articles = Product.objects.filter(done=False)
     for article in not_yet_invoiced_articles:
-        not_yet_invoiced += article.word_count * 0.25
+        not_yet_invoiced += article.quantity * article.price_per_quantity
 
     return (nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced)
 
