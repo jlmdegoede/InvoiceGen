@@ -20,7 +20,7 @@
     <a href="{% url "add_agreement_text" %}">Nieuwe modelovereenkomst toevoegen</a> |
     <a href="{% url "index_model_agreements" %}">Modelovereenkomsten beheren</a>
             {% csrf_token %}
-                <table  class="striped">
+                <table  class="striped responsive-table">
                     <thead>
                         <th data-field="id">Datum</th>
                         <th data-field="word_count">Opdrachten</th>

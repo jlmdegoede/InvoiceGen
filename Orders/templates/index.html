@@ -35,7 +35,7 @@
 
         <div id="openstaand" class="col s12">
                 {% csrf_token %}
-            <table  class="striped">
+            <table  class="striped responsive-table">
                 <thead>
                         <th data-field="select"></th>
                         <th data-field="id">Opdracht</th>
@@ -70,7 +70,7 @@
         {% for y, a in articles.items %}
             <div id="{{ y }}" class="col s12">
                 {% csrf_token %}
-                <table  class="striped">
+                <table  class="striped responsive-table">
                 <thead>
                         <th data-field="select"></th>
                         <th data-field="id">Opdracht</th>
