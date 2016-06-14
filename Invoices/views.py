@@ -100,7 +100,7 @@ def get_invoice_pdf(request, invoice_id):
     generate_pdf(products, user, invoice)
 
     response = HttpResponse(open(BASE_DIR + "/Templates/MaterialDesign/temp/main.pdf", 'rb').read())
-    response['Content-Disposition'] = 'attachment; filename=test.pdf'
+    response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.pdf'
     print(BASE_DIR + "/Templates/MaterialDesign/temp/main.pdf")
     return response
 

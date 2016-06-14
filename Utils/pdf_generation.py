@@ -2,17 +2,15 @@ from Utils.date_helper import *
 import os
 
 
-def generate_title(file, user):
+def generate_title(file, invoice):
     file.writelines("\\color{textGray} \n")
     file.writelines("\\pagenumbering{gobble} \n")
     file.writelines("\\vspace*{25pt}\n")
     file.writelines("\\Huge\n")
     file.writelines("\\BgThispage\n")
-    file.writelines("\\textcolor{black}{\\textbf {Factuur}}\n")
+    file.writelines("\\textcolor{black}{\\textbf {" + invoice.title + "}}\n")
     file.writelines("\n")
-    file.writelines("\\textcolor{black}{\\textbf{" + get_today_string() +"}}\n")
-    file.writelines("\n")
-    file.writelines("\\textcolor{black}{\\textbf{Freelancer " + user.name +  "}}\n")
+    file.writelines("\\textcolor{black}{\\textbf{" + get_today_string() + "}}\n")
     file.writelines("\\BgThispage\n")
     file.writelines("\\vspace*{20pt}\n")
     file.writelines("\n")
@@ -90,7 +88,7 @@ def generate_final_section(file, invoice, tax_rate):
 def generate_pdf(products, user, invoice):
     entry_file = "Templates/MaterialDesign/temp/entry.tex"
     with open(entry_file, 'w') as file:
-        generate_title(file, user)
+        generate_title(file, invoice)
         generate_gegevens_factuur(file, invoice)
         generate_gegevens_leverancier(file, user)
         generate_gegevens_afnemer(file, invoice)
