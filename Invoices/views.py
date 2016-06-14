@@ -8,7 +8,7 @@ import markdown
 from Utils.pdf_generation import *
 from Utils.date_helper import *
 from InvoiceGen.settings import BASE_DIR
-
+from Utils.docx_generation import *
 # Create your views here.
 
 
@@ -103,6 +103,15 @@ def get_invoice_pdf(request, invoice_id):
     response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.pdf'
     print(BASE_DIR + "/Templates/MaterialDesign/temp/main.pdf")
     return response
+
+@login_required
+def get_invoice_docx(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+    products = Product.objects.filter(invoice=invoice)
+    user = UserSetting.objects.first()
+
+    generate_docx_invoice(invoice, user, products)
+    return
 
 
 @login_required
