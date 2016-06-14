@@ -3,12 +3,14 @@ from django.shortcuts import *
 from Invoices.forms import *
 from datetime import date
 from Settings.models import UserSetting
-import datetime
 import Invoices.markdown_generator
 import markdown
 from Utils.pdf_generation import *
 from Utils.date_helper import *
+from InvoiceGen.settings import BASE_DIR
+
 # Create your views here.
+
 
 @login_required
 def get_invoices(request):
@@ -52,21 +54,25 @@ def add_invoice(request):
             f.save(commit=False)
             invoice.date_created = datetime.datetime.now()
             invoice.total_amount = 0
-            articles =  f.cleaned_data['articles']
-            for article in articles:
+            products = f.cleaned_data['articles']
+            for article in products:
                 invoice.total_amount += article.price_per_quantity * article.quantity
                 invoice.to_company = article.from_company
 
-            with_tax_rate = articles[0].tax_rate != 0
-            invoice.contents = Invoices.markdown_generator.create_markdown_file(UserSetting.objects.first(),
-                                                                                    articles[0].from_company, get_today_string(),
-                                                                                    articles,
-                                                                                    f.cleaned_data['invoice_number'], with_tax_rate)
+            with_tax_rate = products[0].tax_rate != 0
+            invoice.invoice_number = f.cleaned_data['invoice_number']
             invoice.save()
 
-            for article in articles:
-                article.invoice = invoice
-                article.save()
+            for product in products:
+                product.invoice = invoice
+                product.save()
+
+            invoice.contents = Invoices.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
+                                                                                products[0].from_company,
+                                                                                get_today_string(),
+                                                                                products,
+                                                                                with_tax_rate)
+            invoice.save()
 
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen')
@@ -75,17 +81,14 @@ def add_invoice(request):
                                       {'form': f, 'invoceid': invoice.id, 'edit': False,
                                        'toast': "Formulier ongeldig!"}, context)
 
+
 @login_required
 def view_markdown(request, invoice_id):
-    # try:
     invoice = Invoice.objects.get(id=invoice_id)
     return render(request, 'markdown.html', {'invoice_id': invoice.id,
-                                                          'html': markdown.markdown(invoice.contents, extensions=[
-                                                              'markdown.extensions.tables',
-                                                              'markdown.extensions.nl2br'])})
-    # except:
-    #    request.session['toast'] = 'Factuur niet gevonden'
-    #   return redirect('/invoices')
+                                             'html': markdown.markdown(invoice.contents, extensions=[
+                                                 'markdown.extensions.tables',
+                                                 'markdown.extensions.nl2br'])})
 
 
 @login_required
@@ -94,12 +97,13 @@ def get_invoice_pdf(request, invoice_id):
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
 
-    pdf = generate_pdf(products, user, invoice)
-    response = HttpResponse(content_type='application/pdf')
-    filename = 'factuur-van-' + str(invoice.date_created) + '.pdf'
-    response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-    response.write(pdf)
+    generate_pdf(products, user, invoice)
+
+    response = HttpResponse(open(BASE_DIR + "/Templates/MaterialDesign/temp/main.pdf", 'rb').read())
+    response['Content-Disposition'] = 'attachment; filename=test.pdf'
+    print(BASE_DIR + "/Templates/MaterialDesign/temp/main.pdf")
     return response
+
 
 @login_required
 def edit_invoice(request, invoiceid=-1):
@@ -165,8 +169,8 @@ def generate_invoice(request):
         # create invoice and save it
         with_tax_rate = articles[0].tax_rate != 0
         invoice.contents = Invoices.markdown_generator.create_markdown_file(UserSetting.objects.first(),
-                                                                    articles[0].from_company, today, articles,
-                                                                    volgnummer, with_tax_rate)
+                                                                            articles[0].from_company, today, articles,
+                                                                            volgnummer, with_tax_rate)
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur " + str(today)
         invoice.to_company = articles[0].from_company
@@ -178,5 +182,3 @@ def generate_invoice(request):
             article.invoice = invoice
             article.save()
     return redirect('/')
-
-

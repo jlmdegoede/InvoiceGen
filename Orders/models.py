@@ -24,7 +24,5 @@ class Product(models.Model):
 
     def serialize(self):
         return {"title": self.title, "date": str(self.date_received), "deadline": str(self.date_deadline),
-            "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
-            "wordcount": self.word_count, "briefing": self.briefing, "server_id": self.id}
-
-
+                "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
+                "wordcount": self.word_count, "briefing": self.briefing, "server_id": self.id}
