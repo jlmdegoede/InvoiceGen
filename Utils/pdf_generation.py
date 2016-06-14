@@ -56,34 +56,32 @@ def generate_gegevens_afnemer(file, invoice):
     file.writelines("\n")
 
 
-def generate_geleverd(file, products):
+def generate_geleverd(file, products, invoice, tax_rate):
     file.writelines("%% Geleverd\n")
     file.writelines("\\LARGE \n")
     file.writelines("\\noindent\\colorbox{materialGreen}\n")
     file.writelines("{\\parbox[c][25pt][c]{\\textwidth}{\\hspace{15pt}\\textcolor{white}{\\textbf{Geleverd}}}}\n")
-    file.writelines("\\begin{tabular}{l l l l}\n")
+    file.writelines("\\begin{tabular}{l l r l}\n")
     file.writelines("\\InvullenVierBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs}\n")
     for product in products:
         file.writelines("\\InvullenVier{" + product.title + "}{" + str(product.identification_number ) + "}{" + str(product.quantity)+"x" + "}{" + str(product.get_price()) + "}\n")
+	
+    if tax_rate:
+        file.writelines("\\cline{3-4} \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str(invoice.get_totaalbedrag())+ "} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large BTW} & {\\large \\euro" + str(invoice.get_btw()) + "} \\\\ \\cline{3-4}\n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_totaalbedrag() + invoice.get_btw()) +" }} \\\\ \n")
+    else:
+        file.writelines("\\cline{3-4} \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_totaalbedrag()) +" }} \\\\ \n")
+		
     file.writelines("\\end{tabular} \\\\\\\\ \n")
 
 
-def generate_final_section(file, invoice, tax_rate):
-    file.writelines("\\begin{changemargin}{1cm}{1cm}")
-    if tax_rate:
-        file.writelines("\large \\textbf{Subtotaal: \\euro" + str(invoice.get_totaalbedrag()) + "}\n")
-        file.writelines("\\\\")
-        file.writelines("\\\\")
-        file.writelines("\large \\textbf{BTW: \\euro" + str(invoice.get_btw()) + "}\n")
-        file.writelines("\\\\")
-        file.writelines("\\\\")
-        file.writelines("\large \\textbf{Totaal te voldoen: \\euro" + str(invoice.get_totaalbedrag() + invoice.get_btw()) + "}\n")
-    else:
-        file.writelines("\large \\textbf{Totaal te voldoen: \\euro" + str(invoice.get_totaalbedrag()) + "}\n")
-
-    file.writelines("\\end{changemargin}")
-    file.writelines("\n")
-
+def generate_final_section(file):
+    file.writelines("\\begin{changemargin}{0.25cm}{0.25cm}\n")
+	file.writelines("\\large Het bedrag kan overgemaakt worden naar IBAN00INGB000000000000\n")
+	file.writelines("\\end{changemargin}\n")
 
 def generate_pdf(products, user, invoice):
     from InvoiceGen.settings import BASE_DIR
@@ -93,8 +91,8 @@ def generate_pdf(products, user, invoice):
         generate_gegevens_factuur(file, invoice)
         generate_gegevens_leverancier(file, user)
         generate_gegevens_afnemer(file, invoice)
-        generate_geleverd(file, products)
-        generate_final_section(file, invoice, products[0].tax_rate != 0)
+        generate_geleverd(file, products, invoice, products[0].tax_rate != 0)
+        #generate_final_section(file)
     os.chdir(BASE_DIR + "/Templates/MaterialDesign/temp/")
     os.system("xelatex main.tex")
     os.chdir("../../..")
