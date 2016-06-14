@@ -16,6 +16,8 @@ from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import asyncio
 import Settings.views
+
+
 # Create your views here.
 
 
@@ -99,7 +101,7 @@ def get_yearly_stats(year):
     nr_of_words = 0
     all_articles = Product.objects.filter(done=True)
     for article in all_articles:
-        if (article.date_deadline.year == int(year)):
+        if article.date_deadline.year == int(year):
             totale_inkomsten += article.quantity * article.price_per_quantity
             nr_of_words += article.quantity
             nr_of_articles += 1
@@ -108,8 +110,7 @@ def get_yearly_stats(year):
     for article in not_yet_invoiced_articles:
         not_yet_invoiced += article.quantity * article.price_per_quantity
 
-    return (nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced)
-
+    return nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced
 
 
 @login_required
@@ -236,9 +237,9 @@ def search(request):
         query_string = request.GET['q']
 
         product_query = get_query(query_string, ['title', 'briefing'])
-        agreement_query = get_query(query_string, ['agreement_text_copy', 'client_name', 'client_emailaddress',])
+        agreement_query = get_query(query_string, ['agreement_text_copy', 'client_name', 'client_emailaddress', ])
         invoice_query = get_query(query_string, ['title', 'contents', ])
-        companies_query =  get_query(query_string, ['company_name', 'company_address', 'company_city_and_zipcode'])
+        companies_query = get_query(query_string, ['company_name', 'company_address', 'company_city_and_zipcode'])
 
         found_products = Product.objects.filter(product_query).order_by('-date_received')
         found_agreements = Agreement.objects.filter(agreement_query).order_by('-created')
@@ -246,5 +247,7 @@ def search(request):
         found_companies = Company.objects.filter(companies_query)
 
     return render_to_response('search_results.html',
-                              {'query_string': query_string, 'found_products': found_products, 'found_agreements': found_agreements, 'found_invoices': found_invoices, 'found_companies': found_companies},
+                              {'query_string': query_string, 'found_products': found_products,
+                               'found_agreements': found_agreements, 'found_invoices': found_invoices,
+                               'found_companies': found_companies},
                               context_instance=RequestContext(request))

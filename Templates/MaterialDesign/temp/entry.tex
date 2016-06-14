@@ -1,0 +1,54 @@
+\color{textGray} 
+\pagenumbering{gobble} 
+\vspace*{25pt}
+\Huge
+\BgThispage
+\textcolor{black}{\textbf {Testfactuur}}
+
+\textcolor{black}{\textbf{14-06-2016}}
+\BgThispage
+\vspace*{20pt}
+
+%% Gegevens Factuur
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens factuur}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Volgnummer}{23}{20}   
+\InvullenTwee{Datum}{14-06-2016}{20}
+\end{tabular} \\ 
+
+%% Gegevens Leverancier
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens leverancier}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Naam}{Testnaam}{0}   
+\InvullenTwee{Adres}{Testadres}{0}   
+\InvullenTwee{Postcode, plaats}{Testplaats en 1245AB}{0}   
+\InvullenTwee{E-mail}{test@test.nl}{0}   
+\InvullenTwee{IBAN}{NL00 INGB 0000 0000 00}{0}   
+\end{tabular} \\ 
+
+%% Gegevens Afnemer
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens afnemer}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Bedrijfsnaam}{Testopdrachtgever}{0}   
+\InvullenTwee{Adres}{Testadres}{0}   
+\InvullenTwee{Postcode, plaats}{Testplaats 1234AB}{0}   
+\end{tabular} \\ 
+
+%% Geleverd
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Geleverd}}}}
+\begin{tabular}{l l l l}
+\InvullenVierBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs}
+\InvullenVier{Testopdracht}{1}{500x}{125.0}
+\end{tabular} \\\\ 
+\begin{changemargin}{1cm}{1cm}\large \textbf{Subtotaal: \euro125.0}
+\\\\\large \textbf{BTW: \euro26.25}
+\\\\\large \textbf{Totaal te voldoen: \euro151.25}
+\end{changemargin}
