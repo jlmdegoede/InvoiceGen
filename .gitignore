@@ -63,3 +63,6 @@ InvoiceGen/site_settings.py
 static/images
 *.pdf
 #latex
+*.out
+*.aux
+*.docx

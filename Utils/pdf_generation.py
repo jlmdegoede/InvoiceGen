@@ -2,6 +2,7 @@ from Utils.date_helper import *
 import os
 
 
+
 def generate_title(file, invoice):
     file.writelines("\\color{textGray} \n")
     file.writelines("\\pagenumbering{gobble} \n")
@@ -78,10 +79,11 @@ def generate_geleverd(file, products, invoice, tax_rate):
     file.writelines("\\end{tabular} \\\\\\\\ \n")
 
 
-def generate_final_section(file):
+def generate_final_section(file, invoice):
     file.writelines("\\begin{changemargin}{0.25cm}{0.25cm}\n")
-	file.writelines("\\large Het bedrag kan overgemaakt worden naar IBAN00INGB000000000000\n")
-	file.writelines("\\end{changemargin}\n")
+    file.writelines("\\large Gelieve uw betaling uiterlijk te voldoen op " + get_formatted_date(invoice.expiration_date) + " op IBAN " + invoice.iban + "\n")
+    file.writelines("\\end{changemargin}\n")
+
 
 def generate_pdf(products, user, invoice):
     from InvoiceGen.settings import BASE_DIR

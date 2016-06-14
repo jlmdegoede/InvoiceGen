@@ -8,6 +8,7 @@ class Invoice(models.Model):
     invoice_number = models.IntegerField()
     total_amount = models.IntegerField()
     paid = models.BooleanField(default=False)
+    expiration_date = models.DateField()
 
     def __str__(self):
         return self.title

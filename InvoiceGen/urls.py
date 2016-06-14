@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^facturen/verwijderen/(?P<invoiceid>\d+)/$', Invoices.views.delete_invoice, name='delete_invoice'),
     url(r'^markdown/(?P<invoice_id>\d+)/', Invoices.views.view_markdown, name='view_markdown'),
     url(r'^pdf/(?P<invoice_id>\d+)/', Invoices.views.get_invoice_pdf, name='download_pdf'),
+    url(r'^docx/(?P<invoice_id>\d+)/', Invoices.views.get_invoice_docx, name='download_docx'),
     url(r'^download/md/(?P<invoice_id>\d+)/', Orders.views.download_markdown, name='download_markdown'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
