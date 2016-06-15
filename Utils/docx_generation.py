@@ -10,6 +10,11 @@ def generate_docx_invoice(invoice, user, products, tax_rate):
     p.add_run('\n' + user.city_and_zipcode)
     p.add_run('\n' + user.iban)
 
+    p = document.add_paragraph()
+    p.add_run(invoice.to_company.company_name)
+    p.add_run('\n' + invoice.to_company.company_address)
+    p.add_run('\n' + invoice.to_company.company_city_and_zipcode)
+
     document.add_heading(invoice.title, 0)
     document.add_paragraph(
         'Volgnummer: \t' + str(invoice.invoice_number), style='ListBullet'
