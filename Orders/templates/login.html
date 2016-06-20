@@ -37,4 +37,12 @@
     <br />
 
     <a href="/wachtwoord-vergeten">Wachtwoord vergeten?</a>
+
+    {% if email %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#id_username').val('{{ email }}');
+            });
+        </script>
+    {% endif %}
 {% endblock %}

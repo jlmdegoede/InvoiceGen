@@ -12,6 +12,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^$', Orders.views.index, name='index'),
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
+    url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
 
     url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_product'),

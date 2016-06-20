@@ -205,6 +205,11 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 
+def user_login_placeholder_email(request):
+    context = RequestContext(request)
+    form = UserForm()
+    return render_to_response('login.html', {'form': form, 'email': request.GET['email']}, context)
+
 def user_login(request):
     context = RequestContext(request)
     form = UserForm()

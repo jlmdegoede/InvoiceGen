@@ -67,6 +67,5 @@ async def create_task_from_order(product):
             {'list_id': int(list_id), 'title': title, 'completed': completed, 'due_date': due_date})
         req = requests.post('https://a.wunderlist.com/api/v1/tasks', post_data, headers=get_headers())
 
-        print(req.text)
         return True
     return False

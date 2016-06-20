@@ -3,9 +3,10 @@ from Settings.models import *
 from Settings.forms import *
 from django.contrib.auth.decorators import login_required
 from Todo.models import *
+import json
 import Todo.views
-
-
+import requests
+from InvoiceGen.site_settings import COMMUNICATION_KEY
 # Create your views here.
 
 
@@ -39,6 +40,7 @@ def settings(request):
     wunderlist_enabled = False
     todo = None
     wunderlist_dict = None
+    invoice_site = get_current_settings()
 
     try:
         todo = TodoAuth.objects.get(id=1)
@@ -52,7 +54,18 @@ def settings(request):
     return render(request, 'settings.html',
                   {'form': form, 'color_form': color_form, 'toast': toast, 'todo': todo, 'lists': lists,
                    'wunderlist_dict': wunderlist_dict,
-                   'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled})
+                   'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
+
+
+def get_current_settings():
+    try:
+        req = requests.post('http://127.0.0.1:8001/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
+        return json.loads(req.content.decode('utf-8'))
+    except:
+        print("Error")
+
+def convert_to_json_utf8(data):
+    return json.dumps(data).encode('utf-8')
 
 
 def get_wunderlist_lists():
