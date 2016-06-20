@@ -10,7 +10,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^$', Orders.views.index, name='index'),
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
@@ -66,6 +65,17 @@ urlpatterns = [
     url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
+
+      url(r'^wachtwoord-vergeten/$', 'django.contrib.auth.views.password_reset', {'post_reset_redirect': '/wachtwoord-vergeten/klaar/'},
+          name="password_reset"),
+      url(r'^wachtwoord-vergeten/klaar/$',
+       'django.contrib.auth.views.password_reset_done'),
+      url(r'^wachtwoord-vergeten/instellen/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+       'django.contrib.auth.views.password_reset_confirm',
+       {'post_reset_redirect': '/wachtwoord-vergeten/opnieuw-ingesteld/'},
+          name="password_reset_confirm"),
+      url(r'^wachtwoord-vergeten/opnieuw-ingesteld/$',
+       'django.contrib.auth.views.password_reset_complete'),
 
     url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
     url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),

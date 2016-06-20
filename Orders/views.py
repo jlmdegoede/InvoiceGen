@@ -20,7 +20,6 @@ import Settings.views
 
 # Create your views here.
 
-
 @login_required
 def index(request):
     articles = {}
@@ -65,7 +64,6 @@ def view_article(request, articleid):
 @login_required
 def mark_products_as_done(request):
     if request.method == 'POST':
-        products = []
         for productId in request.POST.getlist('products[]'):
             product = Product.objects.get(id=productId)
             product.done = True

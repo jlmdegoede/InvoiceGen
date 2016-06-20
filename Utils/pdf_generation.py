@@ -87,7 +87,7 @@ def generate_final_section(file, invoice):
 
 def generate_pdf(products, user, invoice):
     from InvoiceGen.settings import BASE_DIR
-    entry_file = BASE_DIR + "/Templates/MaterialDesign/temp/entry.tex"
+    entry_file = BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/entry.tex"
     with open(entry_file, 'w') as file:
         generate_title(file, invoice)
         generate_gegevens_factuur(file, invoice)
@@ -95,7 +95,7 @@ def generate_pdf(products, user, invoice):
         generate_gegevens_afnemer(file, invoice)
         generate_geleverd(file, products, invoice, products[0].tax_rate != 0)
         #generate_final_section(file)
-    os.chdir(BASE_DIR + "/Templates/MaterialDesign/temp/")
+    os.chdir(BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/")
     os.system("xelatex main.tex")
     os.chdir("../../..")
     return

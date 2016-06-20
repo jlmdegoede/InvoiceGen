@@ -2,6 +2,7 @@ from docx import Document
 from docx.shared import Inches
 from Utils.date_helper import get_formatted_string
 
+
 def generate_docx_invoice(invoice, user, products, tax_rate):
     document = Document()
     p = document.add_paragraph()
