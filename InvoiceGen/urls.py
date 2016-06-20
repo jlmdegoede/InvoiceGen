@@ -67,6 +67,18 @@ urlpatterns = [
         Agreements.views.delete_model_agreement,
         name='delete_model_agreement'),
 
+      url(r'^wachtwoord-vergeten/$',
+          'django.contrib.auth.views.password_reset',
+          {'post_reset_redirect': '/wachtwoord-vergeten/klaar/'},
+          name="password_reset"),
+      url(r'^wachtwoord-vergeten/klaar/$',
+       'django.contrib.auth.views.password_reset_done'),
+      url(r'^wachtwoord-vergeten/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
+       'django.contrib.auth.views.password_reset_confirm',
+       {'post_reset_redirect': 'wachtwoord-vergeten/opnieuw-ingesteld/'}),
+      url(r'^wachtwoord-vergeten/opnieuw-ingesteld/$',
+       'django.contrib.auth.views.password_reset_complete'),
+
     url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
     url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
     url(r'^wunderlist-instellingen/$', Settings.views.save_wunderlist_settings, name='save_wunderlist_settings'),
