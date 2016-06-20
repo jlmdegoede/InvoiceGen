@@ -10,7 +10,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^$', Orders.views.index, name='index'),
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
