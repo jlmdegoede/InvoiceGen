@@ -59,7 +59,7 @@ def settings(request):
 
 def get_current_settings():
     try:
-        req = requests.post('http://127.0.0.1:8001/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
+        req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
         return json.loads(req.content.decode('utf-8'))
     except:
         print("Error")
