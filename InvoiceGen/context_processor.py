@@ -14,7 +14,7 @@ def color_up(request):
     if color_up_objects.count() != 0:
         color_up = color_up_objects[0].value
     else:
-        color_up = "#607d8b"
+        color_up = "#009688"
     return {'color_up': color_up}
 
 
@@ -24,5 +24,5 @@ def color_down(request):
     if color_down_objects.count() != 0:
         color_down = color_down_objects[0].value
     else:
-        color_down = "#e65100"
+        color_down = "#009688"
     return {'color_down': color_down}

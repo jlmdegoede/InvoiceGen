@@ -159,18 +159,18 @@ def reset_colors(request):
 
     if color_up is not None:
         if color_up.count() == 0:
-            color_up = Setting(key='color_up', value='#607d8b')
+            color_up = Setting(key='color_up', value='#009688')
         else:
             color_up = color_up[0]
-            color_up.value = '#607d8b'
+            color_up.value = '#009688'
         color_up.save()
 
     if color_down is not None:
         if color_down.count() == 0:
-            color_down = Setting(key='color_down', value='#e65100')
+            color_down = Setting(key='color_down', value='#009688')
         else:
             color_down = color_down[0]
-            color_down.value = '#e65100'
+            color_down.value = '#009688'
         color_down.save()
 
     return redirect(to='settings')
