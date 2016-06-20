@@ -70,7 +70,7 @@ urlpatterns = [
           name="password_reset"),
       url(r'^wachtwoord-vergeten/klaar/$',
        'django.contrib.auth.views.password_reset_done'),
-      url(r'^wachtwoord-vergeten/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+      url(r'^wachtwoord-vergeten/instellen/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
        'django.contrib.auth.views.password_reset_confirm',
        {'post_reset_redirect': '/wachtwoord-vergeten/opnieuw-ingesteld/'},
           name="password_reset_confirm"),
