@@ -5,6 +5,7 @@ from datetime import date
 from Settings.models import UserSetting
 import Invoices.markdown_generator
 import markdown
+from datetime import timedelta
 from Utils.pdf_generation import *
 from Utils.date_helper import *
 from InvoiceGen.settings import BASE_DIR
@@ -18,11 +19,13 @@ def get_invoices(request):
     invoices = {}
     yearList = []
     years = Invoice.objects.values("date_created").distinct()
+
     for dict in years:
         year = dict['date_created'].year
         if year not in yearList:
             yearList.append(year)
             invoices[year] = Invoice.objects.filter(date_created__contains=year)
+
     toast = None
     if request.session.get('toast'):
         toast = request.session.get('toast')
@@ -97,9 +100,7 @@ def get_invoice_pdf(request, invoice_id):
     invoice = Invoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
-
     generate_pdf(products, user, invoice)
-
     response = HttpResponse(open(BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/main.pdf", 'rb').read())
     response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.pdf'
     return response
@@ -111,8 +112,7 @@ def get_invoice_docx(request, invoice_id):
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
     doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    )
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     doc.save(response)
     response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.docx'
     return response
@@ -125,10 +125,10 @@ def edit_invoice(request, invoiceid=-1):
         try:
             invoice = Invoice.objects.get(id=invoiceid)
             f = InvoiceForm(instance=invoice)
-            articles = Product.objects.filter(invoice=invoice)
+            products = Product.objects.filter(invoice=invoice)
 
             return render_to_response('new_edit_invoice.html',
-                                      {'form': f, 'articles': articles, 'invoceid': invoice.id, 'edit': True,
+                                      {'form': f, 'articles': products, 'invoceid': invoice.id, 'edit': True,
                                        'invoiceid': invoiceid}, context)
         except:
             request.session['toast'] = 'Factuur niet gevonden'
@@ -136,16 +136,15 @@ def edit_invoice(request, invoiceid=-1):
     elif request.method == 'POST':
         invoice = Invoice.objects.get(id=invoiceid)
         f = InvoiceForm(request.POST, instance=invoice)
-        articles = Product.objects.filter(invoice=invoice)
+        products = Product.objects.filter(invoice=invoice)
 
         if f.is_valid():
             f.save()
             request.session['toast'] = 'Factuur gewijzigd'
             return redirect('/facturen')
         else:
-            print(f.errors)
             return render_to_response('new_edit_invoice.html',
-                                      {'form': f, 'articles': articles, 'invoceid': invoice.id, 'edit': True,
+                                      {'form': f, 'articles': products, 'invoceid': invoice.id, 'edit': True,
                                        'invoiceid': invoiceid, 'toast': "Formulier ongeldig!"}, context)
 
 
@@ -179,16 +178,17 @@ def generate_invoice(request):
 
         today = get_today_string()
         volgnummer = request.POST.get('volgnummer')
+        invoice.invoice_number = volgnummer
         # create invoice and save it
         with_tax_rate = articles[0].tax_rate != 0
-        invoice.contents = Invoices.markdown_generator.create_markdown_file(UserSetting.objects.first(),
+        invoice.contents = Invoices.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
                                                                             articles[0].from_company, today, articles,
-                                                                            volgnummer, with_tax_rate)
+                                                                            with_tax_rate)
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur " + str(today)
         invoice.to_company = articles[0].from_company
-        invoice.invoice_number = volgnummer
         invoice.total_amount = totaalbedrag
+        invoice.expiration_date = datetime.datetime.now() + timedelta(days=14)
         invoice.save()
 
         for article in articles:

@@ -1,5 +1,6 @@
 from Companies.models import *
 
+
 class Invoice(models.Model):
     title = models.CharField(max_length=200)
     date_created = models.DateField()
