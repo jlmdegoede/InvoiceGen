@@ -45,5 +45,7 @@ class IncomingInvoice(Invoice):
         if value.file.content_type != 'application/pdf':
             raise ValidationError(u'Error message')
 
-    invoice_file = models.FileField(upload_to=generate_filename, null=True, validators=[validate_file_extension])
+    subtotal = models.IntegerField()
+    btw_amount = models.IntegerField()
+    invoice_file = models.FileField(upload_to='invoice-pdfs/%Y/%m/%d', null=True, validators=[validate_file_extension])
     received_date = models.DateField()

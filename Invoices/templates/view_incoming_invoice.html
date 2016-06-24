@@ -1,0 +1,78 @@
+{% extends 'incoming_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<h2>{{ invoice.title }}</h2>
+    <table class="responsive striped">
+        <tr>
+            <td>
+            Datum aangemaakt
+            </td>
+            <td>
+            {{ invoice.date_created }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+            Datum ontvangen
+            </td>
+            <td>
+            {{ invoice.received_date }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+            Betaald
+            </td>
+            <td>
+                {{ invoice.paid }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Subtotaal
+            </td>
+            <td>
+                {{ invoice.subtotal }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+            BTW-bedrag
+            </td>
+            <td>
+            {{ invoice.btw_amount }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Bestand
+            </td>
+            <td>
+                <a href="{{ invoice.invoice_file.url }}">Bijgevoegde factuur downloaden</a>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+{% endblock %}

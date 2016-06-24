@@ -20,7 +20,9 @@ class IncomingInvoiceForm(forms.ModelForm):
     paid = forms.BooleanField(label="Betaald", required=False)
     received_date = forms.DateField(label="Vervaldatum", input_formats=['%d-%m-%Y'], widget=forms.widgets.DateInput(format="%d-%m-%Y",attrs={'class':'datepicker'}))
     invoice_file = forms.FileField(required=False)
+    subtotal = forms.IntegerField()
+    btw_amount = forms.IntegerField()
 
     class Meta:
         model = OutgoingInvoice
-        fields = ('invoice_number', 'paid', 'title', 'invoice_file', 'received_date')
+        fields = ('invoice_number', 'paid', 'title', 'invoice_file', 'received_date', 'subtotal', 'btw_amount')

@@ -50,7 +50,7 @@
                                      <a href="#" class="dialog-trigger modal-trigger product" value="{{ product.id }}">{{ product.title }}</a>
                                     {% endfor %} </td>
                                 <td>
-                                    <a href="{% url "edit_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "edit_outgoing_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ invoice.id }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>

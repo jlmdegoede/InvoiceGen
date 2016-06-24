@@ -1,4 +1,4 @@
-{% extends 'outgoing_invoice_table.html' %}
+{% extends 'incoming_invoice_table.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% block invoices_active %}active{% endblock %}
@@ -41,35 +41,38 @@
                     {{ form.errors.title }}
                 </div>
                 <div class="input-field col s12">
-                    {{ form.products }}
-                    <label for="{{ form.products.id_for_label }}">Opdrachten (optioneel)</label>
-                    {{ form.errors.articles }}
-                </div>
-                <div class="input-field col s12">
                     {{ form.invoice_number }}
                     <label for="{{ form.invoice_number.id_for_label }}">Volgnummer</label>
                     {{ form.errors.invoice_number }}
                 </div>
                 <div class="input-field col s12">
-                    {{ form.expiration_date }}
-                    <label for="{{ form.expiration_date.id_for_label }}">Vervaldatum</label>
-                    {{ form.errors.expiration_date }}
+                    {{ form.received_date }}
+                    <label for="{{ form.received_date.id_for_label }}">Datum ontvangen</label>
+                    {{ form.errors.received_date }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.subtotal }}
+                    <label for="{{ form.subtotal.id_for_label }}">Subtotaal</label>
+                    {{ form.errors.subtotal }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.btw_amount }}
+                    <label for="{{ form.btw_amount.id_for_label }}">BTW-bedrag</label>
+                    {{ form.errors.btw_amount }}
                 </div>
                 <div class="input-field col s12">
                 <div class="file-field input-field">
                   <div class="btn">
                     <span>PDF-bestand (optioneel)</span>
-                    <input type="file">
+                    <input name="invoice_file" id="id_invoice_file" type="file">
                   </div>
                   <div class="file-path-wrapper">
-                    <input class="file-path validate" name="invoice_file" id="id_invoice_file" type="text" />
+                    <input class="file-path validate" type="text" />
                   </div>
 
                     {{ form.errors.invoice_file }}
                 </div>
                     </div>
-
-
                 <p style="margin-left:10px">
                     {{ form.paid }}
                     <label for="{{ form.paid.id_for_label }}">Betaald</label>

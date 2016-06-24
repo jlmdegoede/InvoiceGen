@@ -42,7 +42,7 @@
                 </div>
                 <div class="input-field col s12">
                     {{ form.products }}
-                    <label for="{{ form.products.id_for_label }}">Opdrachten (optioneel)</label>
+                    <label for="{{ form.products.id_for_label }}">Opdrachten</label>
                     {{ form.errors.articles }}
                 </div>
                 <div class="input-field col s12">
@@ -55,26 +55,6 @@
                     <label for="{{ form.expiration_date.id_for_label }}">Vervaldatum</label>
                     {{ form.errors.expiration_date }}
                 </div>
-                <div class="input-field col s12">
-                <div class="file-field input-field">
-                  <div class="btn">
-                    <span>PDF-bestand (optioneel)</span>
-                    <input type="file">
-                  </div>
-                  <div class="file-path-wrapper">
-                    <input class="file-path validate" name="invoice_file" id="id_invoice_file" type="text" />
-                  </div>
-
-                    {{ form.errors.invoice_file }}
-                </div>
-                    </div>
-
-
-                <p style="margin-left:10px">
-                    {{ form.paid }}
-                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
-                </p>
-            </div>
             <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
                 <i class="material-icons left">send</i>
             </button>

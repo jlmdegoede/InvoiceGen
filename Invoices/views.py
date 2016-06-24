@@ -44,20 +44,22 @@ def get_invoices(invoice_objects):
     yearList = []
     if invoice_objects == 'outgoing':
         years = OutgoingInvoice.objects.values("date_created").distinct()
+        objects = OutgoingInvoice.objects.all()
     else:
         years = IncomingInvoice.objects.values("date_created").distinct()
-
+        objects = IncomingInvoice.objects.all()
 
     for dict in years:
         year = dict['date_created'].year
         if year not in yearList:
             yearList.append(year)
-            invoices[year] = Invoice.objects.filter(date_created__contains=year)
+            invoices[year] = objects.filter(date_created__contains=year)
 
     for year in yearList:
-        for invoice_obj in invoices[year]:
-            products = Product.objects.filter(invoice=invoice_obj)
-            invoice_obj.products = products
+        if invoice_objects == 'outgoing':
+            for invoice_obj in invoices[year]:
+                products = Product.objects.filter(invoice=invoice_obj)
+                invoice_obj.products = products
 
     currentYear = date.today().year
     return {'invoices': invoices,  'years': yearList, 'currentYear': currentYear}
@@ -110,39 +112,22 @@ def add_outgoing_invoice(request):
 def add_incoming_invoice(request):
     context = RequestContext(request)
     if request.method == 'GET':
-        invoice = OutgoingInvoice()
-        f = OutgoingInvoiceForm(instance=invoice)
+        invoice = IncomingInvoice()
+        f = IncomingInvoiceForm(instance=invoice)
 
         return render_to_response('new_edit_incoming_invoice.html',
                                   {'form': f, 'invoceid': invoice.id, 'edit': False}, context)
     elif request.method == 'POST':
-        invoice = OutgoingInvoice()
-        f = OutgoingInvoiceForm(request.POST, instance=invoice)
+        invoice = IncomingInvoice()
+        f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
 
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = datetime.datetime.now()
-            invoice.total_amount = 0
-
-            products = f.cleaned_data['articles']
-            for article in products:
-                invoice.total_amount += article.price_per_quantity * article.quantity
-                invoice.to_company = article.from_company
-
-            if products.count() != 0:
-                with_tax_rate = products[0].tax_rate != 0
-            else:
-                with_tax_rate = False
-            invoice.invoice_number = f.cleaned_data['invoice_number']
+            invoice.invoice_file = request.FILES['invoice_file']
             invoice.save()
-
-            for product in products:
-                product.invoice = invoice
-                product.save()
-            invoice.save()
-
             request.session['toast'] = 'Factuur aangemaakt'
-            return redirect('/facturen')
+            return redirect('/facturen/inkomend')
         else:
             return render_to_response('new_edit_incoming_invoice.html',
                                       {'form': f, 'invoceid': invoice.id, 'edit': False,
@@ -150,9 +135,22 @@ def add_incoming_invoice(request):
 
 
 @login_required
-def detail_invoice(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
-    return render(request, 'view_invoice.html', {'invoice_id': invoice.id})
+def detail_incoming_invoice(request, invoice_id):
+    try:
+        invoice = IncomingInvoice.objects.get(id=invoice_id)
+        return render(request, 'view_incoming_invoice.html', {'invoice': invoice})
+    except:
+        print("No incoming invoice")
+
+
+@login_required
+def detail_outgoing_invoice(request, invoice_id):
+    try:
+        invoice = OutgoingInvoice.objects.get(id=invoice_id)
+        return render(request, 'view_outgoing_invoice.html', {'invoice_id': invoice.id})
+    except:
+        print("No outgoing invoice")
+
 
 
 @login_required

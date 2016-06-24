@@ -4,7 +4,7 @@
 {% block invoices_active %}active{% endblock %}
 
 {% block title %}
-    Uitgaande facturen
+    Inkomende facturen
 {% endblock %}
 
 {% block header %}
@@ -36,9 +36,10 @@
                 <table class="striped responsive-table">
                     <thead>
                         <th data-field="id">Nummer</th>
-                        <th data-field="word_count">Aangemaakt op</th>
-                        <th data-field="magazine_number">Voor opdrachten</th>
-                        <th data-field="magazine_number"></th>
+                        <th data-field="date_created">Aangemaakt op</th>
+                        <th data-field="date_received">Ontvangen op</th>
+                        <th data-field="subtotal">Subtotaal</th>
+                        <th data-field="btw">BTW-bedrag</th>
                     </thead>
 
                     <tbody>
@@ -46,11 +47,11 @@
                             <tr>
                                 <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.invoice_number }}</a></td>
                                 <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.date_created }}</a></td>
-                                <td>{% for product in invoice.products %}
-                                     <a href="#" class="dialog-trigger modal-trigger product" value="{{ product.id }}">{{ product.title }}</a>
-                                    {% endfor %} </td>
+                                <td>{{ invoice.received_date }} </td>
+                                <td>€{{ invoice.subtotal }} </td>
+                                <td>€{{ invoice.btw_amount }} </td>
                                 <td>
-                                    <a href="{% url "edit_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="{% url "edit_incoming_invoice" invoice.id %}"><i class="material-icons">edit</i></a>
                                     <a href="#modal1" class="modal-trigger delete" value="{{ invoice.id }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
