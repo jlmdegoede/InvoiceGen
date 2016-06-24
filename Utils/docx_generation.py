@@ -6,6 +6,7 @@ from docx.shared import Pt
 
 def generate_docx_invoice(invoice, user, products, tax_rate):
     document = Document()
+    p = document.add_paragraph()
     p.add_run('Adres: \t\t' + user.name)
     p.add_run('\n\t\t' + user.address)
     p.add_run('\n\t\t' + user.city_and_zipcode)
