@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 class Invoice(models.Model):
     title = models.CharField(max_length=200)
     date_created = models.DateField()
-    invoice_number = models.IntegerField()
+    invoice_number = models.CharField(max_length=100)
     paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -53,7 +53,7 @@ class IncomingInvoice(Invoice):
         if self.invoice_file and hasattr(self.invoice_file, 'url'):
             return self.invoice_file.url
 
-    subtotal = models.IntegerField()
-    btw_amount = models.IntegerField()
+    subtotal = models.DecimalField(decimal_places=2, max_digits=100)
+    btw_amount = models.DecimalField(decimal_places=2, max_digits=100)
     invoice_file = models.FileField(upload_to='invoice-pdfs/%Y/%m/%d', null=True, validators=[validate_file_extension])
     received_date = models.DateField()

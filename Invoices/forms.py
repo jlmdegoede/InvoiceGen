@@ -16,12 +16,12 @@ class OutgoingInvoiceForm(forms.ModelForm):
 
 class IncomingInvoiceForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)
-    invoice_number = forms.IntegerField(label="Volgnummer")
+    invoice_number = forms.CharField(label="Volgnummer")
     paid = forms.BooleanField(label="Betaald", required=False)
     received_date = forms.DateField(label="Vervaldatum", input_formats=['%d-%m-%Y'], widget=forms.widgets.DateInput(format="%d-%m-%Y",attrs={'class':'datepicker'}))
     invoice_file = forms.FileField(required=False)
-    subtotal = forms.IntegerField()
-    btw_amount = forms.IntegerField()
+    subtotal = forms.DecimalField(decimal_places=2)
+    btw_amount = forms.DecimalField(decimal_places=2)
 
     class Meta:
         model = OutgoingInvoice
