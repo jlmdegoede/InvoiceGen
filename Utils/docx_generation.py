@@ -1,15 +1,20 @@
 from docx import Document
 from docx.shared import Inches
 from Utils.date_helper import get_formatted_string
+from docx.shared import Pt
 
 
 def generate_docx_invoice(invoice, user, products, tax_rate):
     document = Document()
     p = document.add_paragraph()
-    p.add_run(user.name)
-    p.add_run('\n' + user.address)
-    p.add_run('\n' + user.city_and_zipcode)
-    p.add_run('\n' + user.iban)
+    p.add_run('Adres: \t\t' + user.name)
+    p.add_run('\n\t\t' + user.address)
+    p.add_run('\n\t\t' + user.city_and_zipcode)
+    p.add_run('\n\t\t' + user.iban)
+    if user.kvk:
+        p.add_run('\nKvK:\t\t' + user.kvk)
+    if user.btw_number:
+        p.add_run('\nBTW-nr.: \t' + user.btw_number)
 
     p = document.add_paragraph()
     p.add_run(invoice.to_company.company_name)

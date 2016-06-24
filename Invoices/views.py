@@ -1,15 +1,19 @@
+from datetime import date
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
-from Invoices.forms import *
-from datetime import date
-from Settings.models import UserSetting
-import Invoices.markdown_generator
-from datetime import timedelta
-from Utils.pdf_generation import *
-from Utils.date_helper import *
+
+import Utils.markdown_generator
 from InvoiceGen.settings import BASE_DIR
+from Invoices.forms import *
+from Settings.models import UserSetting
+from Utils.date_helper import *
 from Utils.docx_generation import *
+from Utils.pdf_generation import *
 from .models import *
+
+
 # Create your views here.
 
 
@@ -146,7 +150,7 @@ def detail_outgoing_invoice(request, invoice_id):
 
 @login_required
 def get_invoice_pdf(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
     generate_pdf(products, user, invoice)
@@ -157,19 +161,23 @@ def get_invoice_pdf(request, invoice_id):
 
 @login_required
 def get_invoice_markdown(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
-    user = UserSetting.objects.first()
-    with_tax_rate = True
-    invoice.contents = Invoices.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
-                                                                        products[0].from_company,
-                                                                        get_today_string(),
-                                                                        products,
-                                                                        with_tax_rate)
+    with_tax_rate = products[0].tax_rate != 0
+    contents = Utils.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
+                                                             products[0].from_company,
+                                                             get_today_string(),
+                                                             products,
+                                                             with_tax_rate)
+
+
+    response = HttpResponse(contents, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=invoice' + str(invoice.date_created) + '.md'
+    return response
 
 @login_required
 def get_invoice_docx(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
     doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)

@@ -5,7 +5,15 @@ def create_markdown_file(invoice, user, company, date, products, with_tax_rate):
     markdown_file += "|-|-|\n|Volgnummer|" + str(invoice.invoice_number) + "|\n" + "|Datum|" + str(date) + "|\n"
     markdown_file += "\n\n### Opdrachtnemer\n"
     markdown_file += "| | |\n"
-    markdown_file += "|-|-|\n|Naam|" + user.name + "|\n" + "|Adres|" + user.address + "|\n|Plaats en postcode|" + user.city_and_zipcode + "|\n|E-mailadres|" + user.email + "|\n|IBAN|" + user.iban + "|\n"
+    markdown_file += "|-|-|\n|Naam|" + user.name
+    markdown_file += "|\n" + "|Adres|" + user.address
+    markdown_file += "|\n|Plaats en postcode|" + user.city_and_zipcode
+    markdown_file += "|\n|E-mailadres|" + user.email
+    if user.kvk:
+        markdown_file += "|\n|KvK|" + user.kvk
+    if user.btw_number:
+        markdown_file += "|\n|BTW-nummer|" + user.btw_number
+    markdown_file += "|\n|IBAN|" + user.iban + "|\n"
     markdown_file += "\n\n### Opdrachtgever\n"
     markdown_file += "\n| | |\n|-|-|\n" + "|Opdrachtgever|" + company.company_name + "|\n|Adres|" + company.company_address + " |\n|Plaats en postcode|" + company.company_city_and_zipcode + "|\n"
     markdown_file += "\n\n### Geleverd\n"
