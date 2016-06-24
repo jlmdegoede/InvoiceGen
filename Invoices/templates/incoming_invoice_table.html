@@ -101,7 +101,7 @@
             if ($(this).hasClass("delete")) {
                 id = $(this).attr('value');
                 title = $(this).attr('name');
-                $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
+                $('#deleteLink').attr('href', "/facturen/inkomend/verwijderen/" + id);
                 $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
             }  else if ($(this).hasClass("product")) {

@@ -239,9 +239,9 @@ def edit_incoming_invoice(request, invoiceid=-1):
 
 
 @login_required
-def delete_invoice(request, invoiceid=-1):
+def delete_outgoing_invoice(request, invoiceid=-1):
     try:
-        invoice = Invoice.objects.get(id=invoiceid)
+        invoice = OutgoingInvoice.objects.get(id=invoiceid)
         articles = Product.objects.filter(invoice=invoice)
         for article in articles:
             article.invoice = None
@@ -256,11 +256,23 @@ def delete_invoice(request, invoiceid=-1):
 
 
 @login_required
+def delete_incoming_invoice(request, invoiceid=-1):
+    try:
+        invoice = IncomingInvoice.objects.get(id=invoiceid)
+        invoice.delete()
+        request.session['toast'] = 'Verwijderen factuur gelukt'
+        return redirect('/facturen/inkomend')
+    except:
+        request.session['toast'] = 'Verwijderen factuur mislukt'
+        return redirect('/facturen/inkomend')
+
+
+@login_required
 def generate_invoice(request):
     if request.method == 'POST':
         articles = []
         totaalbedrag = 0
-        invoice = Invoice()
+        invoice = OutgoingInvoice()
         for articleId in request.POST.getlist('articles[]'):
             article = Product.objects.get(id=articleId)
             articles.append(article)
