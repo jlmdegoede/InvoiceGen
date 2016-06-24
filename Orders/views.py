@@ -152,14 +152,6 @@ def add_article(request):
 
 
 @login_required
-def download_markdown(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
-    response = HttpResponse(invoice.contents, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=invoice' + str(invoice.date_created) + '.md'
-    return response
-
-
-@login_required
 def edit_article(request, articleid=-1):
     context = RequestContext(request)
     if request.method == 'GET':
