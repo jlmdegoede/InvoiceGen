@@ -1,0 +1,114 @@
+{% extends 'incoming_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur toevoegen/bewerken
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur toevoegen/bewerken" "" %}
+{% endblock %}
+
+{% block content %}
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <h1>Inkomende factuur bewerken</h1>
+    {% else %}
+        <h1>Inkomende factuur toevoegen</h1>
+    {% endif %}
+        {%  if edit %}
+            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_incoming_invoice" invoice.id %}" enctype="multipart/form-data">
+        {% else %}
+            <form id="invoice_form" class="col s12" method="post" action="{% url "add_incoming_invoice" %}" enctype="multipart/form-data">
+        {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.title }}
+                    <label for="{{ form.title.id_for_label }}">Omschrijving</label>
+                    {{ form.errors.title }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.invoice_number }}
+                    <label for="{{ form.invoice_number.id_for_label }}">Volgnummer</label>
+                    {{ form.errors.invoice_number }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.received_date }}
+                    <label for="{{ form.received_date.id_for_label }}">Datum ontvangen</label>
+                    {{ form.errors.received_date }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.subtotal }}
+                    <label for="{{ form.subtotal.id_for_label }}">Subtotaal</label>
+                    {{ form.errors.subtotal }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.btw_amount }}
+                    <label for="{{ form.btw_amount.id_for_label }}">BTW-bedrag</label>
+                    {{ form.errors.btw_amount }}
+                </div>
+                {% if edit %}
+
+                <div class="input-field col s12">
+                        <a href="{{ invoice.pdf_url }}">Huidig bestand</a>
+                </div>
+                {% endif %}
+                <div class="input-field col s12">
+                <div class="file-field input-field">
+                  <div class="btn">
+                    <span>PDF-bestand (optioneel)</span>
+                    <input name="invoice_file" id="id_invoice_file" type="file">
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" />
+                  </div>
+
+                    {{ form.errors.invoice_file }}
+                </div>
+                    </div>
+                <p style="margin-left:10px">
+                    {{ form.paid }}
+                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
+                </p>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
+                <i class="material-icons left">send</i>
+            </button>
+        </form>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+
+        $('.datepicker').pickadate({
+            monthsFull: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+            monthsShort: [ 'jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+            weekdaysFull: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+            weekdaysShort: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+            today: 'Vandaag',
+            clear: 'Legen',
+            close: 'Sluit',
+            firstDay: 1,
+            format: 'dd-mm-yyyy',
+            formatSubmit: 'yyyy/mm/dd',
+            selectMonths: true,
+            selectYears: 15
+        });
+        var dateTypeVar = $('#datepicker').datepicker('getDate');
+        $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
+    </script>
+{% endblock %}

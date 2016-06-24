@@ -1,5 +1,5 @@
 from django.db import models
-from Invoices.models import Invoice
+from Invoices.models import OutgoingInvoice
 from Companies.models import Company
 
 
@@ -10,7 +10,7 @@ class Product(models.Model):
     quantity = models.IntegerField()
     from_company = models.ForeignKey(to=Company, null=True, blank=True)
     identification_number = models.IntegerField(null=True)
-    invoice = models.ForeignKey(Invoice, null=True, blank=True)
+    invoice = models.ForeignKey(OutgoingInvoice, null=True, blank=True)
     briefing = models.TextField(blank=True)
     done = models.BooleanField(default=False)
     price_per_quantity = models.FloatField()

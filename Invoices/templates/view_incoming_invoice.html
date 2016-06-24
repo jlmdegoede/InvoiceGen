@@ -1,0 +1,84 @@
+{% extends 'incoming_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<h2>{{ invoice.title }}</h2>
+    <table class="responsive-table">
+        <tr>
+            <td>
+                Datum aangemaakt
+            </td>
+            <td>
+                <b>{{ invoice.date_created }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Datum ontvangen
+            </td>
+            <td>
+                <b>{{ invoice.received_date }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Betaald
+            </td>
+            <td>
+                <b>{% if invoice.paid %} Betaald {% else %} Niet betaald {% endif %}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Subtotaal
+            </td>
+            <td>
+                <b>{{ invoice.subtotal }}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                BTW-bedrag
+            </td>
+            <td>
+                <b>{{ invoice.btw_amount }}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Bestand
+            </td>
+            <td>
+            <b>
+                {% if invoice.invoice_file %}
+                    <a href="{{ invoice.pdf_url }}">Bijgevoegde factuur downloaden</a>
+                {% else %}
+                    Ontbreekt
+                {% endif %}
+            </b>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+{% endblock %}

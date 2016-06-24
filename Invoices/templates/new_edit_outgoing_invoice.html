@@ -1,4 +1,4 @@
-{% extends 'invoice_table.html' %}
+{% extends 'outgoing_invoice_table.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% block invoices_active %}active{% endblock %}
@@ -23,40 +23,38 @@
          </script>
     {% endif %}
     {% if edit %}
-        <h1>Factuur bewerken</h1>
+        <h1>Uitgaande factuur bewerken</h1>
     {% else %}
-        <h1>Factuur toevoegen</h1>
+        <h1>Uitgaande factuur toevoegen</h1>
     {% endif %}
         {%  if edit %}
-            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_invoice" invoiceid %}">
+            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_outgoing_invoice" invoiceid %}" enctype="multipart/form-data">
         {% else %}
-            <form id="invoice_form" class="col s12" method="post" action="{% url "add_invoice" %}">
+            <form id="invoice_form" class="col s12" method="post" action="{% url "add_outgoing_invoice" %}">
         {% endif %}
         {% csrf_token %}
 
             <div class="row">
                 <div class="input-field col s12">
                     {{ form.title }}
-                    <label for="{{ form.title.id_for_label }}">Titel</label>
+                    <label for="{{ form.title.id_for_label }}">Omschrijving</label>
+                    {{ form.errors.title }}
                 </div>
                 <div class="input-field col s12">
-                    {{ form.articles }}
-                    <label for="{{ form.articles.id_for_label }}">Opdrachten</label>
+                    {{ form.products }}
+                    <label for="{{ form.products.id_for_label }}">Opdrachten</label>
+                    {{ form.errors.articles }}
                 </div>
                 <div class="input-field col s12">
                     {{ form.invoice_number }}
                     <label for="{{ form.invoice_number.id_for_label }}">Volgnummer</label>
+                    {{ form.errors.invoice_number }}
                 </div>
                 <div class="input-field col s12">
                     {{ form.expiration_date }}
                     <label for="{{ form.expiration_date.id_for_label }}">Vervaldatum</label>
+                    {{ form.errors.expiration_date }}
                 </div>
-
-                <p style="margin-left:10px">
-                    {{ form.paid }}
-                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
-                </p>
-            </div>
             <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
                 <i class="material-icons left">send</i>
             </button>

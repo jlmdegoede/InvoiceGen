@@ -1,0 +1,99 @@
+{% extends 'outgoing_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<h2>{{ invoice.title }}</h2>
+<table class="responsive-table">
+    <tr>
+            <td>
+                Datum aangemaakt
+            </td>
+            <td>
+                <b>{{ invoice.date_created }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Vervaldatum
+            </td>
+            <td>
+                <b>{{ invoice.expiration_date }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Betaald
+            </td>
+            <td>
+                <b>{% if invoice.paid %} Betaald {% else %} Niet betaald {% endif %}</b>
+            </td>
+        </tr>
+
+    <tr>
+        <td>
+            Aan bedrijf
+        </td>
+        <td>
+            <b>{{ invoice.to_company }}</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Totaalbedrag
+        </td>
+        <td>
+            <b>{{ invoice.total_amount }}</b>
+        </td>
+    </tr>
+</table>
+
+<h3>Opdrachten</h3>
+<table>
+    <thead>
+        <th>Opdracht</th>
+        <th>Aantal</th>
+        <th>Leverdatum</th>
+        <th>Overeenkomst</th>
+    </thead>
+    {% for product in invoice.product_set.all %}
+    <tr>
+        <td>
+            {{ product.title }}
+        </td>
+        <td>
+            {{ product.quantity }}
+        </td>
+        <td>
+            {{ product.date_deadline }}
+        </td>
+        <td>
+            {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Exporteren</h3>
+<a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
+<a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
+<a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>
+</div>
+
+{% endblock %}
