@@ -25,7 +25,7 @@ def settings(request):
             toast = 'Instellingen opgeslagen'
         else:
             return render(request, 'settings.html',
-                          {'form': form, 'toast': toast, 'errors': form.errors})
+                          {'form': form, 'toast': toast, 'error': form.errors})
     user_i = UserSetting.objects.all().first()
 
     if not user_i:
@@ -64,6 +64,7 @@ def get_current_settings():
     except:
         print("Error")
 
+
 def convert_to_json_utf8(data):
     return json.dumps(data).encode('utf-8')
 
@@ -78,6 +79,7 @@ def no_settings_created_yet():
         return False
     except:
         return True
+
 
 def get_user_fullname():
     try:
