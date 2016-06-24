@@ -83,15 +83,11 @@ def add_outgoing_invoice(request):
             invoice.date_created = datetime.datetime.now()
             invoice.total_amount = 0
 
-            products = f.cleaned_data['articles']
-            for article in products:
-                invoice.total_amount += article.price_per_quantity * article.quantity
-                invoice.to_company = article.from_company
+            products = f.cleaned_data['products']
+            for product in products:
+                invoice.total_amount += product.price_per_quantity * product.quantity
+                invoice.to_company = product.from_company
 
-            if products.count() != 0:
-                with_tax_rate = products[0].tax_rate != 0
-            else:
-                with_tax_rate = False
             invoice.invoice_number = f.cleaned_data['invoice_number']
             invoice.save()
 
@@ -124,7 +120,8 @@ def add_incoming_invoice(request):
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = datetime.datetime.now()
-            invoice.invoice_file = request.FILES['invoice_file']
+            if 'invoice_file' in request.FILES:
+                invoice.invoice_file = request.FILES['invoice_file']
             invoice.save()
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen/inkomend')
@@ -136,21 +133,15 @@ def add_incoming_invoice(request):
 
 @login_required
 def detail_incoming_invoice(request, invoice_id):
-    try:
-        invoice = IncomingInvoice.objects.get(id=invoice_id)
-        return render(request, 'view_incoming_invoice.html', {'invoice': invoice})
-    except:
-        print("No incoming invoice")
+    invoice = IncomingInvoice.objects.get(id=invoice_id)
+    print(invoice)
+    return render(request, 'view_incoming_invoice.html', {'invoice': invoice})
 
 
 @login_required
 def detail_outgoing_invoice(request, invoice_id):
-    try:
-        invoice = OutgoingInvoice.objects.get(id=invoice_id)
-        return render(request, 'view_outgoing_invoice.html', {'invoice_id': invoice.id})
-    except:
-        print("No outgoing invoice")
-
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
+    return render(request, 'view_outgoing_invoice.html', {'invoice': invoice})
 
 
 @login_required
@@ -215,7 +206,7 @@ def edit_outgoing_invoice(request, invoiceid=-1):
         else:
             return render_to_response('new_edit_outgoing_invoice.html',
                                       {'form': f, 'articles': products, 'invoceid': invoice.id, 'edit': True,
-                                       'invoiceid': invoiceid, 'toast': "Formulier ongeldig!"}, context)
+                                       'toast': "Formulier ongeldig!"}, context)
 
 
 @login_required
@@ -223,29 +214,28 @@ def edit_incoming_invoice(request, invoiceid=-1):
     context = RequestContext(request)
     if request.method == 'GET':
         try:
-            invoice = OutgoingInvoice.objects.get(id=invoiceid)
-            f = OutgoingInvoiceForm(instance=invoice)
-            products = Product.objects.filter(invoice=invoice)
+            invoice = IncomingInvoice.objects.get(id=invoiceid)
+            f = IncomingInvoiceForm(instance=invoice)
 
             return render_to_response('new_edit_incoming_invoice.html',
-                                      {'form': f, 'articles': products, 'invoceid': invoice.id, 'edit': True,
-                                       'invoiceid': invoiceid}, context)
+                                      {'form': f, 'invoice': invoice, 'edit': True}, context)
         except:
             request.session['toast'] = 'Factuur niet gevonden'
-            return redirect('/facturen')
+            return redirect('/facturen/inkomend')
     elif request.method == 'POST':
-        invoice = Invoice.objects.get(id=invoiceid)
-        f = OutgoingInvoiceForm(request.POST, instance=invoice)
-        products = Product.objects.filter(invoice=invoice)
+        invoice = IncomingInvoice.objects.get(id=invoiceid)
+        f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
 
         if f.is_valid():
-            f.save()
+            f.save(commit=False)
+            if 'invoice_file' in request.FILES:
+                invoice.invoice_file = request.FILES['invoice_file']
             request.session['toast'] = 'Factuur gewijzigd'
-            return redirect('/facturen')
+            return redirect('/facturen/inkomend')
         else:
             return render_to_response('new_edit_incoming_invoice.html',
-                                      {'form': f, 'articles': products, 'invoceid': invoice.id, 'edit': True,
-                                       'invoiceid': invoiceid, 'toast': "Formulier ongeldig!"}, context)
+                                      {'form': f, 'invoceid': invoice.id, 'edit': True,
+                                       'toast': "Formulier ongeldig!"}, context)
 
 
 @login_required

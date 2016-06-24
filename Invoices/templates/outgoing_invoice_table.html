@@ -44,8 +44,8 @@
                     <tbody>
                             {% for invoice in a %}
                             <tr>
-                                <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.invoice_number }}</a></td>
-                                <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.date_created }}</a></td>
+                                <td><a href="{% url "detail_outgoing_invoice" invoice.id %}">{{ invoice.invoice_number }}</a></td>
+                                <td><a href="{% url "detail_outgoing_invoice" invoice.id %}">{{ invoice.date_created }}</a></td>
                                 <td>{% for product in invoice.products %}
                                      <a href="#" class="dialog-trigger modal-trigger product" value="{{ product.id }}">{{ product.title }}</a>
                                     {% endfor %} </td>

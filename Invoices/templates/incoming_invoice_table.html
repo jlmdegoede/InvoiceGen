@@ -45,8 +45,8 @@
                     <tbody>
                             {% for invoice in a %}
                             <tr>
-                                <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.invoice_number }}</a></td>
-                                <td><a href="{% url "detail_invoice" invoice.id %}">{{ invoice.date_created }}</a></td>
+                                <td><a href="{% url "detail_incoming_invoice" invoice.id %}">{{ invoice.invoice_number }}</a></td>
+                                <td><a href="{% url "detail_incoming_invoice" invoice.id %}">{{ invoice.date_created }}</a></td>
                                 <td>{{ invoice.received_date }} </td>
                                 <td>€{{ invoice.subtotal }} </td>
                                 <td>€{{ invoice.btw_amount }} </td>

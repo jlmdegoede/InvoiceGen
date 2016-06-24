@@ -42,8 +42,16 @@ class IncomingInvoice(Invoice):
         return url
 
     def validate_file_extension(value):
-        if value.file.content_type != 'application/pdf':
-            raise ValidationError(u'Error message')
+        try:
+            if value and value.file and value.file.content_type != 'application/pdf':
+                raise ValidationError(u'Alleen PDF-bestanden toegestaan')
+        except:
+            print("Geen contenttype gevonden")
+
+    @property
+    def pdf_url(self):
+        if self.invoice_file and hasattr(self.invoice_file, 'url'):
+            return self.invoice_file.url
 
     subtotal = models.IntegerField()
     btw_amount = models.IntegerField()
