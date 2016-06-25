@@ -66,7 +66,7 @@ class InvoicesTestCase(TestCase):
         response = self.c.post(reverse('generate_invoice'), data)
         self.assertEqual(response.status_code, 302)
         invoice = OutgoingInvoice.objects.get(id=3)
-        self.assertEqual(invoice.invoice_number, 2)
+        self.assertEqual(invoice.invoice_number, '2')
 
     def test_get_invoices_not_logged_in(self):
         response = self.c.get(reverse('get_invoices'))
