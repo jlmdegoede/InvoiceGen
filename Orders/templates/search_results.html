@@ -24,11 +24,17 @@
             <li  class="collection-item">Geen resultaten</li>
         {% endif %}
             <li class="collection-header"><h4>Gevonden facturen</h4></li>
-        {% if found_invoices.count != 0 %}
-                {% for entry in found_invoices %}
-                    <li  class="collection-item"><a href="{% url "detail_invoice" entry.id %}">{{ entry }}</a></li>
+        {% if found_outgoing_invoices.count != 0 %}
+                {% for entry in found_outgoing_invoices %}
+                    <li class="collection-item"><a href="{% url "detail_outgoing_invoice" entry.id %}">{{ entry }}</a></li>
                 {% endfor %}
-        {% else %}
+        {% endif %}
+        {% if found_incoming_invoices.count != 0 %}
+                {% for entry in found_incoming_invoices %}
+                    <li class="collection-item"><a href="{% url "detail_incoming_invoice" entry.id %}">{{ entry }}</a></li>
+                {% endfor %}
+        {% endif %}
+        {% if found_outgoing_invoices.count == 0 and found_incoming_invoices.count == 0 %}
             <li  class="collection-item">Geen resultaten</li>
         {% endif %}
 

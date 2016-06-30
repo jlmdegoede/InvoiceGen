@@ -6,17 +6,16 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import *
-
+from Invoices.models import *
 from Agreements.models import Agreement
 from Companies.forms import CompanyForm
-from Companies.models import Company
 from Orders.forms import *
 from Utils.search_query import get_query
 from Todo.views import create_task_from_order
 from Settings.views import get_setting
-import asyncio
 import Settings.views
-
+import Utils.report_to_main
+import asyncio
 
 # Create your views here.
 
@@ -226,23 +225,26 @@ def search(request):
     query_string = ''
     found_products = None
     found_agreements = None
-    found_invoices = None
+    found_incoming_invoices = None
+    found_outgoing_invoices = None
     found_companies = None
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
 
         product_query = get_query(query_string, ['title', 'briefing'])
         agreement_query = get_query(query_string, ['agreement_text_copy', 'client_name', 'client_emailaddress', ])
-        invoice_query = get_query(query_string, ['title', 'contents', ])
+        incoming_invoice_query = get_query(query_string, ['title', 'invoice_number', ])
+        outgoing_invoice_query = get_query(query_string, ['title', 'invoice_number', 'to_company__company_name'])
         companies_query = get_query(query_string, ['company_name', 'company_address', 'company_city_and_zipcode'])
 
         found_products = Product.objects.filter(product_query).order_by('-date_received')
         found_agreements = Agreement.objects.filter(agreement_query).order_by('-created')
-        found_invoices = Invoice.objects.filter(invoice_query).order_by('-date_created')
+        found_incoming_invoices = IncomingInvoice.objects.filter(incoming_invoice_query).order_by('-date_created')
+        found_outgoing_invoices = OutgoingInvoice.objects.filter(outgoing_invoice_query).order_by('-date_created')
         found_companies = Company.objects.filter(companies_query)
 
     return render_to_response('search_results.html',
                               {'query_string': query_string, 'found_products': found_products,
-                               'found_agreements': found_agreements, 'found_invoices': found_invoices,
-                               'found_companies': found_companies},
+                               'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
+                               'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies},
                               context_instance=RequestContext(request))
