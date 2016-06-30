@@ -14,7 +14,6 @@ from Utils.search_query import get_query
 from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import Settings.views
-import Utils.report_to_main
 import asyncio
 
 # Create your views here.
