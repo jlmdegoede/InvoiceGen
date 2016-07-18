@@ -6,6 +6,7 @@ import Invoices.views
 import Companies.views
 import Settings.views
 import Todo.views
+import HourRegistration.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
     url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
     url(r'^opdracht/afronden/$', Orders.views.mark_products_as_done, name='mark_products_as_done'),
+    url(r'^opdracht/list-hourregistration/$', Orders.views.get_list_of_orders_hourregistration, name='get_list_of_orders_hourregistration'),
 
     url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
     url(r'^facturen/$', Invoices.views.get_outgoing_invoices, name='get_invoices'),
@@ -50,6 +52,9 @@ urlpatterns = [
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
 
     url(r'^zoeken/$', Orders.views.search, name='search'),
+
+    url(r'^urenregistratie/start/(?P<product_id>\d+)/$', HourRegistration.views.start_time_tracking, name='start_time_tracking'),
+    url(r'^urenregistratie/stop/(?P<product_id>\d+)/$', HourRegistration.views.end_time_tracking, name='end_time_tracking'),
 
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),

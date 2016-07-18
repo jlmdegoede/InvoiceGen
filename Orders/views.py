@@ -14,9 +14,11 @@ from Utils.search_query import get_query
 from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import Settings.views
+from django.core import serializers
 import asyncio
 
 # Create your views here.
+
 
 @login_required
 def index(request):
@@ -200,6 +202,7 @@ def user_login_placeholder_email(request):
     form = UserForm()
     return render_to_response('login.html', {'form': form, 'email': request.GET['email']}, context)
 
+
 def user_login(request):
     context = RequestContext(request)
     form = UserForm()
@@ -217,6 +220,12 @@ def user_login(request):
             return render_to_response('login.html', {'error': "Ongeldige inloggegevens", 'form': form}, context)
     else:
         return render_to_response('login.html', {'form': form}, context)
+
+
+@login_required
+def get_list_of_orders_hourregistration(request):
+    orders = Product.objects.filter(done=False)
+    return HttpResponse(serializers.serialize('json', orders), content_type='json')
 
 
 @login_required
