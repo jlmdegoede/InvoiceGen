@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
 
-    url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_product'),
+    url(r'^opdracht/(?P<productid>\d+)/(.*)$', Orders.views.view_product, name='view_product'),
     url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
     url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
     url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
@@ -55,6 +55,9 @@ urlpatterns = [
 
     url(r'^urenregistratie/start/(?P<product_id>\d+)/$', HourRegistration.views.start_time_tracking, name='start_time_tracking'),
     url(r'^urenregistratie/stop/(?P<product_id>\d+)/$', HourRegistration.views.end_time_tracking, name='end_time_tracking'),
+    url(r'^urenregistratie/bestaand/$', HourRegistration.views.existing_time_tracking, name='existing_time_tracking'),
+    url(r'^urenregistratie/eindtijd/$', HourRegistration.views.set_end_time, name='set_end_time'),
+    url(r'^urenregistratie/nieuw/$', HourRegistration.views.create_new_hour_registration, name='create_new_hour_registration'),
 
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),

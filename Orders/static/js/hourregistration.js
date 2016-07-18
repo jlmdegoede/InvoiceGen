@@ -4,13 +4,20 @@ var HourRegistrationComponent = React.createClass({
     },
     render: function() {
         return (
-            <div>
-                <p>Kies een opdracht uit de lijst en klik op <b>Start</b> om de tijd bij te houden. Klik op <b>Stop</b> als u klaar bent of pauze neemt.</p>
+            <div className="row">
+                <div className="col s12 m12">
+                    <div className="card blue-grey darken-1">
+                        <div className="card-content white-text">
+                        <span className="card-title">Urenregistratie</span>
+                            <p>Kies een opdracht uit de lijst en klik op <b>Start</b> om de tijd bij te houden. Klik op <b>Stop</b> als u klaar bent of pauze neemt.</p>
                 <div id="article-list-select">
                     <ArticleListComponent url="/opdracht/list-hourregistration/" />
                 </div>
-                <ButtonComponent action="Start" />
+                    <ButtonComponent action="Start" />
             </div>
+          </div>
+        </div>
+      </div>
         );
     }
 });
@@ -61,6 +68,10 @@ var TimingComponent = React.createClass({
     render: function() {
         return (
             <div>
+                <div className="progress">
+                  <div className="indeterminate"></div>
+              </div>
+
                 <ul>
                     <li>U werkt nu aan: <b>{this.props.title}</b></li>
                     <li>Gestart op: <b>{this.props.start}</b></li>
@@ -73,14 +84,34 @@ var TimingComponent = React.createClass({
 
 var ButtonComponent = React.createClass({
     getInitialState: function() {
-      return {action: this.props.action}
+      return {action: this.props.action, selected: 0}
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: '/urenregistratie/bestaand/',
+            dataType: 'json',
+            success: function(data) {
+                if (data.existing == undefined) {
+                    $('#article-list-select').hide();
+                    ReactDOM.render(<TimingComponent title={data.title}
+                                                     start={data.start}/>,
+                                document.getElementById('uren-bijhouden'));
+                    this.setState({action: toggleStartStop(this.state.action)});
+                    this.setState({selected: data.pk})
+                }
+            }.bind(this)
+        })
     },
     buttonClick: function() {
-        var selectedValue = $('select option:selected').val();
-        var title = $('select option:selected').text();
+        var list = $('select option:selected');
+        if (this.state.selected == 0) {
+            var selectedValue = list.val();
+            this.setState({selected: selectedValue});
+        }
+        var title = list.text();
 
         $.ajax({
-            url: '/urenregistratie/' + this.state.action.toLowerCase() + '/' + selectedValue,
+            url: '/urenregistratie/' + this.state.action.toLowerCase() + '/' + this.state.selected,
             dataType: 'json',
             success: function (data) {
                 if (this.state.action == 'Start') {
@@ -99,7 +130,10 @@ var ButtonComponent = React.createClass({
         return (
             <div>
                 <div id="uren-bijhouden"></div>
-                <button className="waves-effect waves-light btn" onClick={this.buttonClick}>{this.state.action}</button>
+
+                <div className="card-action">
+                    <button className="waves-effect waves-light btn" onClick={this.buttonClick}>{this.state.action}</button>
+                </div>
             </div>
         );
     }

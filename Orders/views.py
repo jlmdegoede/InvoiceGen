@@ -16,6 +16,7 @@ from Settings.views import get_setting
 import Settings.views
 from django.core import serializers
 import asyncio
+from HourRegistration.models import HourRegistration
 
 # Create your views here.
 
@@ -50,12 +51,18 @@ def index(request):
 
 
 @login_required
-def view_article(request, articleid):
+def view_product(request, productid):
     try:
-        article = Product.objects.get(id=articleid)
-        if Agreement.objects.filter(article_concerned=article).count() != 0:
-            article.agreement = Agreement.objects.filter(article_concerned=article)[0]
-        return render(request, 'view_article.html', {'article': article})
+        product = Product.objects.get(id=productid)
+        if Agreement.objects.filter(article_concerned=product).count() != 0:
+            product.agreement = Agreement.objects.filter(article_concerned=product)[0]
+        hourregistration = HourRegistration.objects.filter(product=product)
+        total_hours = 0
+        for hour in hourregistration:
+            if hour.end is not None:
+                total_hours += ((hour.end - hour.start).total_seconds()).real
+        total_hours = round((total_hours / 60) / 60, 2)
+        return render(request, 'view_product.html', {'product': product, 'hourregistrations': hourregistration, 'total_hours': total_hours})
     except Exception as err:
         print(err)
         request.session['toast'] = 'Product niet gevonden'
@@ -69,7 +76,6 @@ def mark_products_as_done(request):
             product.done = True
             product.save()
         return JsonResponse({'success': True})
-
     return JsonResponse({'success': False})
 
 
@@ -93,7 +99,6 @@ def view_statistics(request):
 
 
 def get_yearly_stats(year):
-    print(year)
     nr_of_articles = 0
     totale_inkomsten = 0
     nr_of_words = 0
