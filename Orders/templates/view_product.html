@@ -79,7 +79,7 @@
               {% if hourregistration.end == None %}
                 <a href="#" class="save-endtime" data-id="{{ hourregistration.id }}">Eindtijd opslaan</a>
               {% endif %}
-              <a href="#">Verwijderen</a>
+              <a href="#"  data-id="{{ hourregistration.id }}" class="modal-trigger">Verwijderen</a>
             </div>
           </div>
         </div>
@@ -117,6 +117,19 @@
           </div>
         </div>
       </div>
+
+         <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Urenregistratie verwijderen</h4>
+      <p id="confirmText">Weet u zeker dat u deze urenregistratie wilt verwijderen?</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="deleteLink" class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+    </div>
+  </div>
+
 
     <script type="text/javascript" src="/static/js/timepicker/materialize.clockpicker.js"></script>
     <script type="text/javascript">
@@ -183,7 +196,23 @@
                 } else {
                     $('#error-new').text("Niet alle velden zijn ingevuld");
                 }
+            });
 
+            $('.modal-trigger').click(function(e) {
+                $('#modal1').openModal();
+                var hour_id = $(this).attr('data-id');
+                $('#deleteLink').click(function(e) {
+                   e.preventDefault();
+                   $.ajax({
+                       url: '/urenregistratie/verwijderen/',
+                       dataType: 'json',
+                       method: 'POST',
+                       data: {time_id: hour_id, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                       success: function(data) {
+                           location.reload();
+                       }
+                   })
+                });
             });
         });
     </script>
