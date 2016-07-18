@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def start_time_tracking(request, product_id):
     product = Product.objects.get(id=product_id)
     existing_time = HourRegistration.objects.filter(end=None)
-    if existing_time == 0:
+    if existing_time.count() == 0:
         time = HourRegistration(product=product, start=datetime.datetime.now())
         time.save()
         return JsonResponse({'success': True, 'start': time.start.strftime('%d-%m-%Y %H:%M:%S')})

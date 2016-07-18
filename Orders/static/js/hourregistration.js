@@ -104,6 +104,8 @@ var ButtonComponent = React.createClass({
     },
     buttonClick: function() {
         var list = $('select option:selected');
+        var selectedValue = this.state.selected;
+
         if (this.state.selected == 0) {
             var selectedValue = list.val();
             this.setState({selected: selectedValue});
@@ -111,7 +113,7 @@ var ButtonComponent = React.createClass({
         var title = list.text();
 
         $.ajax({
-            url: '/urenregistratie/' + this.state.action.toLowerCase() + '/' + this.state.selected,
+            url: '/urenregistratie/' + this.state.action.toLowerCase() + '/' + selectedValue,
             dataType: 'json',
             success: function (data) {
                 if (this.state.action == 'Start') {
