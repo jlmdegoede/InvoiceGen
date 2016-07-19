@@ -4,7 +4,8 @@ from django.shortcuts import *
 from Companies.forms import *
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
-
+from .tables import CompanyTable
+from django_tables2 import RequestConfig
 
 @login_required
 def index(request):
@@ -14,12 +15,15 @@ def index(request):
         products = Product.objects.filter(from_company=company)
         if products.count() is not 0:
             company.recent_products = products[:3]
+    company_table = CompanyTable(companies)
 
     toast = None
     if request.session.get('toast'):
         toast = request.session.get('toast')
         del request.session['toast']
-    return render_to_response('index_companies.html', {'companies': companies, 'toast': toast}, context)
+
+    RequestConfig(request).configure(company_table)
+    return render_to_response('index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast}, context)
 
 
 @login_required

@@ -16,8 +16,8 @@
 {% endblock %}
 
 {% block side_menu %}
-    <a href="{% url "company_add" %}" class="collection-item">Nieuwe opdrachtgever toevoegen</a>
-    <a href="{% url "company_index" %}" class="collection-item">Opdrachtgevers beheren</a>
+    <a href="{% url "company_index" %}" class="collection-item {% block companies_active %}{% endblock %}">Opdrachtgevers beheren</a>
+    <a href="{% url "company_add" %}" class="collection-item {% block new_company_active %}{% endblock %}">Nieuwe opdrachtgever toevoegen</a>
 {% endblock %}
 
 {% block content %}
@@ -48,7 +48,7 @@
         {% for y, table in products.items %}
             <div id="{{ y }}" class="col s12">
                 {% render_table table "../templates/table_materialize.html" %}
-                <a href="#modal2" class="modal-trigger waves-effect waves-light btn">Factureren</a>
+                <a href="#" class="modal-trigger waves-effect waves-light btn">Factureren</a>
             </div>
 
         {% endfor %}
