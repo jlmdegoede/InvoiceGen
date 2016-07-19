@@ -17,37 +17,49 @@ import Settings.views
 from django.core import serializers
 import asyncio
 from HourRegistration.models import HourRegistration
-
+from .tables import OrderTable
+from django_tables2 import RequestConfig
 # Create your views here.
 
 
 @login_required
 def index(request):
-    articles = {}
-    yearList = []
+    products = {}
+    year_list = []
     years = Product.objects.values("date_deadline").distinct()
-    for dict in years:
-        year = dict['date_deadline'].year
-        if year not in yearList:
-            yearList.append(year)
-            articles[year] = Product.objects.filter(date_deadline__contains=year, done=True)
-            for article in articles[year]:
-                article.clean_url_title = article.title.replace(' ', '-').lower()
-                agreements = Agreement.objects.filter(article_concerned=article)
+
+    for distinct_years in years:
+        year = distinct_years['date_deadline'].year
+        if year not in year_list:
+            year_list.append(year)
+            products_year = Product.objects.filter(date_deadline__contains=year, done=True)
+
+            for product in products_year:
+                agreements = Agreement.objects.filter(article_concerned=product)
                 if agreements.count() != 0:
-                    article.agreement = agreements[0]
+                    product.agreement = agreements[0]
+
+            products[year] = OrderTable(products_year)
+            RequestConfig(request).configure(products[year])
+
     toast = None
     if request.session.get('toast'):
         toast = request.session.get('toast')
         del request.session['toast']
 
-    yearList.sort(reverse=True)
-    active_articles = Product.objects.filter(done=False)
+    year_list.sort(reverse=True)
+
+    active_products_table = OrderTable(Product.objects.filter(done=False))
     currentYear = date.today().year
     no_settings = Settings.views.no_settings_created_yet()
+
+    RequestConfig(request).configure(active_products_table)
+
     return render(request, 'index.html',
-                  {'articles': articles, 'active_articles': active_articles, 'toast': toast, 'years': yearList,
+                  {'products': products, 'active_products_table': active_products_table, 'toast': toast, 'years': year_list,
                    'currentYear': currentYear, 'first_time': no_settings})
+
+
 
 
 @login_required

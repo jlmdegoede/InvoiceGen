@@ -6,3 +6,4 @@ pillow
 requests
 fpdf
 python-docx
+django-tables2

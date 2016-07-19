@@ -134,7 +134,7 @@ var ButtonComponent = React.createClass({
                 <div id="uren-bijhouden"></div>
 
                 <div className="card-action">
-                    <button className="waves-effect waves-light btn" onClick={this.buttonClick}>{this.state.action}</button>
+                    <button className="orange-text btn-flat" onClick={this.buttonClick}>{this.state.action}</button>
                 </div>
             </div>
         );

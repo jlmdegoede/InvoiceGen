@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django_bootstrap_breadcrumbs',
     'Todo',
     'HourRegistration',
+    'django_tables2'
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
