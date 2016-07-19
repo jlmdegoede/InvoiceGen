@@ -31,9 +31,9 @@
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
-                <li class="tab col s3 active"><a href="#openstaand">Openstaand</a></li>
+                <li class="tab col s3 active"><a href="#openstaand" class="yeartable">Openstaand</a></li>
                 {% for year in years %}
-                    <li class="tab col s3"><a href="#{{year}}">{{ year }}</a></li>
+                    <li class="tab col s3"><a href="#{{year}}" class="yeartable">{{ year }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -94,10 +94,12 @@
   </div>
 
     <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
+        saveTableTab('order_page');
+
          // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
         $('.done-button').click(function(e) {
-            var clickedDoneList = []
+            var clickedDoneList = [];
                 $('input[type="checkbox"]:checked').each(function() {
                     clickedDoneList[clickedDoneList.length] = $(this).val();
                 });
