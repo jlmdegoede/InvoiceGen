@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'colorful',
     'django_bootstrap_breadcrumbs',
     'Todo',
+    'HourRegistration',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

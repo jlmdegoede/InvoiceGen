@@ -47,17 +47,17 @@
                     </thead>
                     <tbody>
 
-                        {% for article in active_articles %}
+                        {% for product in active_articles %}
                             <tr>
-                                <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
-                                <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.company_name }}</td>
-                                <td>{{ article.date_deadline }}</td>
-                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
+                                <td><input type="checkbox" id="{{ product.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ product.id }}"></label></td>
+                                <td><a href="/opdracht/{{ product.id }}" class="dialog-trigger modal-trigger" value="{{ product.id }}">{{ product.title }}</a></td>
+                                <td>{{ product.quantity }}</td>
+                                <td>{{ product.from_company.company_name }}</td>
+                                <td>{{ product.date_deadline }}</td>
+                                <td>{% if product.invoice %} <a href="{{ product.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if product.agreement %} <a href="/overeenkomsten/ondertekenen/{{ product.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
+                                    <a href="{% url "edit_product" product.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ product.id }}" name="{{ product.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -82,17 +82,17 @@
                     </thead>
 
                     <tbody>
-                            {% for article in a %}
+                            {% for product in a %}
                             <tr>
-                                <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
-                                <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.company_name }}</td>
-                                <td>{{ article.date_deadline }}</td>
-                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="{% url "view_agreement" article.agreement.url %}">Openen</a> {% else %} Geen {% endif %}</td>
+                                <td><input type="checkbox" id="{{ product.id }}" value="{{ product.id }}" name="to_invoice" /><label for="{{ product.id }}"></label></td>
+                                <td><a href="/opdracht/{{ order.id }}" class="dialog-trigger modal-trigger" value="{{ product.id }}">{{ product.title }}</a></td>
+                                <td>{{ product.quantity }}</td>
+                                <td>{{ product.from_company.company_name }}</td>
+                                <td>{{ product.date_deadline }}</td>
+                                <td>{% if product.invoice %} <a href="{{ product.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if product.agreement %} <a href="{% url "view_agreement" product.agreement.url %}">Openen</a> {% else %} Geen {% endif %}</td>
                                 <td>
-                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
+                                    <a href="{% url "edit_product" product.id %}"><i class="material-icons">edit</i></a>
+                                    <a href="#modal1" class="modal-trigger delete" value="{{ product.id }}" name="{{ product.title }}"><i class="material-icons">delete</i></a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -115,6 +115,10 @@
             {% endif %}
     </div>
 
+    <script type="text/babel" src="/static/js/hourregistration.js"></script>
+    <div id="urenregistratie">
+
+    </div>
 
 <div id="modal-invoice" class="modal">
    <div class="modal-content">
@@ -144,18 +148,7 @@
     </div>
   </div>
 
-
- <div id="modal-article" class="modal" style="height:600px">
-    <div class="modal-content" style="height:500px">
-      <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
-    </div>
-  </div>
-
     <script type="text/javascript">
-
     $(document).ready(function(){
          // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
         $('.done-button').click(function(e) {
@@ -180,10 +173,6 @@
                 $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
                 $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
-            } else if ($(this).hasClass("dialog-trigger")) {
-                var page = "/opdracht/" + $(this).attr('value');
-                $('.article-iframe').attr('src', page)
-                $('#modal-article').openModal();
             } else {
                 // factuurknop gedrukt
                 if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {

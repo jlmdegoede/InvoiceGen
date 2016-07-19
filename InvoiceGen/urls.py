@@ -6,6 +6,7 @@ import Invoices.views
 import Companies.views
 import Settings.views
 import Todo.views
+import HourRegistration.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
@@ -16,11 +17,12 @@ urlpatterns = [
     url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
 
-    url(r'^opdracht/(?P<articleid>\d+)/(.*)$', Orders.views.view_article, name='view_product'),
+    url(r'^opdracht/(?P<productid>\d+)/(.*)$', Orders.views.view_product, name='view_product'),
     url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
     url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
     url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
     url(r'^opdracht/afronden/$', Orders.views.mark_products_as_done, name='mark_products_as_done'),
+    url(r'^opdracht/list-hourregistration/$', Orders.views.get_list_of_orders_hourregistration, name='get_list_of_orders_hourregistration'),
 
     url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
     url(r'^facturen/$', Invoices.views.get_outgoing_invoices, name='get_invoices'),
@@ -50,6 +52,13 @@ urlpatterns = [
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
 
     url(r'^zoeken/$', Orders.views.search, name='search'),
+
+    url(r'^urenregistratie/start/(?P<product_id>\d+)/$', HourRegistration.views.start_time_tracking, name='start_time_tracking'),
+    url(r'^urenregistratie/stop/(?P<product_id>\d+)/$', HourRegistration.views.end_time_tracking, name='end_time_tracking'),
+    url(r'^urenregistratie/bestaand/$', HourRegistration.views.existing_time_tracking, name='existing_time_tracking'),
+    url(r'^urenregistratie/eindtijd/$', HourRegistration.views.set_end_time, name='set_end_time'),
+    url(r'^urenregistratie/nieuw/$', HourRegistration.views.create_new_hour_registration, name='create_new_hour_registration'),
+    url(r'^urenregistratie/verwijderen/$', HourRegistration.views.delete_time_tracking, name='delete_time_tracking'),
 
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),
