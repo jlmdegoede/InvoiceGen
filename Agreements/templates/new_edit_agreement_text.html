@@ -15,11 +15,17 @@
     {% breadcrumb "Modelovereenkomst toevoegen/bewerken" "" %}
 {% endblock %}
 
+{% block model_agreements_active %}
+{% endblock %}
+{% block edit_new_model_agreement_active %}
+    active
+{% endblock %}
+
 {% block content %}
     {% if edit %}
-        <h1>Modelovereenkomst bewerken</h1>
+        <h4>Modelovereenkomst bewerken</h4>
     {% else %}
-        <h1>Modelovereenkomst toevoegen</h1>
+        <h4>Modelovereenkomst toevoegen</h4>
     {% endif %}
 
     <p>

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block side_menu %}
+    <a href="{% url "get_invoices" %}" class="{% block outgoing_invoice_active %}{% endblock %} collection-item">Uitgaande facturen beheren</a>
+    <a href="{% url "get_incoming_invoices" %}" class="{% block incoming_invoice_active %}{% endblock %}collection-item">Inkomende facturen beheren</a>
+{% endblock %}

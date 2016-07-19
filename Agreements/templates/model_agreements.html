@@ -1,5 +1,6 @@
 {% extends 'agreements.html' %}
 {% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
 {% load staticfiles %}
 {% block agreements_active %}active{% endblock %}
 
@@ -15,29 +16,14 @@
     {% breadcrumb "Modelovereenkomsten" "index_model_agreements" %}
 {% endblock %}
 
+{% block model_agreements_active %}
+    active
+{% endblock %}
+
 {% block content %}
-    <h1>Modelovereenkomsten</h1>
+    <h4>Modelovereenkomsten</h4>
             {% csrf_token %}
-                <table  class="striped">
-                    <thead>
-                        <th data-field="id">Titel</th>
-                        <th data-field="edit"></th>
-                    </thead>
-
-                    <tbody>
-
-                    {% for model in model_agreements %}
-                        <tr>
-                            <td>{{ model.title }}</td>
-                            <td>
-                                <a href="{% url "edit_model_agreement" model.id %}"><i class="material-icons">edit</i></a>
-                                <a href="#modal1" class="modal-trigger delete" value="{{ model.id }}" name="{{ model.title }}"><i class="material-icons">delete</i></a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
-            </form>
+            {% render_table model_agreements "../templates/table_materialize.html" %}
 
              <a class="btn-floating btn-large waves-effect waves-light red right"  href="{% url "add_agreement_text" %}"><i class="material-icons">add</i></a>
 

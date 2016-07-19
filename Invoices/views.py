@@ -12,6 +12,8 @@ from Utils.date_helper import *
 from Utils.docx_generation import *
 from Utils.pdf_generation import *
 from .models import *
+from .tables import *
+from django_tables2 import RequestConfig
 
 
 # Create your views here.
@@ -19,7 +21,7 @@ from .models import *
 
 @login_required
 def get_outgoing_invoices(request):
-    dict = get_invoices('outgoing')
+    dict = get_invoices('outgoing', request)
 
     toast = None
     if request.session.get('toast'):
@@ -32,7 +34,7 @@ def get_outgoing_invoices(request):
 
 @login_required
 def get_incoming_invoices(request):
-    dict = get_invoices('incoming')
+    dict = get_invoices('incoming', request)
 
     toast = None
     if request.session.get('toast'):
@@ -43,7 +45,7 @@ def get_incoming_invoices(request):
     return render(request, 'incoming_invoice_table.html', dict)
 
 
-def get_invoices(invoice_objects):
+def get_invoices(invoice_objects, request):
     invoices = {}
     yearList = []
     if invoice_objects == 'outgoing':
@@ -57,13 +59,18 @@ def get_invoices(invoice_objects):
         year = dict['date_created'].year
         if year not in yearList:
             yearList.append(year)
-            invoices[year] = objects.filter(date_created__contains=year)
 
-    for year in yearList:
-        if invoice_objects == 'outgoing':
-            for invoice_obj in invoices[year]:
-                products = Product.objects.filter(invoice=invoice_obj)
-                invoice_obj.products = products
+            invoice_year_objs = objects.filter(date_created__contains=year)
+            if invoice_objects == 'outgoing':
+                for invoice_obj in invoice_year_objs:
+                    products = Product.objects.filter(invoice=invoice_obj)
+                    invoice_obj.products = products
+
+            if invoice_objects == 'outgoing':
+                invoices[year] = OutgoingInvoiceTable(invoice_year_objs)
+            else:
+                invoices[year] = IncomingInvoiceTable(invoice_year_objs)
+            RequestConfig(request).configure(invoices[year])
 
     currentYear = date.today().year
     return {'invoices': invoices,  'years': yearList, 'currentYear': currentYear}
