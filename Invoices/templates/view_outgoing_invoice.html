@@ -19,7 +19,7 @@
 
 <div class="container">
 
-<h2>{{ invoice.title }}</h2>
+<h4>{{ invoice.title }}</h4>
 <table class="responsive-table">
     <tr>
             <td>
@@ -64,7 +64,7 @@
     </tr>
 </table>
 
-<h3>Opdrachten</h3>
+<h4>Opdrachten</h4>
 <table>
     <thead>
         <th>Opdracht</th>
@@ -90,7 +90,7 @@
     {% endfor %}
 </table>
 
-<h3>Exporteren</h3>
+<h4>Exporteren</h4>
 <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
 <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
 <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>

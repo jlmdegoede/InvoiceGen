@@ -23,9 +23,9 @@
          </script>
     {% endif %}
     {% if edit %}
-        <h1>Inkomende factuur bewerken</h1>
+        <h4>Inkomende factuur bewerken</h4>
     {% else %}
-        <h1>Inkomende factuur toevoegen</h1>
+        <h4>Inkomende factuur toevoegen</h4>
     {% endif %}
         {%  if edit %}
             <form id="invoice_form" class="col s12" method="post" action="{% url "edit_incoming_invoice" invoice.id %}" enctype="multipart/form-data">

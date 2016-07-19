@@ -1,10 +1,8 @@
 import django_tables2 as tables
 from .models import Invoice, IncomingInvoice, OutgoingInvoice
-
+from django_tables2 import A
 
 class InvoiceTable(tables.Table):
-    invoice_number = tables.Column(verbose_name='Volgnr.')
-    title = tables.Column(verbose_name='Titel')
     date_created = tables.Column(verbose_name='Aangemaakt op')
     paid = tables.BooleanColumn(verbose_name='Betaald')
 
@@ -13,6 +11,8 @@ class InvoiceTable(tables.Table):
 
 
 class IncomingInvoiceTable(InvoiceTable):
+    invoice_number = tables.LinkColumn('detail_incoming_invoice', args=[A('pk')], verbose_name='Volgnr.')
+    title = tables.LinkColumn('detail_incoming_invoice', args=[A('pk')], verbose_name='Titel')
     subtotal = tables.Column(verbose_name='Subtotaal')
     btw = tables.Column(verbose_name='BTW')
     actions = tables.TemplateColumn('<a href="{% url "edit_incoming_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
@@ -24,6 +24,8 @@ class IncomingInvoiceTable(InvoiceTable):
 
 
 class OutgoingInvoiceTable(InvoiceTable):
+    invoice_number = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Volgnr.')
+    title = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Titel')
     total_amount = tables.Column(verbose_name='Bedrag')
     actions = tables.TemplateColumn('<a href="{% url "edit_outgoing_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#modal1" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
 

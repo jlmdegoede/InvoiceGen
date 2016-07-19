@@ -101,15 +101,19 @@
                 $('input[type="checkbox"]:checked').each(function() {
                     clickedDoneList[clickedDoneList.length] = $(this).val();
                 });
-                $.ajax({
-                    type: "POST",
-                    url: '{% url "mark_products_as_done" %}',
-                    data: {
-                        products: clickedDoneList,
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: location.reload(),
-                });
+                if (clickedDoneList.length != 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: '{% url "mark_products_as_done" %}',
+                        data: {
+                            products: clickedDoneList,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: location.reload(),
+                    });
+                } else {
+                     Materialize.toast('Vink eerst een of meer afgeronde opdrachten aan', 4000)
+                }
         });
         $('.modal-trigger').click(function (event) {
             if ($(this).hasClass("delete")) {
