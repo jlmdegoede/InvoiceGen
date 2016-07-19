@@ -15,7 +15,7 @@ class InvoiceTable(tables.Table):
 class IncomingInvoiceTable(InvoiceTable):
     subtotal = tables.Column(verbose_name='Subtotaal')
     btw = tables.Column(verbose_name='BTW')
-    actions = tables.TemplateColumn("test", verbose_name='')
+    actions = tables.TemplateColumn('<a href="{% url "edit_incoming_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
 
     class Meta:
         model = IncomingInvoice
