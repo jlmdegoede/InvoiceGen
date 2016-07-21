@@ -8,39 +8,42 @@
 {% block header %}
 {% endblock %}
 
+{% block side_menu %}
+    <a href="{% url "password_reset" %}" class="collection-item">Wachtwoord vergeten?</a>
+{% endblock %}
+
 {% block content %}
-    <h2>Meld u aan om door te gaan</h2>
+    <h4>Meld u aan om door te gaan</h4>
+
     {% if error %}
-        <h4>{{ error }}</h4>
+        <h5>{{ error }}</h5>
     {% endif %}
+
     <form id="login_form" method="post" action="{% url "user_login" %}">
         {% csrf_token %}
-
         <div class="row">
 
-                <div class="input-field col s12">
-                    {{ form.username }}
-                    <label for="{{ form.username.id_for_label }}">E-mailadres</label>
-                </div>
+            <div class="input-field col s12">
+                {{ form.username }}
+                <label for="{{ form.username.id_for_label }}">E-mailadres</label>
+            </div>
 
 
-                <div class="input-field col s12">
-                    {{ form.password }}
-                    <label for="{{ form.password.id_for_label }}">Wachtwoord</label>
-                </div>
+            <div class="input-field col s12">
+                {{ form.password }}
+                <label for="{{ form.password.id_for_label }}">Wachtwoord</label>
+            </div>
         </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Aanmelden
             <i class="material-icons right">send</i>
         </button>
     </form>
-    <br />
-
-    <a href="/wachtwoord-vergeten">Wachtwoord vergeten?</a>
+    <br/>
 
     {% if email %}
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('#id_username').val('{{ email }}');
             });
         </script>

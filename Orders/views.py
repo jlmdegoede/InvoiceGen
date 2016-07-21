@@ -160,12 +160,12 @@ def add_article(request):
                 loop.close()
             return redirect('/')
         else:
-            return render_to_response('new_edit_article.html',
+            return render_to_response('new_edit_product.html',
                                       {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
     else:
         form = ProductForm()
 
-        return render_to_response('new_edit_article.html', {'form': form}, context)
+        return render_to_response('new_edit_product.html', {'form': form}, context)
 
 
 @login_required
@@ -176,7 +176,7 @@ def edit_article(request, articleid=-1):
             article = Product.objects.get(id=articleid)
             f = ProductForm(instance=article)
 
-            return render_to_response('new_edit_article.html',
+            return render_to_response('new_edit_product.html',
                                       {'form': f, 'edit': True, 'articleid': articleid}, context)
         except:
             request.session['toast'] = 'Opdracht niet gevonden'
@@ -190,7 +190,7 @@ def edit_article(request, articleid=-1):
             request.session['toast'] = 'Opdracht gewijzigd'
             return redirect('/')
         else:
-            return render_to_response('new_edit_article.html',
+            return render_to_response('new_edit_product.html',
                                       {'form': f, 'edit': True, 'articleid': articleid, 'toast': 'Ongeldig formulier'},
                                       context)
 
