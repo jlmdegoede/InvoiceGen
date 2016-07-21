@@ -19,47 +19,53 @@ import asyncio
 from HourRegistration.models import HourRegistration
 from .tables import OrderTable
 from django_tables2 import RequestConfig
+from Utils.session_helper import get_toast_and_cleanup_session
+from datetime import datetime
+from functools import reduce
+
 # Create your views here.
 
 
 @login_required
 def index(request):
-    products = {}
-    year_list = []
-    years = Product.objects.values("date_deadline").distinct()
+    products, year_list = fill_product_table_per_year(request)
 
-    for distinct_years in years:
-        year = distinct_years['date_deadline'].year
-        if year not in year_list:
-            year_list.append(year)
-            products_year = Product.objects.filter(date_deadline__contains=year, done=True)
-
-            for product in products_year:
-                agreements = Agreement.objects.filter(article_concerned=product)
-                if agreements.count() != 0:
-                    product.agreement = agreements[0]
-
-            products[year] = OrderTable(products_year)
-            RequestConfig(request).configure(products[year])
-
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
-    year_list.sort(reverse=True)
+    toast = get_toast_and_cleanup_session(request)
 
     active_products_table = OrderTable(Product.objects.filter(done=False))
-    currentYear = date.today().year
-    no_settings = Settings.views.no_settings_created_yet()
+    no_settings_notification = Settings.views.no_settings_created_yet()
 
     RequestConfig(request).configure(active_products_table)
 
     return render(request, 'index.html',
-                  {'products': products, 'active_products_table': active_products_table, 'toast': toast, 'years': year_list,
-                   'currentYear': currentYear, 'first_time': no_settings})
+                  {'products': products, 'active_products_table': active_products_table, 'toast': toast,
+                   'years': year_list, 'first_time': no_settings_notification})
 
 
+def fill_product_table_per_year(request):
+    year_list = []
+    products = {}
+
+    now = datetime.now()
+
+    for year in range(now.year - 5, now.year + 1):
+        products_year = Product.objects.filter(date_deadline__contains=year, done=True)
+        if products_year.count() is not 0:
+            year_list.append(year)
+            products_year = add_agreements_to_products(products_year)
+            products[year] = OrderTable(products_year)
+            RequestConfig(request).configure(products[year])
+
+    year_list.sort(reverse=True)
+    return products, year_list
+
+
+def add_agreements_to_products(products):
+    for product in products:
+        agreements = Agreement.objects.filter(article_concerned=product)
+        if agreements.count() != 0:
+            product.agreement = agreements[0]
+    return products
 
 
 @login_required
@@ -68,17 +74,18 @@ def view_product(request, productid):
         product = Product.objects.get(id=productid)
         if Agreement.objects.filter(article_concerned=product).count() != 0:
             product.agreement = Agreement.objects.filter(article_concerned=product)[0]
-        hourregistration = HourRegistration.objects.filter(product=product)
-        total_hours = 0
-        for hour in hourregistration:
-            if hour.end is not None:
-                total_hours += ((hour.end - hour.start).total_seconds()).real
+
+        hour_registration = HourRegistration.objects.filter(product=product)
+        total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
         total_hours = round((total_hours / 60) / 60, 2)
-        return render(request, 'view_product.html', {'product': product, 'hourregistrations': hourregistration, 'total_hours': total_hours})
+
+        return render(request, 'view_product.html',
+                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours})
     except Exception as err:
         print(err)
         request.session['toast'] = 'Product niet gevonden'
         return redirect('/')
+
 
 @login_required
 def mark_products_as_done(request):
