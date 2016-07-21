@@ -37,8 +37,8 @@ class InvoicesTestCase(TestCase):
         response = self.c.get(reverse('get_invoices'))
         self.assertTrue(2015 in response.context['years'])
         self.assertTrue(datetime.now().year in response.context['years'])
-        self.assertTrue(self.invoice_current in response.context['invoices'][datetime.now().year])
-        self.assertTrue(self.invoice_year_old in response.context['invoices'][2015])
+        self.assertTrue(self.invoice_current.title in response.context['invoices'][datetime.now().year].rows[0].get_cell(1))
+        self.assertTrue(self.invoice_year_old.title in response.context['invoices'][2015].rows[0].get_cell(1))
 
     def test_delete_valid_invoice(self):
         self.c.login(username='testuser', password='secret')
@@ -58,7 +58,7 @@ class InvoicesTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue('facturen' in response.url)
         response_index = self.c.get(reverse('get_invoices'))
-        self.assertEqual(response_index.context['invoices'][datetime.now().year].count(), 2)
+        self.assertEqual(response_index.context['invoices'][datetime.now().year].paginator.count, 2)
 
     def test_generate_invoice(self):
         self.c.login(username='testuser', password='secret')

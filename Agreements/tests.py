@@ -32,7 +32,8 @@ class AgreementTestCase(TestCase):
     def test_index_model_agreements(self):
         self.c.login(username='testuser', password='secret')
         response = self.c.get(reverse('index_model_agreements'))
-        self.assertEqual(response.context['model_agreements'][0].title, self.text.title)
+        self.assertTrue(self.text.title in response.context['model_agreements'].rows[0].get_cell(0))
+        self.assertIsNotNone(response.context['model_agreements'].rows)
 
     def test_view_agreement(self):
         response = self.c.get(reverse('view_agreement', args=[self.agreement.url]))
