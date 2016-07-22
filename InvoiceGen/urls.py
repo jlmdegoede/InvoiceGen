@@ -17,10 +17,10 @@ urlpatterns = [
     url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
 
-    url(r'^opdracht/(?P<productid>\d+)/(.*)$', Orders.views.view_product, name='view_product'),
-    url(r'^opdracht/toevoegen/$', Orders.views.add_article, name='add_product'),
-    url(r'^opdracht/wijzigen/(?P<articleid>\d+)/$', Orders.views.edit_article, name='edit_product'),
-    url(r'^opdracht/verwijderen/(?P<articleid>\d+)/$', Orders.views.delete_article, name='delete_product'),
+    url(r'^opdracht/(?P<product_id>\d+)/(.*)$', Orders.views.view_product, name='view_product'),
+    url(r'^opdracht/toevoegen/$', Orders.views.add_product, name='add_product'),
+    url(r'^opdracht/wijzigen/(?P<product_id>\d+)/$', Orders.views.edit_product, name='edit_product'),
+    url(r'^opdracht/verwijderen/(?P<product_id>\d+)/$', Orders.views.delete_product, name='delete_product'),
     url(r'^opdracht/afronden/$', Orders.views.mark_products_as_done, name='mark_products_as_done'),
     url(r'^opdracht/list-hourregistration/$', Orders.views.get_list_of_orders_hourregistration, name='get_list_of_orders_hourregistration'),
 

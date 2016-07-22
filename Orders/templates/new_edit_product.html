@@ -30,7 +30,7 @@
          </script>
     {% endif %}
     {% if edit %}
-        <form id="article_form" class="col s12" method="post" action="{% url "edit_product" articleid %}">
+        <form id="article_form" class="col s12" method="post" action="{% url "edit_product" productid %}">
     {% else %}
         <form id="article_form" class="col s12" method="post" action="{% url "add_product" %}">
     {% endif %}

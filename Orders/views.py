@@ -23,6 +23,7 @@ from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
 from functools import reduce
 
+
 # Create your views here.
 
 
@@ -62,18 +63,22 @@ def fill_product_table_per_year(request):
 
 def add_agreements_to_products(products):
     for product in products:
-        agreements = Agreement.objects.filter(article_concerned=product)
-        if agreements.count() != 0:
-            product.agreement = agreements[0]
+        product = add_agreements_to_product(product)
     return products
 
 
+def add_agreements_to_product(product):
+    agreements = Agreement.objects.filter(article_concerned=product)
+    if agreements.count() != 0:
+        product.agreement = agreements[0]
+    return product
+
+
 @login_required
-def view_product(request, productid):
+def view_product(request, product_id):
     try:
-        product = Product.objects.get(id=productid)
-        if Agreement.objects.filter(article_concerned=product).count() != 0:
-            product.agreement = Agreement.objects.filter(article_concerned=product)[0]
+        product = Product.objects.get(id=product_id)
+        product = add_agreements_to_product(product)
 
         hour_registration = HourRegistration.objects.filter(product=product)
         total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
@@ -151,62 +156,74 @@ def add_company_inline(request):
 
 
 @login_required
-def add_article(request):
+def add_product(request):
     context = RequestContext(request)
     if request.method == 'POST':
-        article = Product()
-        f = ProductForm(request.POST, instance=article)
-        article.invoice = None
-        if f.is_valid():
-            article.save()
-            request.session['toast'] = 'Opdracht toegevoegd'
-            if get_setting('auto_wunderlist', False):
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                loop.run_until_complete(create_task_from_order(article))
-                loop.close()
-            return redirect('/')
-        else:
-            return render_to_response('new_edit_product.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
-    else:
-        form = ProductForm()
+        return add_product_post(request, context)
+    return add_product_get(request, context)
 
-        return render_to_response('new_edit_product.html', {'form': form}, context)
+
+def add_product_post(request, context):
+    product = Product()
+    f = ProductForm(request.POST, instance=product)
+    product.invoice = None
+    if f.is_valid():
+        product.save()
+        request.session['toast'] = 'Opdracht toegevoegd'
+        if get_setting('auto_wunderlist', False):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(create_task_from_order(product))
+            loop.close()
+        return redirect('/')
+    else:
+        return render_to_response('new_edit_product.html',
+                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
+
+
+def add_product_get(request, context):
+    form = ProductForm()
+    return render_to_response('new_edit_product.html', {'form': form}, context)
 
 
 @login_required
-def edit_article(request, articleid=-1):
+def edit_product(request, product_id=-1):
     context = RequestContext(request)
     if request.method == 'GET':
-        try:
-            article = Product.objects.get(id=articleid)
-            f = ProductForm(instance=article)
+        return edit_product_get(request, context, product_id)
+    return edit_product_post(request, context, product_id)
 
-            return render_to_response('new_edit_product.html',
-                                      {'form': f, 'edit': True, 'articleid': articleid}, context)
-        except:
-            request.session['toast'] = 'Opdracht niet gevonden'
-            return redirect('/')
-    elif request.method == 'POST':
-        article = Product.objects.get(id=articleid)
-        f = ProductForm(request.POST, instance=article)
 
-        if f.is_valid():
-            f.save()
-            request.session['toast'] = 'Opdracht gewijzigd'
-            return redirect('/')
-        else:
-            return render_to_response('new_edit_product.html',
-                                      {'form': f, 'edit': True, 'articleid': articleid, 'toast': 'Ongeldig formulier'},
-                                      context)
+def edit_product_get(request, context, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        f = ProductForm(instance=product)
+        return render_to_response('new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id}, context)
+    except:
+        request.session['toast'] = 'Opdracht niet gevonden'
+        return redirect('/')
+
+
+def edit_product_post(request, context, product_id):
+    product = Product.objects.get(id=product_id)
+    f = ProductForm(request.POST, instance=product)
+
+    if f.is_valid():
+        f.save()
+        request.session['toast'] = 'Opdracht gewijzigd'
+        return redirect('/')
+    else:
+        return render_to_response('new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'},
+                                  context)
 
 
 @login_required
-def delete_article(request, articleid=-1):
+def delete_product(request, product_id=-1):
     try:
-        article_to_delete = Product.objects.get(id=articleid)
-        article_to_delete.delete()
+        product_to_delete = Product.objects.get(id=product_id)
+        product_to_delete.delete()
         request.session['toast'] = 'Opdracht verwijderd'
         return redirect('/')
     except:
@@ -217,7 +234,6 @@ def delete_article(request, articleid=-1):
 @login_required
 def user_logout(request):
     logout(request)
-
     return HttpResponseRedirect('/')
 
 
