@@ -101,11 +101,7 @@ def add_outgoing_invoice(request):
 
             invoice.invoice_number = f.cleaned_data['invoice_number']
             invoice.save()
-
-            for product in products:
-                product.invoice = invoice
-                product.save()
-            invoice.save()
+            add_invoice_to_products(invoice, products)
 
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen')
@@ -113,6 +109,18 @@ def add_outgoing_invoice(request):
             return render_to_response('new_edit_outgoing_invoice.html',
                                       {'form': f, 'invoceid': invoice.id, 'edit': False,
                                        'toast': "Formulier ongeldig!"}, context)
+
+
+def add_invoice_to_products(invoice, products):
+    for product in products:
+        product.invoice = invoice
+        product.save()
+
+
+def remove_invoice_from_products(products):
+    for product in products:
+        product.invoice = None
+        product.save()
 
 
 @login_required
@@ -182,6 +190,7 @@ def get_invoice_markdown(request, invoice_id):
     response['Content-Disposition'] = 'attachment; filename=invoice' + str(invoice.date_created) + '.md'
     return response
 
+
 @login_required
 def get_invoice_docx(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
@@ -204,7 +213,7 @@ def edit_outgoing_invoice(request, invoiceid=-1):
             products = Product.objects.filter(invoice=invoice)
 
             return render_to_response('new_edit_outgoing_invoice.html',
-                                      {'form': f, 'articles': products, 'invoiceid': invoice.id, 'edit': True,
+                                      {'form': f, 'products': products, 'edit': True,
                                        'invoiceid': invoiceid}, context)
         except:
             request.session['toast'] = 'Factuur niet gevonden'
@@ -212,15 +221,22 @@ def edit_outgoing_invoice(request, invoiceid=-1):
     elif request.method == 'POST':
         invoice = OutgoingInvoice.objects.get(id=invoiceid)
         f = OutgoingInvoiceForm(request.POST, instance=invoice)
-        products = Product.objects.filter(invoice=invoice)
+        old_products = Product.objects.filter(invoice=invoice)
 
         if f.is_valid():
+            old_products = Product.objects.filter(invoice=invoice)
+            remove_invoice_from_products(old_products)
+
             f.save()
+
+            new_products = f.cleaned_data['products']
+            add_invoice_to_products(invoice, new_products)
+
             request.session['toast'] = 'Factuur gewijzigd'
             return redirect('/facturen')
         else:
             return render_to_response('new_edit_outgoing_invoice.html',
-                                      {'form': f, 'articles': products, 'invoiceid': invoice.id, 'edit': True,
+                                      {'form': f, 'products': old_products, 'invoiceid': invoice.id, 'edit': True,
                                        'toast': "Formulier ongeldig!"}, context)
 
 

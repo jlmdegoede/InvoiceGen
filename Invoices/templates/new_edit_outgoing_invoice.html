@@ -34,7 +34,7 @@
         {% endif %}
         {% csrf_token %}
 
-            <div class="row">
+            <p class="row">
                 <div class="input-field col s12">
                     {{ form.title }}
                     <label for="{{ form.title.id_for_label }}">Omschrijving</label>
@@ -43,7 +43,7 @@
                 <div class="input-field col s12">
                     {{ form.products }}
                     <label for="{{ form.products.id_for_label }}">Opdrachten</label>
-                    {{ form.errors.articles }}
+                    {{ form.errors.products }}
                 </div>
                 <div class="input-field col s12">
                     {{ form.invoice_number }}
@@ -55,6 +55,12 @@
                     <label for="{{ form.expiration_date.id_for_label }}">Vervaldatum</label>
                     {{ form.errors.expiration_date }}
                 </div>
+                <p style="margin-left:10px">
+                    {{ form.paid }}
+                    <label for="{{ form.paid.id_for_label }}">Betaald</label>
+                    {{ form.errors.paid }}
+                </p>
+
             <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
                 <i class="material-icons left">send</i>
             </button>

@@ -66,3 +66,15 @@ static/images
 *.out
 *.aux
 *.docx
+
+.idea/workspace.xml
+
+.idea/misc.xml
+
+.idea/jsLibraryMappings.xml
+
+.idea/FactuurMaker.iml
+
+.idea/dataSources.xml
+
+.idea/dataSources.ids
