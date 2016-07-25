@@ -59,6 +59,7 @@ urlpatterns = [
     url(r'^urenregistratie/eindtijd/$', HourRegistration.views.set_end_time, name='set_end_time'),
     url(r'^urenregistratie/nieuw/$', HourRegistration.views.create_new_hour_registration, name='create_new_hour_registration'),
     url(r'^urenregistratie/verwijderen/$', HourRegistration.views.delete_time_tracking, name='delete_time_tracking'),
+    url(r'^urenregistratie/omschrijving/$', HourRegistration.views.add_description_to_hourregistration, name='add_description_to_hourregistration'),
 
     url(r'^overeenkomsten/$', Agreements.views.agreement_index,
         name='agreement_index'),

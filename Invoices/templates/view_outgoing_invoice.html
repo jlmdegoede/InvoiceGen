@@ -47,7 +47,7 @@
                 Betaald
             </td>
             <td>
-                <b>{% if invoice.paid %} Betaald {% else %} Niet betaald {% endif %}</b>
+                <b>{% if invoice.paid %} Ja {% else %} Nee {% endif %}</b>
             </td>
         </tr>
 
@@ -64,7 +64,7 @@
             Totaalbedrag
         </td>
         <td>
-            <b>{{ invoice.total_amount }}</b>
+            <b>€{{ invoice.total_amount }}</b>
         </td>
     </tr>
 </table>
@@ -73,9 +73,10 @@
 <table>
     <thead>
         <th>Opdracht</th>
-        <th>Aantal</th>
-        <th>Leverdatum</th>
-        <th>Overeenkomst</th>
+        <th>Identificatienr.</th>
+        <th>Kwantiteit</th>
+        <th>Prijs per eenheid</th>
+        <th>Prijs</th>
     </thead>
     {% for product in invoice.product_set.all %}
     <tr>
@@ -83,13 +84,16 @@
             {{ product.title }}
         </td>
         <td>
+            {{ product.identification_number }}
+        </td>
+        <td>
             {{ product.quantity }}
         </td>
         <td>
-            {{ product.date_deadline }}
+            €{{ product.price_per_quantity }}
         </td>
         <td>
-            {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
+            €{{ product.get_price }}
         </td>
     </tr>
     {% endfor %}

@@ -55,6 +55,8 @@
           <div class="card blue-grey">
             <div class="card-content white-text">
               <span class="card-title">Tijd gewerkt: {{ hourregistration.number_of_hours }}</span>
+              <p>Omschrijving: {{ hourregistration.description|linebreaks }}</p>
+                <br />
               <p>Gestart op: {{ hourregistration.start }}</p>
                 {% if hourregistration.end != None %}
                 <p>Gestopt op: {{ hourregistration.end }}</p>

@@ -1,3 +1,21 @@
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
 var HourRegistrationComponent = React.createClass({
     componentDidMount: function() {
         $.ajax('/')
@@ -69,9 +87,11 @@ var TimingComponent = React.createClass({
         return (
             <div>
                 <div className="progress">
-                  <div className="indeterminate"></div>
-              </div>
-
+                      <div className="indeterminate"></div>
+                </div>
+                <div className="row">
+                    <DescriptionComponent pk={this.props.pk} />
+                </div>
                 <ul>
                     <li>U werkt nu aan: <b>{this.props.title}</b></li>
                     <li>Gestart op: <b>{this.props.start}</b></li>
@@ -81,6 +101,51 @@ var TimingComponent = React.createClass({
     }
 });
 
+var DescriptionComponent = React.createClass({
+    getInitialState: function() {
+      return {changed: false, description: ''}
+    },
+    handleTextChange: function(e) {
+      this.setState({description: e.target.value});
+      this.setState({changed: true})
+    },
+    getExistingValue: function() {
+        $.get({
+            url: '/urenregistratie/omschrijving/',
+            dataType: 'json',
+            data: {'product_id': this.props.pk},
+            success: function(data) {
+                this.setState({description: data.description})
+                $('#description').trigger('autoresize');
+            }.bind(this),
+        });
+    },
+    componentDidMount: function() {
+        this.getExistingValue();
+        var self = this;
+        var product_id = this.props.pk;
+        setInterval(function () {
+            if (self.state.changed) {
+                $.post({
+                    url: '/urenregistratie/omschrijving/',
+                    dataType: 'json',
+                    data: {'description': self.state.description, 'product_id': product_id, csrfmiddlewaretoken: csrftoken},
+                    success: function(data) {
+                        self.setState({changed: false})
+                    },
+                });
+            }
+        }, 1000);
+    },
+    render: function() {
+        return (
+       <div className="row input-field col s12">
+            <textarea id="description" className="materialize-textarea" value={this.state.description} onChange={this.handleTextChange} ></textarea>
+          <label for="description">Omschrijving werkzaamheden (optioneel)</label>
+        </div>
+        );
+    }
+});
 
 var ButtonComponent = React.createClass({
     getInitialState: function() {
@@ -94,7 +159,8 @@ var ButtonComponent = React.createClass({
                 if (data.existing == undefined) {
                     $('#article-list-select').hide();
                     ReactDOM.render(<TimingComponent title={data.title}
-                                                     start={data.start}/>,
+                                                     start={data.start}
+                                                    pk={data.pk} />,
                                 document.getElementById('uren-bijhouden'));
                     this.setState({action: toggleStartStop(this.state.action)});
                     this.setState({selected: data.pk})
@@ -119,7 +185,7 @@ var ButtonComponent = React.createClass({
                 if (this.state.action == 'Start') {
                     $('#article-list-select').hide();
                     ReactDOM.render(<TimingComponent title={title}
-                                                     start={data.start}/>, document.getElementById('uren-bijhouden'))
+                                                     start={data.start} pk={selectedValue} />, document.getElementById('uren-bijhouden'))
                 } else {
                     $('#article-list-select').show();
                     ReactDOM.unmountComponentAtNode(document.getElementById('uren-bijhouden'))
