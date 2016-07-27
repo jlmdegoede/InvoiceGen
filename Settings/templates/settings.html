@@ -27,7 +27,7 @@
             </ul>
         </div>
         <div id="data" class="col s12">
-            <h2>Persoonlijke gegevens</h2>
+            <h4>Persoonlijke gegevens</h4>
             <form id="login_form" method="post" action="{% url "settings" %}">
                 {% csrf_token %}
                 <div class="row">
@@ -89,7 +89,7 @@
             </form>
         </div>
         <div id="color" class="col s12">
-            <h2>Personalisatie</h2>
+            <h4>Personalisatie</h4>
             <form method="post" action="{% url "set_colors" %}">
                 {% csrf_token %}
                 <div class="row">
@@ -128,7 +128,7 @@
             </form>
         </div>
         <div id="todo" class="col s12">
-            <h2>Wunderlist-integratie</h2>
+            <h4>Wunderlist-integratie</h4>
             {% if todo != None %}
             <table>
                 <tr>
@@ -174,7 +174,7 @@
         </div>
 
         <div id="subscription">
-            <h2>Mijn gegevens</h2>
+            <h4>Mijn gegevens</h4>
     <table class="table">
         <tr>
             <td>Naam</td>

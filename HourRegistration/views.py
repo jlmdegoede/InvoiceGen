@@ -89,12 +89,13 @@ def create_new_hour_registration(request):
     starttime = request.POST['startTime']
     enddate = request.POST['endDate']
     endtime = request.POST['endTime']
+    description = request.POST['description']
     product_id = request.POST['product_id']
     if enddate and endtime and product_id:
         start_date = format_date_and_time(startdate, starttime)
         end_date = format_date_and_time(enddate, endtime)
         product = Product.objects.get(pk=product_id)
-        time = HourRegistration(start=start_date, end=end_date, product=product)
+        time = HourRegistration(start=start_date, end=end_date, product=product, description=description)
         time.save()
         return JsonResponse({'success': True})
 

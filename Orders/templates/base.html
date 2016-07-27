@@ -52,13 +52,13 @@
             <ul class="left hide-on-med-and-down">
                 <li class="{% block search_active %}{% endblock %}"><a href="{% url "search" %}"><i class="left material-icons" style="margin-right:-5px;">search</i>&nbsp;</a></li>
                 <li class="{% block orders_active %}{% endblock %}"><a href="{% url "index" %}"><i class="material-icons left">work</i>Opdrachten</a></li>
-                <li class="{% block agreements_active %}{% endblock %}"><a href="{% url "agreement_index" %}"><i class="material-icons left">group_work</i>Overeenkomsten</a></li>
+                <li class="{% block agreements_active %}{% endblock %}"><a href="{% url "agreement_index" %}"><i class="material-icons left">description</i>Overeenkomsten</a></li>
                 <li class="{% block invoices_active %}{% endblock %}"><a href="{% url "get_invoices" %}"><i class="material-icons left">credit_card</i>Facturen</a></li>
                 <li class="{% block more_active %}{% endblock %}"><a class="dropdown-button"  href="#!" data-activates="dropdown1"><i class="material-icons left">arrow_drop_down</i>Meer</a></li>
             </ul>
               <ul class="side-nav" id="mobile-demo">
                 <li><a href="{% url "index" %}"><i class="material-icons left">work</i>Opdrachten</a></li>
-                <li><a href="{% url "agreement_index" %}"><i class="material-icons left">group_work</i>Overeenkomsten</a></li>
+                <li><a href="{% url "agreement_index" %}"><i class="material-icons left">description</i>Overeenkomsten</a></li>
                 <li><a href="{% url "get_invoices" %}"><i class="material-icons left">credit_card</i>Facturen</a></li>
                 <li><a href="{% url "statistics" %}"><i class="material-icons left">assessment</i>Statistieken</a></li>
                 <li><a href="{% url "settings" %}"><i class="material-icons left">settings</i>Instellingen</a></li>
