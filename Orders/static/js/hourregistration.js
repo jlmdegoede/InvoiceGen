@@ -115,7 +115,8 @@ var DescriptionComponent = React.createClass({
             dataType: 'json',
             data: {'product_id': this.props.pk},
             success: function(data) {
-                this.setState({description: data.description})
+                this.setState({description: data.description});
+                Materialize.updateTextFields();
                 $('#description').trigger('autoresize');
             }.bind(this),
         });
@@ -139,9 +140,9 @@ var DescriptionComponent = React.createClass({
     },
     render: function() {
         return (
-       <div className="row input-field col s12">
+        <div className="row input-field col s12">
             <textarea id="description" className="materialize-textarea" value={this.state.description} onChange={this.handleTextChange} ></textarea>
-          <label for="description">Omschrijving werkzaamheden (optioneel)</label>
+            <label for="description">Omschrijving werkzaamheden (optioneel)</label>
         </div>
         );
     }
