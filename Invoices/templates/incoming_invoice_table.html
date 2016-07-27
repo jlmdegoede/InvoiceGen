@@ -27,9 +27,9 @@
             <ul class="tabs">
                 {% for year in years %}
                     {% if currentYear == year %}
-                        <li class="tab col s3"><a class="active" href="#{{year}}">{{ year }}</a></li>
+                        <li class="tab col s3"><a class="active" href="#{{ year }}">{{ year }}</a></li>
                     {% else %}
-                        <li class="tab col s3"><a href="#{{year}}">{{ year }}</a></li>
+                        <li class="tab col s3"><a href="#{{ year }}">{{ year }}</a></li>
                     {% endif %}
                 {% endfor %}
             </ul>
@@ -41,61 +41,66 @@
             </div>
         {% endfor %}
 
-             <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "add_incoming_invoice" %}"><i class="material-icons">add</i></a>
-            {% if toast %}
-                <script type="text/javascript">
-                    Materialize.toast('{{ toast }}', 4000)
-                </script>
-            {% endif %}
+        {% if toast %}
+            <script type="text/javascript">
+                Materialize.toast('{{ toast }}', 4000)
+            </script>
+        {% endif %}
 
 
     </div>
 
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "add_incoming_invoice" %}">
+            <i class="large material-icons">add</i>
+        </a>
+    </div>
 
-     <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-    <div class="modal-content">
-      <h4>Factuur verwijderen</h4>
-      <p id="confirmText">Weet u zeker dat u deze factuur wilt verwijderen?</p>
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Factuur verwijderen</h4>
+            <p id="confirmText">Weet u zeker dat u deze factuur wilt verwijderen?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="deleteLink"
+               class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
     </div>
-    <div class="modal-footer">
-      <a href="#" id="deleteLink" class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
-    </div>
-  </div>
 
-     <div id="modal-article" class="modal" style="height:600px">
-    <div class="modal-content" style="height:500px">
-      <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+    <div id="modal-article" class="modal" style="height:600px">
+        <div class="modal-content" style="height:500px">
+            <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
-    </div>
-  </div>
 
     <script type="text/javascript">
 
-    $(document).ready(function(){
-        saveTableTab('incoming_invoice');
+        $(document).ready(function () {
+            saveTableTab('incoming_invoice');
 
-         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-        $('.modal-trigger').click(function (event) {
-            if ($(this).hasClass("delete")) {
-                id = $(this).attr('value');
-                title = $(this).attr('name');
-                $('#deleteLink').attr('href', "/facturen/inkomend/verwijderen/" + id);
-                $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
-                $('#modal1').openModal();
-            }  else if ($(this).hasClass("product")) {
-                var page = "/opdracht/" + $(this).attr('value');
-                $('.article-iframe').attr('src', page)
-                $('#modal-article').openModal();
-            }
+            // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            $('.modal-trigger').click(function (event) {
+                if ($(this).hasClass("delete")) {
+                    id = $(this).attr('value');
+                    title = $(this).attr('name');
+                    $('#deleteLink').attr('href', "/facturen/inkomend/verwijderen/" + id);
+                    $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
+                    $('#modal1').openModal();
+                } else if ($(this).hasClass("product")) {
+                    var page = "/opdracht/" + $(this).attr('value');
+                    $('.article-iframe').attr('src', page)
+                    $('#modal-article').openModal();
+                }
+            });
         });
-  });
 
-    function getId(id) {
-        return $('.modal-trigger').attr("value")
-    }
+        function getId(id) {
+            return $('.modal-trigger').attr("value")
+        }
     </script>
 {% endblock %}

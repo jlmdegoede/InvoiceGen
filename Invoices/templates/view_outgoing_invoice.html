@@ -15,11 +15,6 @@
     {% breadcrumb "Factuur inzien" "" %}
 {% endblock %}
 
-{% block side_menu %}
-    {{ block.super }}
-    <a href="{% url "edit_outgoing_invoice" invoice.id %}" class="collection-item">Factuur bewerken</a>
-{% endblock %}
-
 {% block content %}
 
 <div class="container">
@@ -103,6 +98,13 @@
 <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
 <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
 <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>
+</div>
+
+
+<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
+        <i class="large material-icons">mode_edit</i>
+    </a>
 </div>
 
 {% endblock %}

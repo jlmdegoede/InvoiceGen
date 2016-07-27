@@ -25,9 +25,6 @@
     <h4>Overeenkomsten beheren</h4>
             {% csrf_token %}
             {% render_table agreements "../templates/table_materialize.html" %}
-            <p>
-                <a class="btn-floating btn-large waves-effect waves-light red right"  href="{% url 'add_agreement' %}"><i class="material-icons">add</i></a>
-            </p>
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)
@@ -48,6 +45,12 @@
         <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
     </div>
   </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "add_agreement" %}">
+          <i class="large material-icons">add</i>
+        </a>
+    </div>
 
 <div id="dialog" title="Artikel"></div>
 
