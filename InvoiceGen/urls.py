@@ -7,6 +7,7 @@ import Companies.views
 import Settings.views
 import Todo.views
 import HourRegistration.views
+import Statistics.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
@@ -43,7 +44,9 @@ urlpatterns = [
     url(r'^instellingen/kleuren/$', Settings.views.set_colors, name='set_colors'),
     url(r'^instellingen/reset-kleuren/$', Settings.views.reset_colors, name='reset_colors'),
 
-    url(r'^statistieken/$', Orders.views.view_statistics, name='statistics'),
+    url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),
+
+    url(r'^statistieken/btw-aangifte$', Statistics.views.view_btw_aangifte, name='btw_aangifte'),
 
     url(r'^opdrachtgevers/$', Companies.views.index, name='company_index'),
     url(r'^opdrachtgevers/nieuw$', Companies.views.add_company, name='company_add'),

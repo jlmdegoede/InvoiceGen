@@ -1,10 +1,7 @@
-from datetime import date
-
-import markdown
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import *
 from Invoices.models import *
 from Agreements.models import Agreement
@@ -21,7 +18,6 @@ from .tables import OrderTable
 from django_tables2 import RequestConfig
 from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
-from functools import reduce
 
 
 # Create your views here.
@@ -101,44 +97,6 @@ def mark_products_as_done(request):
             product.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
-
-
-@login_required
-def view_statistics(request):
-    year = date.today().year
-    year_list = [int(year) - 5, int(year) - 4, int(year) - 3, int(year) - 2, int(year) - 1, int(year)]
-    nr_of_articles = []
-    not_yet_invoiced = []
-    nr_of_words = []
-    totale_inkomsten = []
-    for i in range(int(year) - 5, int(year) + 1):
-        tuple = get_yearly_stats(i)
-        nr_of_articles.append(tuple[0])
-        nr_of_words.append(tuple[1])
-        totale_inkomsten.append(tuple[2])
-        not_yet_invoiced.append(tuple[3])
-    return render(request, 'statistics.html',
-                  {'nr_of_articles': nr_of_articles, 'not_yet_invoiced': not_yet_invoiced, 'nr_of_words': nr_of_words,
-                   'totale_inkomsten': totale_inkomsten, 'year': year, 'year_list': year_list})
-
-
-def get_yearly_stats(year):
-    nr_of_articles = 0
-    totale_inkomsten = 0
-    nr_of_words = 0
-    all_articles = Product.objects.filter(done=True)
-    for article in all_articles:
-        if article.date_deadline.year == int(year):
-            totale_inkomsten += article.quantity * article.price_per_quantity
-            nr_of_words += article.quantity
-            nr_of_articles += 1
-    not_yet_invoiced = 0
-    not_yet_invoiced_articles = Product.objects.filter(done=False)
-    for article in not_yet_invoiced_articles:
-        not_yet_invoiced += article.quantity * article.price_per_quantity
-
-    return nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced
-
 
 @login_required
 def add_company_inline(request):

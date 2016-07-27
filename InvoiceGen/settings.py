@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django_bootstrap_breadcrumbs',
     'Todo',
     'HourRegistration',
+    'Statistics',
     'django_tables2'
 )
 

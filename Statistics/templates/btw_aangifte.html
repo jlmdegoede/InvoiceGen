@@ -1,0 +1,139 @@
+{% extends "statistics.html" %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block more_active %}active{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "BTW-aangifte" "btw_aangifte" %}
+{% endblock %}
+
+
+{% block side_menu %}
+    <a href="{% url "btw_aangifte" %}" class="active collection-item">BTW-aangifte</a>
+{% endblock %}
+
+{% block side_menu_outside_collections %}
+    <div class="row"><br/>
+        <h5>Selecteer periode</h5>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="date" name="startdate" class="datepicker">
+                        <label for="startdate">Startdatum</label>
+                    </div>
+                    <div class="input-field col s12">
+                        <input type="date" class="datepicker" name="enddate">
+                        <label for="enddate">Einddatum</label>
+                    </div>
+                    <button class="btn waves-effect waves-light" type="submit" name="submit">
+                        Aanpassen
+                        <i class="material-icons left">send</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <h4>BTW-aangifte</h4>
+
+    <div class="row">
+    <table class="bordered col s12">
+        <tr>
+        <tr>
+            <td width="350px">Inkomende BTW</td>
+            <td>€ {{ incoming_btw }}</td>
+        </tr>
+        <tr>
+            <td>Uitgaande BTW</td>
+            <td>€ {{ outgoing_btw }}</td>
+        </tr>
+        <tr>
+            <td>Te betalen BTW</td>
+            <td>€ {{ difference_btw|floatformat }}</td>
+        </tr>
+    </table>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <h5>Inkomende facturen in deze periode</h5>
+            <table class="responsive-table highlight">
+            <thead>
+                <th>Factuur</th>
+                <th>Volgnr.</th>
+                <th>Subtotaal</th>
+                <th>BTW</th>
+            </thead>
+            <tbody>
+            {% for invoice in incoming_invoices %}
+                <tr>
+                    <td>
+                        {{ invoice.title }}
+                    </td>
+                    <td>
+                        {{ invoice.invoice_number }}
+                    </td>
+                    <td>
+                        € {{ invoice.subtotal }}
+                    </td>
+                    <td>
+                        € {{ invoice.btw_amount }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class="col s6">
+            <h5>Uitgaande facturen in deze periode</h5>
+            <table class="responsive-table highlight">
+            <thead>
+                <th>Titel</th>
+                <th>Opdrachtgever</th>
+                <th>Prijs</th>
+                <th>BTW</th>
+            </thead>
+            <tbody>
+            {% for invoice in outgoing_invoices %}
+                <tr>
+                    <td>
+                        {{ invoice.title }}
+                    </td>
+                    <td>
+                        {{ invoice.to_company }}
+                    </td>
+                    <td>
+                        {{ invoice.total_amount }}
+                    </td>
+                    <td>
+                        € {{ invoice.get_btw }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('.datepicker').pickadate({
+            monthsFull: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+            monthsShort: ['jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
+            weekdaysFull: ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'],
+            weekdaysShort: ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'],
+            today: 'Vandaag',
+            clear: 'Legen',
+            close: 'Sluit',
+            firstDay: 1,
+            format: 'dd-mm-yyyy',
+            formatSubmit: 'yyyy/mm/dd',
+            selectMonths: true,
+            selectYears: 15
+        });
+
+    </script>
+
+{% endblock %}
