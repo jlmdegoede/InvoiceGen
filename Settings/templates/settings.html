@@ -15,18 +15,17 @@
     {% breadcrumb "Instellingen" "settings" %}
 {% endblock %}
 
+{% block side_menu %}
+    <a href="#data" class="collection-item" id="data-link">Persoonlijke gegevens</a>
+    <a href="#color" class="collection-item">Personalisatie</a>
+    <a href="#todo" class="collection-item">Integratie</a>
+    <a href="#subscription" class="collection-item">InvoiceGen-abonnement</a>
+{% endblock %}
+
 {% block content %}
 
     <div class="row">
-        <div class="col s12">
-            <ul class="tabs">
-                <li class="tab col s3"><a href="#data">Persoonlijke gegevens</a></li>
-                <li class="tab col s3"><a href="#color">Personalisatie</a></li>
-                <li class="tab col s3"><a href="#todo">Integratie</a></li>
-                <li class="tab col s3"><a href="#subscription">InvoiceGen-abonnement</a></li>
-            </ul>
-        </div>
-        <div id="data" class="col s12">
+        <div id="data" class="col s12 settings-tab" style="display:none;">
             <h4>Persoonlijke gegevens</h4>
             <form id="login_form" method="post" action="{% url "settings" %}">
                 {% csrf_token %}
@@ -88,7 +87,7 @@
                 </div>
             </form>
         </div>
-        <div id="color" class="col s12">
+        <div id="color" class="col s12 settings-tab" style="display:none;">
             <h4>Personalisatie</h4>
             <form method="post" action="{% url "set_colors" %}">
                 {% csrf_token %}
@@ -127,99 +126,121 @@
                 <a href="{% url "reset_colors" %}">Standaardkleuren herstellen</a>
             </form>
         </div>
-        <div id="todo" class="col s12">
+        <div id="todo" class="col s12 settings-tab" style="display:none;">
             <h4>Wunderlist-integratie</h4>
             {% if todo != None %}
-            <table>
-                <tr>
-                    <td>Auth:</td>
-                    <td>{% if todo.auth_token != None %}Geautoriseerd{% else %}Nu inschakelen{% endif %}</td>
-                </tr>
-                <tr>
-                    <td>Gemaakt op:</td>
-                    <td> {{ todo.created }}</td>
-                </tr>
-                <tr>
-                    <td>Voor gebruiker:</td>
-                    <td> {{ todo.user_id.username }}</td>
-                </tr>
-                <tr>
-                    <td>Lijst:</td>
-                    <td>
-                        <form method="post" action="/wunderlist-instellingen/">
-                        {% csrf_token %}
-                            <select name="existing_list">
-                                {% for list in lists %}
-                                    <option value="{{  list.id }}" {% if list.id == current_list %}selected{% endif %}>{{ list.title }}</option>
-                                   {% endfor %}
-                            </select>
-                            <input type="text" placeholder="...Of maak een nieuwe lijst aan voor opdrachten FactuurMaker" name="new_list" /></a>
-                            <p>
-                                <input type="checkbox" id="auto_add_to_wunderlist" name="auto_add_to_wunderlist" {% if wunderlist_enabled %}checked{% endif %} />
-                                <label for="auto_add_to_wunderlist">Automatisch nieuwe opdrachten aan Wunderlist toevoegen</label>
-                            </p>
-                                <input type="submit" value="Opslaan" class="btn btn-default" />
-                        </form>
-                    </td>
-                </tr>
-            </table>
+                <table>
+                    <tr>
+                        <td>Auth:</td>
+                        <td>{% if todo.auth_token != None %}Geautoriseerd{% else %}Nu inschakelen{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>Gemaakt op:</td>
+                        <td> {{ todo.created }}</td>
+                    </tr>
+                    <tr>
+                        <td>Voor gebruiker:</td>
+                        <td> {{ todo.user_id.username }}</td>
+                    </tr>
+                    <tr>
+                        <td>Lijst:</td>
+                        <td>
+                            <form method="post" action="/wunderlist-instellingen/">
+                                {% csrf_token %}
+                                <select name="existing_list">
+                                    {% for list in lists %}
+                                        <option value="{{ list.id }}"
+                                                {% if list.id == current_list %}selected{% endif %}>{{ list.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text"
+                                       placeholder="...Of maak een nieuwe lijst aan voor opdrachten FactuurMaker"
+                                       name="new_list"/></a>
+                                <p>
+                                    <input type="checkbox" id="auto_add_to_wunderlist" name="auto_add_to_wunderlist"
+                                           {% if wunderlist_enabled %}checked{% endif %}/>
+                                    <label for="auto_add_to_wunderlist">Automatisch nieuwe opdrachten aan Wunderlist
+                                        toevoegen</label>
+                                </p>
+                                <input type="submit" value="Opslaan" class="btn btn-default"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
             {% else %}
                 <a href="{{ wunderlist_dict.url }}">Klik hier om Wunderlist te koppelen</a>
             {% endif %}
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('select').material_select();
+                });
+            </script>
+        </div>
+
+        <div id="subscription" style="display:none;" class="settings-tab">
+            <h4>Mijn gegevens</h4>
+            <table class="table">
+                <tr>
+                    <td>Naam</td>
+                    <td>{{ invoice_site.first_name }} {{ invoice_site.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>E-mailadres</td>
+                    <td>{{ invoice_site.email }}</td>
+                </tr>
+                <tr>
+                    <td>Uw InvoiceGen-omgeving</td>
+                    <td>
+                        <a href="https://{{ invoice_site.subdomain }}.invoicegen.nl/">https://{{ invoice_site.subdomain }}.invoicegen.nl/</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Account actief</td>
+                    <td>{% if invoice_site.subscription %} Ja {% else %} Nee {% endif %}</td>
+                </tr>
+                <tr>
+                    <td>Abonnement geldig tot</td>
+                    <td>{{ invoice_site.valid_until }}</td>
+                </tr>
+                <tr>
+                    <td>Klantnummer</td>
+                    <td>{{ invoice_site.customer_number }}</td>
+                </tr>
+            </table>
+
+            Heeft u vragen, opmerkingen of wijzigingen? <a href="mailto:support@invoicegen.nl">Stuur ons een e-mail!</a>
+            <br/>
+            <br/>
+            <div class="row">
+                <h4>Account beëindigen</h4>
+                Wilt u uw account beëeindigen? Stuur dan een e-mailbericht met uw klantnummer naar <a
+                    href="mailto:support@invoicegen.nl">support@invoicegen.nl</a> met uw accountgegevens.<br/>
+                Al uw persoonlijke data wordt binnen een werkdag verwijderd.
+            </div>
+        </div>
+    </div>
+    </div>
+
         <script type="text/javascript">
             $(document).ready(function () {
-                $('select').material_select();
+                $('#data').show();
+                $('data-link').addClass('active');
+
+                $('.collection-item').click(function (e) {
+                    $('.settings-tab').hide();
+                    var divClicked = $(this).attr('href');
+                    $('.collection-item').removeClass('active');
+                    $(this).addClass('active');
+                    $(divClicked).show();
+                });
             });
         </script>
-        </div>
-
-        <div id="subscription">
-            <h4>Mijn gegevens</h4>
-    <table class="table">
-        <tr>
-            <td>Naam</td>
-            <td>{{ invoice_site.first_name }} {{ invoice_site.last_name }}</td>
-        </tr>
-        <tr>
-            <td>E-mailadres</td>
-            <td>{{ invoice_site.email }}</td>
-        </tr>
-        <tr>
-            <td>Uw InvoiceGen-omgeving</td>
-            <td><a href="https://{{ invoice_site.subdomain }}.invoicegen.nl/">https://{{ invoice_site.subdomain }}.invoicegen.nl/</a></td>
-        </tr>
-        <tr>
-            <td>Account actief</td>
-            <td>{% if invoice_site.subscription %} Ja {% else %} Nee {% endif %}</td>
-        </tr>
-        <tr>
-            <td>Abonnement geldig tot</td>
-            <td>{{ invoice_site.valid_until }}</td>
-        </tr>
-        <tr>
-            <td>Klantnummer</td>
-            <td>{{ invoice_site.customer_number }}</td>
-        </tr>
-    </table>
-
-    Heeft u vragen, opmerkingen of wijzigingen? <a href="mailto:support@invoicegen.nl">Stuur ons een e-mail!</a>
-    <br />
-    <br />
-        <div class="row">
-        <h4>Account beëindigen</h4>
-        Wilt u uw account beëeindigen? Stuur dan een e-mailbericht met uw klantnummer naar <a href="mailto:support@invoicegen.nl">support@invoicegen.nl</a> met uw accountgegevens.<br />
-            Al uw persoonlijke data wordt binnen een werkdag verwijderd.
-        </div>
-    </div>
-        </div>
-    </div>
 
     {% if toast %}
         <script type="text/javascript">
             $(document).ready(function () {
-                $('ul.tabs').tabs();
+                Materialize.toast('{{ toast }}', 4000)
             });
-            Materialize.toast('{{ toast }}', 4000)
         </script>
     {% endif %}
 {% endblock %}
