@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from datetime import date
+from datetime import date, datetime
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
 from Invoices.models import OutgoingInvoice, IncomingInvoice
-
+from Utils.date_helper import get_formatted_string
 
 # Create your views here.
 
@@ -46,32 +46,69 @@ def get_yearly_stats(year):
 
 
 def view_btw_aangifte(request):
-    year = 2016
-    incoming_btw = get_btw_incoming(year)
-    outgoing_btw = get_btw_outgoing(year)
+    start_date = None
+    end_date = None
+    if 'start_date' in request.POST and 'end_date' in request.POST:
+        start_date = datetime.strptime(request.POST['start_date'], '%d-%m-%Y')
+        end_date = datetime.strptime(request.POST['end_date'], '%d-%m-%Y')
+    if not start_date or not end_date or end_date < start_date:
+        now = datetime.now()
+        quarter = (now.month-1)//3
+        start_date = get_previous_quarter_start_date(now, quarter)
+        end_date = get_previous_quarter_end_date(now, quarter)
+
+    incoming_btw = get_btw_incoming(start_date, end_date)
+    outgoing_btw = get_btw_outgoing(start_date, end_date)
     difference_btw = float(outgoing_btw) - float(incoming_btw)
 
-    incoming_invoices = IncomingInvoice.objects.filter(date_created__year=year).exclude(btw_amount=0)
+    incoming_invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
 
-    outgoing_invoices = OutgoingInvoice.objects.filter(date_created__year=year)
+    outgoing_invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
     outgoing_invoices = filter(lambda x: x.get_btw() is not 0, outgoing_invoices)
+
     return render(request, 'btw_aangifte.html',
                   {'incoming_btw': incoming_btw, 'outgoing_btw': outgoing_btw, 'difference_btw': str(difference_btw),
-                   'incoming_invoices': incoming_invoices, 'outgoing_invoices': outgoing_invoices})
+                   'incoming_invoices': incoming_invoices, 'outgoing_invoices': outgoing_invoices,
+                   'start_date': get_formatted_string(start_date), 'end_date': get_formatted_string(end_date)})
 
 
-def get_btw_outgoing(year):
-    invoices = OutgoingInvoice.objects.filter(date_created__year=year)
-    #
+def get_btw_outgoing(start_date, end_date):
+    invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
     btw_outgoing = 0
     for invoice in invoices:
         btw_outgoing += invoice.get_btw()
     return btw_outgoing
 
 
-def get_btw_incoming(year):
-    invoices = IncomingInvoice.objects.filter(date_created__year=year).exclude(btw_amount=0)
+def get_btw_incoming(start_date, end_date):
+    invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
     btw_incoming = 0
     for invoice in invoices:
         btw_incoming += invoice.btw_amount
     return btw_incoming
+
+
+def get_previous_quarter_start_date(now, quarter):
+    quarter = quarter - 1 if quarter - 1 >= 0 else 3
+    year = now.year if quarter >= 0 else now.year - 1
+
+    quarters = {
+        0: datetime(year, 1, 1),
+        1: datetime(year, 4, 1),
+        2: datetime(year, 7, 1),
+        3: datetime(year, 10, 1),
+    }
+    return quarters.get(quarter, 0)
+
+
+def get_previous_quarter_end_date(now, quarter):
+    quarter = quarter - 1 if quarter - 1 >= 0 else 3
+    year = now.year if quarter >= 0 else now.year - 1
+
+    quarters = {
+        0: datetime(year, 3, 31),
+        1: datetime(year, 6, 30),
+        2: datetime(year, 9, 30),
+        3: datetime(year, 12, 31),
+    }
+    return quarters.get(quarter, 0)

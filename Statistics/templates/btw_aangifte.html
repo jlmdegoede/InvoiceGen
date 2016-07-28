@@ -17,20 +17,22 @@
     <div class="row"><br/>
         <h5>Selecteer periode</h5>
         <div class="row">
-            <form class="col s12">
+            <form class="col s12" method="post" action="{% url "btw_aangifte" %}">
+                {% csrf_token %}
                 <div class="row">
-                    <div class="input-field col s12">
-                        <input type="date" name="startdate" class="datepicker">
-                        <label for="startdate">Startdatum</label>
+                    <div class="input-field col s6">
+                        <input type="date" name="start_date validate" class="datepicker" value="{{ start_date }}" required>
+                        <label for="start_date">Startdatum</label>
                     </div>
-                    <div class="input-field col s12">
-                        <input type="date" class="datepicker" name="enddate">
-                        <label for="enddate">Einddatum</label>
+                    <div class="input-field col s6">
+                        <input type="date" class="datepicker validate" name="end_date" value="{{ end_date }}" required>
+                        <label for="end_date">Einddatum</label>
                     </div>
                     <button class="btn waves-effect waves-light" type="submit" name="submit">
                         Aanpassen
                         <i class="material-icons left">send</i>
                     </button>
+                    {{ error }}
                 </div>
             </form>
         </div>
@@ -44,13 +46,12 @@
     <div class="row">
     <table class="bordered col s12">
         <tr>
+            <td>Uitgaande BTW</td>
+            <td>€ {{ outgoing_btw }}</td>
+        </tr>
         <tr>
             <td width="350px">Inkomende BTW</td>
             <td>€ {{ incoming_btw }}</td>
-        </tr>
-        <tr>
-            <td>Uitgaande BTW</td>
-            <td>€ {{ outgoing_btw }}</td>
         </tr>
         <tr>
             <td>Te betalen BTW</td>
@@ -72,7 +73,7 @@
             {% for invoice in incoming_invoices %}
                 <tr>
                     <td>
-                        {{ invoice.title }}
+                        <a href="{% url "detail_incoming_invoice" invoice.id %}">{{ invoice.title }}</a>
                     </td>
                     <td>
                         {{ invoice.invoice_number }}
@@ -101,7 +102,7 @@
             {% for invoice in outgoing_invoices %}
                 <tr>
                     <td>
-                        {{ invoice.title }}
+                        <a href="{% url "detail_outgoing_invoice" invoice.id %}">{{ invoice.title }}</a>
                     </td>
                     <td>
                         {{ invoice.to_company }}

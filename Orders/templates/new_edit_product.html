@@ -42,12 +42,12 @@
         <label for="{{ form.title.id_for_label }}">Opdracht</label>
         {{ error.title }}
     </div>
-    <div class="input-field col s12">
+    <div class="input-field col s6">
         {{ form.date_received }}
         <label for="{{ form.date_received.id_for_label }}">Datum ontvangen</label>
         {{ error.date_received }}
     </div>
-    <div class="input-field col s12">
+    <div class="input-field col s6">
         {{ form.date_deadline }}
         <label for="{{ form.date_deadline.id_for_label }}">Deadline</label>
         {{ error.date_deadline }}
@@ -65,20 +65,20 @@
         <label for="{{ form.identification_number.id_for_label }}">Identificatienummer</label>
         {{ error.identification_number }}
     </div>
-    <div class="input-field col s12">
+    <div class="input-field col s6">
         {{ form.price_per_quantity }}
         <label for="{{ form.price_per_quantity.id_for_label }}">Prijs per eenheid</label>
         {{ error.price_per_quantity }}
+    </div>
+    <div class="input-field col s6">
+        {{ form.quantity }}
+        <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
+        {{ error.quantity }}
     </div>
     <div class="input-field col s12">
         {{ form.tax_rate }}
         <label for="{{ form.tax_rate.id_for_label }}">BTW-tarief percentage (0 als geen BTW)</label>
         {{ error.tax_rate }}
-    </div>
-    <div class="input-field col s12">
-        {{ form.quantity }}
-        <label for="{{ form.quantity.id_for_label }}">Kwantiteit</label>
-        {{ error.quantity }}
     </div>
     <div class="input-field col s12">
         {{ form.briefing }}
