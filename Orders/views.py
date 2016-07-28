@@ -29,7 +29,7 @@ def index(request):
 
     toast = get_toast_and_cleanup_session(request)
 
-    active_products_table = OrderTable(Product.objects.filter(done=False))
+    active_products_table = OrderTable(Product.objects.filter(done=False), prefix='openstaand-', order_by='date_deadline')
     no_settings_notification = Settings.views.no_settings_created_yet()
 
     RequestConfig(request).configure(active_products_table)
@@ -50,7 +50,8 @@ def fill_product_table_per_year(request):
         if products_year.count() is not 0:
             year_list.append(year)
             products_year = add_agreements_to_products(products_year)
-            products[year] = OrderTable(products_year)
+            prefix = str(year) + '-'
+            products[year] = OrderTable(products_year, prefix=prefix, order_by='-date_deadline')
             RequestConfig(request).configure(products[year])
 
     year_list.sort(reverse=True)
