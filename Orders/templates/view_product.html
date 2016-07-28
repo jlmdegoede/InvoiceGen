@@ -64,12 +64,12 @@
                         {% else %}
                             <form>
                                 <div class="row">
-                                    <div class="input-field col s12">
+                                    <div class="input-field col s6">
                                         <input id="date-{{ hourregistration.id }}" type="date" class="datepicker"
                                                required>
                                         <label for="date-{{ hourregistration.id }}">Einddatum</label>
                                     </div>
-                                    <div class="input-field col s12">
+                                    <div class="input-field col s6">
                                         <input id="time-{{ hourregistration.id }}" class="timepicker" type="text"
                                                required>
                                         <label for="time-{{ hourregistration.id }}">Eindtijd</label>
@@ -96,19 +96,19 @@
                     <span class="card-title">Nieuwe urenregistratie</span>
                     <form id="new-hourregistration-form">
                         <div class="row">
-                            <div class="input-field col s12">
+                            <div class="input-field col s6">
                                 <input id="start-date" type="date" class="datepicker validate" required>
                                 <label for="start-date">Startdatum</label>
                             </div>
-                            <div class="input-field col s12">
+                            <div class="input-field col s6">
                                 <input id="start-time" type="text" class="timepicker validate" required>
                                 <label for="start-time">Starttijd</label>
                             </div>
-                            <div class="input-field col s12">
+                            <div class="input-field col s6">
                                 <input id="end-date" type="date" class="datepicker validate" required>
                                 <label for="end-date">Einddatum</label>
                             </div>
-                            <div class="input-field col s12">
+                            <div class="input-field col s6">
                                 <input id="end-time" class="timepicker validate" type="text" required>
                                 <label for="end-time">Eindtijd</label>
                             </div>
