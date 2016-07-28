@@ -51,8 +51,10 @@ def view_btw_aangifte(request):
     outgoing_btw = get_btw_outgoing(year)
     difference_btw = float(outgoing_btw) - float(incoming_btw)
 
-    incoming_invoices = IncomingInvoice.objects.filter(date_created__year=year)
+    incoming_invoices = IncomingInvoice.objects.filter(date_created__year=year).exclude(btw_amount=0)
+
     outgoing_invoices = OutgoingInvoice.objects.filter(date_created__year=year)
+    outgoing_invoices = filter(lambda x: x.get_btw() is not 0, outgoing_invoices)
     return render(request, 'btw_aangifte.html',
                   {'incoming_btw': incoming_btw, 'outgoing_btw': outgoing_btw, 'difference_btw': str(difference_btw),
                    'incoming_invoices': incoming_invoices, 'outgoing_invoices': outgoing_invoices})
@@ -60,6 +62,7 @@ def view_btw_aangifte(request):
 
 def get_btw_outgoing(year):
     invoices = OutgoingInvoice.objects.filter(date_created__year=year)
+    #
     btw_outgoing = 0
     for invoice in invoices:
         btw_outgoing += invoice.get_btw()
@@ -67,7 +70,7 @@ def get_btw_outgoing(year):
 
 
 def get_btw_incoming(year):
-    invoices = IncomingInvoice.objects.filter(date_created__year=year)
+    invoices = IncomingInvoice.objects.filter(date_created__year=year).exclude(btw_amount=0)
     btw_incoming = 0
     for invoice in invoices:
         btw_incoming += invoice.btw_amount
