@@ -38,22 +38,22 @@
 
 
                     <div class="input-field col s12">
+                        {{ form.email }}
+                        <label for="{{ form.email.id_for_label }}">E-mailadres</label>
+                        {{ error.title }}
+                    </div>
+
+
+                    <div class="input-field col s6">
                         {{ form.address }}
                         <label for="{{ form.address.id_for_label }}">Adres</label>
                         {{ error.title }}
                     </div>
 
 
-                    <div class="input-field col s12">
+                    <div class="input-field col s6">
                         {{ form.city_and_zipcode }}
                         <label for="{{ form.city_and_zipcode.id_for_label }}">Plaats en postcode</label>
-                        {{ error.title }}
-                    </div>
-
-
-                    <div class="input-field col s12">
-                        {{ form.email }}
-                        <label for="{{ form.email.id_for_label }}">E-mailadres</label>
                         {{ error.title }}
                     </div>
 
@@ -63,13 +63,13 @@
                         {{ error.title }}
                     </div>
 
-                    <div class="input-field col s12">
+                    <div class="input-field col s6">
                         {{ form.kvk }}
                         <label for="{{ form.kvk.id_for_label }}">KvK-nummer (optioneel)</label>
                         {{ error.kvk }}
                     </div>
 
-                    <div class="input-field col s12">
+                    <div class="input-field col s6">
                         {{ form.btw_number }}
                         <label for="{{ form.btw_number.id_for_label }}">BTW-nummer (optioneel)</label>
                         {{ error.kvk }}
