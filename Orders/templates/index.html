@@ -146,11 +146,16 @@
                                 type: "POST",
                                 url: '{% url "generate_invoice" %}',
                                 data: {
-                                    articles: clickedList,
+                                    products: clickedList,
                                     volgnummer: follower_number,
                                     csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
-                                success: Materialize.toast('Factuur aangemaakt', 4000)
+                                success: function(data) {
+                                    if (data.return_url) {
+                                        var url = data.return_url;
+                                        window.location.replace(url);
+                                    }
+                                },
                             });
                         } else {
                             $('#volgnummer').attr("placeholder", "Vul een volgnummer in!");

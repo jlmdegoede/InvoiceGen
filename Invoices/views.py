@@ -1,9 +1,9 @@
 from datetime import date
 from datetime import timedelta
-
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
-
+from django.core.urlresolvers import reverse
 import Utils.markdown_generator
 from InvoiceGen.settings import BASE_DIR
 from Invoices.forms import *
@@ -304,7 +304,7 @@ def generate_invoice(request):
         articles = []
         totaalbedrag = 0
         invoice = OutgoingInvoice()
-        for articleId in request.POST.getlist('articles[]'):
+        for articleId in request.POST.getlist('products[]'):
             article = Product.objects.get(id=articleId)
             articles.append(article)
             totaalbedrag += article.quantity * article.price_per_quantity
@@ -324,4 +324,5 @@ def generate_invoice(request):
         for article in articles:
             article.invoice = invoice
             article.save()
-    return redirect('/')
+        return JsonResponse({'return_url': reverse(detail_outgoing_invoice, kwargs={'invoice_id': invoice.id})})
+    return JsonResponse({'success': False})

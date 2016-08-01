@@ -16,6 +16,8 @@ def view_statistics(request):
     not_yet_invoiced = []
     nr_of_words = []
     totale_inkomsten = []
+    totale_urenbesteding = 0
+
     for i in range(int(year) - 5, int(year) + 1):
         tuple = get_yearly_stats(i)
         nr_of_articles.append(tuple[0])
@@ -31,11 +33,11 @@ def get_yearly_stats(year):
     nr_of_articles = 0
     totale_inkomsten = 0
     nr_of_words = 0
-    all_articles = Product.objects.filter(done=True)
-    for article in all_articles:
-        if article.date_deadline.year == int(year):
-            totale_inkomsten += article.quantity * article.price_per_quantity
-            nr_of_words += article.quantity
+    all_products = Product.objects.filter(done=True)
+    for product in all_products:
+        if product.date_deadline.year == int(year):
+            totale_inkomsten += product.quantity * product.price_per_quantity
+            nr_of_words += product.quantity
             nr_of_articles += 1
     not_yet_invoiced = 0
     not_yet_invoiced_articles = Product.objects.filter(done=False)
@@ -45,7 +47,7 @@ def get_yearly_stats(year):
     return nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced
 
 
-def view_btw_aangifte(request):
+def get_start_end_dates(request):
     start_date = None
     end_date = None
     if 'start_date' in request.POST and 'end_date' in request.POST:
@@ -53,9 +55,14 @@ def view_btw_aangifte(request):
         end_date = datetime.strptime(request.POST['end_date'], '%d-%m-%Y')
     if not start_date or not end_date or end_date < start_date:
         now = datetime.now()
-        quarter = (now.month-1)//3
+        quarter = (now.month - 1) // 3
         start_date = get_previous_quarter_start_date(now, quarter)
         end_date = get_previous_quarter_end_date(now, quarter)
+    return start_date, end_date
+
+
+def view_btw_aangifte(request):
+    start_date, end_date = get_start_end_dates(request)
 
     incoming_btw = get_btw_incoming(start_date, end_date)
     outgoing_btw = get_btw_outgoing(start_date, end_date)

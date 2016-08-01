@@ -12,7 +12,7 @@
 
 {% block content %}
     <h4>{{ product.title }}</h4>
-    <table class="striped">
+    <table class="bordered">
         <tr>
             <td>Datum ontvangen</td>
             <td><b>{{ product.date_received }}</b></td>
@@ -28,6 +28,10 @@
         <tr>
             <td>Prijs per eenheid</td>
             <td><b>{{ product.price_per_quantity }}</b></td>
+        </tr>
+        <tr>
+            <td>Identificatienr.</td>
+            <td><b>{{ product.identification_number }}</b></td>
         </tr>
         <tr>
             <td>BTW</td>
