@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
 {% load staticfiles %}
 {% block orders_active %}active{% endblock %}
 {% block title %}
@@ -14,107 +15,53 @@
     {% breadcrumb "Opdrachten" "index" %}
 {% endblock %}
 
+{% block side_menu %}
+    <a href="{% url "company_index" %}" class="collection-item {% block companies_active %}{% endblock %}">Opdrachtgevers beheren</a>
+    <a href="{% url "company_add" %}" class="collection-item {% block new_company_active %}{% endblock %}">Nieuwe opdrachtgever toevoegen</a>
+{% endblock %}
+
 {% block content %}
     {% if first_time %}
-        <div class="card-panel green">
+        <div class="card-panel teal white-text">
             <b>Welkom bij InvoiceGen!</b> Voordat u begint met het maken van facturen, overeenkomsten en opdrachten, zorg ervoor dat u eerst even een bezoek brengt aan <a href="/instellingen" class="blue-grey-text text-darken-2">Instellingen</a> om uw persoonlijke gegevens in te vullen.
             Pas als u dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en facturen te genereren. Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
         </div>
     {% endif %}
-    <h1>Opdrachten beheren</h1>
-    <a href="{% url "company_add" %}">Nieuwe opdrachtgever toevoegen</a> | <a href="{% url "company_index" %}">Opdrachtgevers beheren</a>
+    <h4>Opdrachten beheren</h4>
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
-                <li class="tab col s3 active"><a href="#openstaand">Openstaand</a></li>
+                <li class="tab col s3 active"><a href="#openstaand" class="yeartable">Openstaand</a></li>
                 {% for year in years %}
-                    <li class="tab col s3"><a href="#{{year}}">{{ year }}</a></li>
+                    <li class="tab col s3"><a href="#{{year}}" class="yeartable">{{ year }}</a></li>
                 {% endfor %}
             </ul>
         </div>
 
         <div id="openstaand" class="col s12">
                 {% csrf_token %}
-            <table  class="striped responsive-table">
-                <thead>
-                        <th data-field="select"></th>
-                        <th data-field="id">Opdracht</th>
-                        <th data-field="word_count">Aantal</th>
-                        <th data-field="magazine">Opdrachtgever</th>
-                        <th data-field="date">Datum</th>
-                        <th data-field="paid">Factuur/Overeenkomst</th>
-                        <th data-field="paid"></th>
-                    </thead>
-                    <tbody>
-
-                        {% for article in active_articles %}
-                            <tr>
-                                <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
-                                <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.company_name }}</td>
-                                <td>{{ article.date_deadline }}</td>
-                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %} / {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
-                                <td>
-                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-            </table>
+                {% render_table active_products_table "../templates/table_materialize.html" %}
         <p>
             <a href="#" class="waves-effect waves-light btn done-button">Opdrachten afgerond</a></p>
         </div>
 
-        {% for y, a in articles.items %}
+        {% for y, table in products.items %}
             <div id="{{ y }}" class="col s12">
-                {% csrf_token %}
-                <table  class="striped responsive-table">
-                <thead>
-                        <th data-field="select"></th>
-                        <th data-field="id">Opdracht</th>
-                        <th data-field="word_count">Aantal</th>
-                        <th data-field="magazine">Opdrachtgever</th>
-                        <th data-field="date">Datum</th>
-                        <th data-field="paid">Factuur/Overeenkomst</th>
-                        <th data-field="paid"></th>
-                    </thead>
-
-                    <tbody>
-                            {% for article in a %}
-                            <tr>
-                                <td><input type="checkbox" id="{{ article.id }}" value="{{ article.id }}" name="to_invoice" /><label for="{{ article.id }}"></label></td>
-                                <td><a href="#" class="dialog-trigger modal-trigger" value="{{ article.id }}">{{ article.title }}</a></td>
-                                <td>{{ article.quantity }}</td>
-                                <td>{{ article.from_company.company_name }}</td>
-                                <td>{{ article.date_deadline }}</td>
-                                <td>{% if article.invoice %} <a href="{{ article.invoice.file_path }}">Openen</a> {% else %} Geen {% endif %} / {% if article.agreement %} <a href="{% url "view_agreement" article.agreement.url %}">Openen</a> {% else %} Geen {% endif %}</td>
-                                <td>
-                                    <a href="{% url "edit_product" article.id %}"><i class="material-icons">edit</i></a>
-                                    <a href="#modal1" class="modal-trigger delete" value="{{ article.id }}" name="{{ article.title }}"><i class="material-icons">delete</i></a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                    </tbody>
-                </table>
-            <div>
-                <p>
-                    <a href="#modal2" class="modal-trigger waves-effect waves-light btn">Factureren</a>
-                </p>
-                </div>
-            </form>
+                {% render_table table "../templates/table_materialize.html" %}
+                <a href="#" class="modal-trigger waves-effect waves-light btn">Factureren</a>
             </div>
-        {% endfor %}
 
-            <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "add_product" %}"><i class="material-icons">add</i></a>
-            {% if toast %}
-                <script type="text/javascript">
-                    Materialize.toast('{{ toast }}', 4000)
-                </script>
-            {% endif %}
+        {% endfor %}
+        {% if toast %}
+            <script type="text/javascript">
+                Materialize.toast('{{ toast }}', 4000)
+            </script>
+        {% endif %}
     </div>
 
+    <script type="text/babel" src="/static/js/hourregistration.js"></script>
+    
+    <div id="urenregistratie"></div>
 
 <div id="modal-invoice" class="modal">
    <div class="modal-content">
@@ -144,34 +91,36 @@
     </div>
   </div>
 
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "add_product" %}">
+          <i class="large material-icons">add</i>
+        </a>
+    </div>
 
- <div id="modal-article" class="modal" style="height:600px">
-    <div class="modal-content" style="height:500px">
-      <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
-    </div>
-  </div>
 
     <script type="text/javascript">
+    $(document).ready(function() {
+        saveTableTab('order_page');
 
-    $(document).ready(function(){
          // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
         $('.done-button').click(function(e) {
-            var clickedDoneList = []
+            var clickedDoneList = [];
                 $('input[type="checkbox"]:checked').each(function() {
                     clickedDoneList[clickedDoneList.length] = $(this).val();
                 });
-                $.ajax({
-                    type: "POST",
-                    url: '{% url "mark_products_as_done" %}',
-                    data: {
-                        products: clickedDoneList,
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: location.reload(),
-                });
+                if (clickedDoneList.length != 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: '{% url "mark_products_as_done" %}',
+                        data: {
+                            products: clickedDoneList,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: location.reload(),
+                    });
+                } else {
+                     Materialize.toast('Vink eerst een of meer afgeronde opdrachten aan', 4000)
+                }
         });
         $('.modal-trigger').click(function (event) {
             if ($(this).hasClass("delete")) {
@@ -180,10 +129,6 @@
                 $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
                 $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
                 $('#modal1').openModal();
-            } else if ($(this).hasClass("dialog-trigger")) {
-                var page = "/opdracht/" + $(this).attr('value');
-                $('.article-iframe').attr('src', page)
-                $('#modal-article').openModal();
             } else {
                 // factuurknop gedrukt
                 if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {
@@ -201,11 +146,16 @@
                                 type: "POST",
                                 url: '{% url "generate_invoice" %}',
                                 data: {
-                                    articles: clickedList,
+                                    products: clickedList,
                                     volgnummer: follower_number,
                                     csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
-                                success: Materialize.toast('Factuur aangemaakt', 4000)
+                                success: function(data) {
+                                    if (data.return_url) {
+                                        var url = data.return_url;
+                                        window.location.replace(url);
+                                    }
+                                },
                             });
                         } else {
                             $('#volgnummer').attr("placeholder", "Vul een volgnummer in!");

@@ -7,9 +7,6 @@
     Factuur inzien
 {% endblock %}
 
-{% block header %}
-{% endblock %}
-
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Factuur inzien" "" %}
@@ -17,9 +14,9 @@
 
 {% block content %}
 
-<div class="container">
-<h2>{{ invoice.title }}</h2>
-    <table class="responsive-table">
+<div class="row">
+<h4>{{ invoice.title }}</h4>
+    <table class="responsive-table bordered">
         <tr>
             <td>
                 Datum aangemaakt
@@ -80,5 +77,14 @@
 
     </table>
 </div>
+
+
+
+<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a class="btn-floating btn-large red" href="{% url "edit_incoming_invoice" invoice.id %}">
+      <i class="large material-icons">mode_edit</i>
+    </a>
+</div>
+
 
 {% endblock %}

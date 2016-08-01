@@ -1,0 +1,252 @@
+{% extends "index.html" %}
+
+{% load django_bootstrap_breadcrumbs %}
+{% block title %}
+    Opdracht {{ product.title }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb product.title "view_product" %}
+{% endblock %}
+
+{% block content %}
+    <h4>{{ product.title }}</h4>
+    <table class="bordered">
+        <tr>
+            <td>Datum ontvangen</td>
+            <td><b>{{ product.date_received }}</b></td>
+        </tr>
+        <tr>
+            <td>Deadline</td>
+            <td><b>{{ product.date_deadline }}</b></td>
+        </tr>
+        <tr>
+            <td>Kwantiteit</td>
+            <td><b>{{ product.quantity }}</b></td>
+        </tr>
+        <tr>
+            <td>Prijs per eenheid</td>
+            <td><b>{{ product.price_per_quantity }}</b></td>
+        </tr>
+        <tr>
+            <td>Identificatienr.</td>
+            <td><b>{{ product.identification_number }}</b></td>
+        </tr>
+        <tr>
+            <td>BTW</td>
+            <td><b>{{ product.tax_rate }} procent</b></td>
+        </tr>
+        <tr>
+            <td>Opdrachtgever</td>
+            <td><b>{{ product.from_company }}</b></td>
+        </tr>
+        <tr>
+            <td>Gefactureerd</td>
+            <td>{% if product.invoice %} <a href="{{ product.invoice.file_path }}">Openen</a> {% else %} Nee {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Briefing</td>
+            <td><b>{{ product.briefing }}</b></td>
+        </tr>
+    </table>
+
+    <h5>Urenregistraties</h5>
+    Totale tijd aan opdracht gewerkt: {{ total_hours }} uur
+    <div class="row">
+        {% for hourregistration in hourregistrations %}
+            <div class="col s12 m6">
+                <div class="card blue-grey">
+                    <div class="card-content white-text">
+                        <span class="card-title">Tijd gewerkt: {{ hourregistration.number_of_hours }}</span>
+                        <p>Omschrijving: {{ hourregistration.description|default_if_none:""|linebreaks }}</p>
+                        <br/>
+                        <p>Gestart op: {{ hourregistration.start }}</p>
+                        {% if hourregistration.end != None %}
+                            <p>Gestopt op: {{ hourregistration.end }}</p>
+                        {% else %}
+                            <form>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <input id="date-{{ hourregistration.id }}" type="date" class="datepicker"
+                                               required>
+                                        <label for="date-{{ hourregistration.id }}">Einddatum</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <input id="time-{{ hourregistration.id }}" class="timepicker" type="text"
+                                               required>
+                                        <label for="time-{{ hourregistration.id }}">Eindtijd</label>
+                                    </div>
+                                </div>
+
+                                <div id="error-new-{{ hourregistration.id }}"></div>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="card-action">
+                        {% if hourregistration.end == None %}
+                            <a href="#" class="save-endtime" data-id="{{ hourregistration.id }}">Eindtijd opslaan</a>
+                        {% endif %}
+                        <a href="#" data-id="{{ hourregistration.id }}" class="modal-trigger">Verwijderen</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="col s12 m6">
+            <div class="card white">
+                <div class="card-content dark-text">
+                    <span class="card-title">Nieuwe urenregistratie</span>
+                    <form id="new-hourregistration-form">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input id="start-date" type="date" class="datepicker validate" required>
+                                <label for="start-date">Startdatum</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="start-time" type="text" class="timepicker validate" required>
+                                <label for="start-time">Starttijd</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="end-date" type="date" class="datepicker validate" required>
+                                <label for="end-date">Einddatum</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="end-time" class="timepicker validate" type="text" required>
+                                <label for="end-time">Eindtijd</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <textarea id="description" class="validate materialize-textarea"></textarea>
+                                <label for="end-time">Omschrijving werkzaamheden (optioneel)</label>
+                            </div>
+                        </div>
+                        <div id="error-new"></div>
+                    </form>
+                </div>
+                <div class="card-action">
+                    <a href="#" class="save-new-hourregistration" data-id="{{ hourregistration.id }}">Urenregistratie
+                        opslaan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "edit_product" product.id %}">
+            <i class="large material-icons">mode_edit</i>
+        </a>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Urenregistratie verwijderen</h4>
+            <p id="confirmText">Weet u zeker dat u deze urenregistratie wilt verwijderen?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="deleteLink"
+               class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="/static/js/timepicker/materialize.clockpicker.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.datepicker').pickadate({
+                monthsFull: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+                monthsShort: ['jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
+                weekdaysFull: ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'],
+                weekdaysShort: ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'],
+                today: 'Vandaag',
+                clear: 'Legen',
+                close: 'Sluit',
+                firstDay: 1,
+                format: 'dd-mm-yyyy',
+                selectMonths: true,
+                selectYears: 15,
+            });
+
+            $('.timepicker').pickatime({
+                autoclose: false,
+                twelvehour: false,
+                donetext: 'Klaar',
+            });
+            // click handler for time cards
+            $('.save-endtime').click(function (e) {
+                e.preventDefault();
+                var hourId = $(this).attr('data-id');
+                var endDate = $('#date-' + hourId).val();
+                var endTime = $('#time-' + hourId).val();
+
+                if (endDate && endTime) {
+                    $.ajax({
+                        url: '/urenregistratie/eindtijd/',
+                        dataType: 'json',
+                        method: 'POST',
+                        data: {endTime: endTime, endDate: endDate, pk: hourId, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        success: function (data) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    $('#error-new-' + hourId).text("Niet alle velden zijn ingevuld");
+                }
+            });
+
+            $('.save-new-hourregistration').click(function (e) {
+                e.preventDefault();
+                var startDate = $('#start-date').val();
+                var startTime = $('#start-time').val();
+                var endDate = $('#end-date').val();
+                var endTime = $('#end-time').val();
+                var description = $('#description').val();
+
+                if (!startDate || !startTime || !endDate || !endTime) {
+                    $('#error-new').text("Niet alle velden zijn ingevuld");
+                } else if ((endTime <= startTime && startDate == endDate) ||
+                        (endDate < startDate)) {
+                    $('#error-new').text("Ongeldige invoer: einde moet groter zijn dan start");
+                } else {
+                    $.ajax({
+                        url: '/urenregistratie/nieuw/',
+                        dataType: 'json',
+                        method: 'POST',
+                        data: {
+                            startDate: startDate,
+                            startTime: startTime,
+                            endTime: endTime,
+                            endDate: endDate,
+                            description: description,
+                            product_id: {{ product.id }},
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (data) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            $('.modal-trigger').click(function (e) {
+                $('#modal1').openModal();
+                var hour_id = $(this).attr('data-id');
+                $('#deleteLink').click(function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/urenregistratie/verwijderen/',
+                        dataType: 'json',
+                        method: 'POST',
+                        data: {time_id: hour_id, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        success: function (data) {
+                            location.reload();
+                        }
+                    })
+                });
+            });
+        });
+    </script>
+{% endblock %}

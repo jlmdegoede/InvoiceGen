@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
 {% block agreements_active %}active{% endblock %}
 
 {% block title %}
@@ -15,40 +16,18 @@
     {% breadcrumb "Overeenkomsten" "agreement_index" %}
 {% endblock %}
 
+    {% block side_menu %}
+        {% if user.is_authenticated %}
+            <a href="{% url "index_model_agreements" %}" class="collection-item {% block model_agreements_active %}{% endblock %}">Modelovereenkomsten beheren</a>
+            <a href="{% url "add_agreement_text" %}" class="collection-item {% block edit_new_model_agreement_active %}{% endblock %}">Nieuwe modelovereenkomst</a>
+        {% endif %}
+            <a href="javascript:window.print()" class="collection-item">Afdrukken</a>
+    {% endblock %}
+
 {% block content %}
-    <h1>Overeenkomsten beheren</h1>
-    <a href="{% url "add_agreement_text" %}">Nieuwe modelovereenkomst toevoegen</a> |
-    <a href="{% url "index_model_agreements" %}">Modelovereenkomsten beheren</a>
+    <h4>Overeenkomsten beheren</h4>
             {% csrf_token %}
-                <table  class="striped responsive-table">
-                    <thead>
-                        <th data-field="id">Datum</th>
-                        <th data-field="word_count">Opdrachten</th>
-                        <th data-field="magazine">Datum</th>
-                        <th data-field="ondertekend">Ondertekend</th>
-                        <th data-field="paid"></th>
-                    </thead>
-
-                    <tbody>
-
-                    {% for agreement in agreements %}
-                        <tr>
-                            <td><a href="{% url "view_agreement" agreement.url %}">{{ agreement.created }}</a></td>
-                            <td>{% for article in agreement.article_concerned.all %}{{ article.title }} {% endfor %}</td>
-                            <td>{{ agreement.article_concerned.first.date_deadline }}</td>
-                            <td>{% if not agreement.signed_by_client_at == None %} Ja {% else %} Nee {% endif %}</td>
-                            <td>
-                                <!--<a href="/article/edit/{{ article.id }}"><i class="small mdi-editor-mode-edit"></i></a>-->
-                                <a href="#modal1" class="modal-trigger delete" value="{{ agreement.id }}" name="{{ agreement.title }}"><i class="material-icons">delete</i></a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
-            </form>
-
-             <a class="btn-floating btn-large waves-effect waves-light red right"  href="/overeenkomsten/nieuw/"><i class="material-icons">add</i></a>
-
+            {% render_table agreements "../templates/table_materialize.html" %}
             {% if toast %}
                 <script type="text/javascript">
                     Materialize.toast('{{ toast }}', 4000)
@@ -69,6 +48,12 @@
         <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
     </div>
   </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "add_agreement" %}">
+          <i class="large material-icons">add</i>
+        </a>
+    </div>
 
 <div id="dialog" title="Artikel"></div>
 

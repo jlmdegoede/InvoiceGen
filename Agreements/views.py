@@ -11,8 +11,9 @@ from base64 import b64decode
 from django.core.files.base import ContentFile
 import InvoiceGen.site_settings
 import Settings.views
+from .tables import AgreementTable, AgreementTextTable
+from django_tables2 import RequestConfig
 
-# Create your views here.
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
 CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
 CLIENT_ADDRESS_CONSTANT = '<ADRES_OPDRACHTGEVER>'
@@ -25,6 +26,23 @@ CONTRACTOR_ADDRESS_CONSTANT = '<MIJN_ADRES>'
 OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
 
 AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
+
+
+
+@login_required
+def agreement_index(request):
+    context = RequestContext(request)
+    agreements = AgreementTable(Agreement.objects.all())
+    RequestConfig(request).configure(agreements)
+    return render_to_response('agreements.html', {'agreements': agreements}, context)
+
+
+@login_required
+def index_model_agreements(request):
+    context = RequestContext(request)
+    model_agreements = AgreementTextTable(AgreementText.objects.all())
+    RequestConfig(request).configure(model_agreements)
+    return render_to_response('model_agreements.html', {'model_agreements': model_agreements}, context)
 
 
 @login_required
@@ -54,12 +72,6 @@ def add_agreement(request):
         articles = Product.objects.filter(done=False)
         return render_to_response('new_edit_agreement.html', {'form': form, 'articles': articles}, context)
 
-
-@login_required
-def agreement_index(request):
-    context = RequestContext(request)
-    agreements = Agreement.objects.all()
-    return render_to_response('agreements.html', {'agreements': agreements}, context)
 
 
 def view_agreement(request, url):
@@ -163,13 +175,6 @@ def replace_text(agree_text, products):
     agree_text = agree_text.replace(CONTRACTOR_CITY_ZIPCODE_CONSTANT, contractor_city_zipcode)
     agree_text = agree_text.replace(CONTRACTOR_NAME_CONSTANT, contractor_name)
     return agree_text
-
-
-@login_required
-def index_model_agreements(request):
-    context = RequestContext(request)
-    model_agreements = AgreementText.objects.all()
-    return render_to_response('model_agreements.html', {'model_agreements': model_agreements}, context)
 
 
 @login_required

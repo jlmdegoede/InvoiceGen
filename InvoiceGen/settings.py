@@ -33,6 +33,9 @@ INSTALLED_APPS = (
     'colorful',
     'django_bootstrap_breadcrumbs',
     'Todo',
+    'HourRegistration',
+    'Statistics',
+    'django_tables2'
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -104,7 +107,7 @@ BREADCRUMBS_TEMPLATE = "breadcrumbs.html"
 
 LANGUAGE_CODE = 'nl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 
@@ -118,4 +121,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR + '/static/files/'
-MEDIA_URL = '/img/'
+MEDIA_URL = '/files/'

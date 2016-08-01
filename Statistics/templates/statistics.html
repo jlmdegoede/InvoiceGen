@@ -10,13 +10,17 @@
 {% block header %}
 {% endblock %}
 
+{% block side_menu %}
+    <a href="{% url "btw_aangifte" %}" class="collection-item">BTW-aangifte</a>
+{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Statistieken" "statistics" %}
 {% endblock %}
 
 {% block content %}
-<h1>Statistieken {{ year }}</h1>
+<h4>Statistieken {{ year }}</h4>
     <table class="striped">
         <tr>
             <td width="350px">Totaalaantal opdrachten</td>
@@ -32,7 +36,7 @@
         </tr>
         <tr>
             <td>Openstaande opdrachten
-            <td>&#8364;{{ not_yet_invoiced|last }}</td>
+            <td>€{{ not_yet_invoiced|last }}</td>
         </tr>
     </table>
     <h4>Afgelopen 5 jaar</h4>

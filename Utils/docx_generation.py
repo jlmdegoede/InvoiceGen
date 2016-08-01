@@ -7,10 +7,12 @@ from docx.shared import Pt
 def generate_docx_invoice(invoice, user, products, tax_rate):
     document = Document()
     p = document.add_paragraph()
-    p.add_run('Adres: \t\t' + user.name)
+    p.add_run('Adres: \t\t')
+    p.add_run(user.name).bold = True
     p.add_run('\n\t\t' + user.address)
     p.add_run('\n\t\t' + user.city_and_zipcode)
-    p.add_run('\n\t\t' + user.iban)
+    p.add_run('\nE-mail:\t\t' + user.email)
+    p.add_run('\nIBAN:\t\t' + user.iban)
     if user.kvk:
         p.add_run('\nKvK:\t\t' + user.kvk)
     if user.btw_number:
@@ -22,29 +24,26 @@ def generate_docx_invoice(invoice, user, products, tax_rate):
     p.add_run('\n' + invoice.to_company.company_city_and_zipcode)
 
     document.add_heading(invoice.title, 0)
-    document.add_paragraph(
-        'Volgnummer: \t' + str(invoice.invoice_number), style='ListBullet'
-    )
-    document.add_paragraph(
-        'Factuurdatum: \t' + get_formatted_string(invoice.date_created), style='ListBullet'
-    )
-    document.add_paragraph(
-        'Vervaldatum: \t' + get_formatted_string(invoice.expiration_date), style='ListBullet'
-    )
+    p = document.add_paragraph()
+    p.add_run('\nVolgnummer: \t\t' + str(invoice.invoice_number))
+    p.add_run('\nFactuurdatum: \t' + get_formatted_string(invoice.date_created))
+    p.add_run('\nVervaldatum: \t\t' + get_formatted_string(invoice.expiration_date))
     document.add_paragraph()
 
-    table = document.add_table(rows=1, cols=4)
+    table = document.add_table(rows=1, cols=5)
     hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'Opdracht'
-    hdr_cells[1].text = 'Identificatienr.'
-    hdr_cells[2].text = 'Kwantiteit'
-    hdr_cells[3].text = 'Prijs'
+    hdr_cells[0].paragraphs[0].add_run('Opdracht').bold = True
+    hdr_cells[1].paragraphs[0].add_run('Identificatienr.').bold = True
+    hdr_cells[2].paragraphs[0].add_run('Kwantiteit').bold = True
+    hdr_cells[3].paragraphs[0].add_run('Prijs per eenheid').bold = True
+    hdr_cells[4].paragraphs[0].add_run('Prijs').bold = True
     for product in products:
         row_cells = table.add_row().cells
         row_cells[0].text = str(product.title)
         row_cells[1].text = str(product.identification_number)
         row_cells[2].text = str(product.quantity)
-        row_cells[3].text = '€' + str(product.get_price())
+        row_cells[3].text = '€' + str(product.price_per_quantity)
+        row_cells[4].text = '€' + str(product.get_price())
 
     document.add_paragraph()
 

@@ -1,10 +1,7 @@
-from datetime import date
-
-import markdown
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import *
 from Invoices.models import *
 from Agreements.models import Agreement
@@ -14,50 +11,83 @@ from Utils.search_query import get_query
 from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import Settings.views
+from django.core import serializers
 import asyncio
+from HourRegistration.models import HourRegistration
+from .tables import OrderTable
+from django_tables2 import RequestConfig
+from Utils.session_helper import get_toast_and_cleanup_session
+from datetime import datetime
+
 
 # Create your views here.
 
+
 @login_required
 def index(request):
-    articles = {}
-    yearList = []
-    years = Product.objects.values("date_deadline").distinct()
-    for dict in years:
-        year = dict['date_deadline'].year
-        if year not in yearList:
-            yearList.append(year)
-            articles[year] = Product.objects.filter(date_deadline__contains=year, done=True)
-            for article in articles[year]:
-                article.clean_url_title = article.title.replace(' ', '-').lower()
-                agreements = Agreement.objects.filter(article_concerned=article)
-                if agreements.count() != 0:
-                    article.agreement = agreements[0]
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
+    products, year_list = fill_product_table_per_year(request)
 
-    yearList.sort(reverse=True)
-    active_articles = Product.objects.filter(done=False)
-    currentYear = date.today().year
-    no_settings = Settings.views.no_settings_created_yet()
+    toast = get_toast_and_cleanup_session(request)
+
+    active_products_table = OrderTable(Product.objects.filter(done=False), prefix='openstaand-', order_by='date_deadline')
+    no_settings_notification = Settings.views.no_settings_created_yet()
+
+    RequestConfig(request).configure(active_products_table)
+
     return render(request, 'index.html',
-                  {'articles': articles, 'active_articles': active_articles, 'toast': toast, 'years': yearList,
-                   'currentYear': currentYear, 'first_time': no_settings})
+                  {'products': products, 'active_products_table': active_products_table, 'toast': toast,
+                   'years': year_list, 'first_time': no_settings_notification})
+
+
+def fill_product_table_per_year(request):
+    year_list = []
+    products = {}
+
+    now = datetime.now()
+
+    for year in range(now.year - 5, now.year + 1):
+        products_year = Product.objects.filter(date_deadline__contains=year, done=True)
+        if products_year.count() is not 0:
+            year_list.append(year)
+            products_year = add_agreements_to_products(products_year)
+            prefix = str(year) + '-'
+            products[year] = OrderTable(products_year, prefix=prefix, order_by='-date_deadline')
+            RequestConfig(request).configure(products[year])
+
+    year_list.sort(reverse=True)
+    return products, year_list
+
+
+def add_agreements_to_products(products):
+    for product in products:
+        product = add_agreements_to_product(product)
+    return products
+
+
+def add_agreements_to_product(product):
+    agreements = Agreement.objects.filter(article_concerned=product)
+    if agreements.count() != 0:
+        product.agreement = agreements[0]
+    return product
 
 
 @login_required
-def view_article(request, articleid):
+def view_product(request, product_id):
     try:
-        article = Product.objects.get(id=articleid)
-        if Agreement.objects.filter(article_concerned=article).count() != 0:
-            article.agreement = Agreement.objects.filter(article_concerned=article)[0]
-        return render(request, 'view_article.html', {'article': article})
+        product = Product.objects.get(id=product_id)
+        product = add_agreements_to_product(product)
+
+        hour_registration = HourRegistration.objects.filter(product=product)
+        total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
+        total_hours = round((total_hours / 60) / 60, 2)
+
+        return render(request, 'view_product.html',
+                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours})
     except Exception as err:
         print(err)
         request.session['toast'] = 'Product niet gevonden'
         return redirect('/')
+
 
 @login_required
 def mark_products_as_done(request):
@@ -67,47 +97,7 @@ def mark_products_as_done(request):
             product.done = True
             product.save()
         return JsonResponse({'success': True})
-
     return JsonResponse({'success': False})
-
-
-@login_required
-def view_statistics(request):
-    year = date.today().year
-    year_list = [int(year) - 5, int(year) - 4, int(year) - 3, int(year) - 2, int(year) - 1, int(year)]
-    nr_of_articles = []
-    not_yet_invoiced = []
-    nr_of_words = []
-    totale_inkomsten = []
-    for i in range(int(year) - 5, int(year) + 1):
-        tuple = get_yearly_stats(i)
-        nr_of_articles.append(tuple[0])
-        nr_of_words.append(tuple[1])
-        totale_inkomsten.append(tuple[2])
-        not_yet_invoiced.append(tuple[3])
-    return render(request, 'statistics.html',
-                  {'nr_of_articles': nr_of_articles, 'not_yet_invoiced': not_yet_invoiced, 'nr_of_words': nr_of_words,
-                   'totale_inkomsten': totale_inkomsten, 'year': year, 'year_list': year_list})
-
-
-def get_yearly_stats(year):
-    print(year)
-    nr_of_articles = 0
-    totale_inkomsten = 0
-    nr_of_words = 0
-    all_articles = Product.objects.filter(done=True)
-    for article in all_articles:
-        if article.date_deadline.year == int(year):
-            totale_inkomsten += article.quantity * article.price_per_quantity
-            nr_of_words += article.quantity
-            nr_of_articles += 1
-    not_yet_invoiced = 0
-    not_yet_invoiced_articles = Product.objects.filter(done=False)
-    for article in not_yet_invoiced_articles:
-        not_yet_invoiced += article.quantity * article.price_per_quantity
-
-    return nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced
-
 
 @login_required
 def add_company_inline(request):
@@ -125,62 +115,74 @@ def add_company_inline(request):
 
 
 @login_required
-def add_article(request):
+def add_product(request):
     context = RequestContext(request)
     if request.method == 'POST':
-        article = Product()
-        f = ProductForm(request.POST, instance=article)
-        article.invoice = None
-        if f.is_valid():
-            article.save()
-            request.session['toast'] = 'Opdracht toegevoegd'
-            if get_setting('auto_wunderlist', False):
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                loop.run_until_complete(create_task_from_order(article))
-                loop.close()
-            return redirect('/')
-        else:
-            return render_to_response('new_edit_article.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
-    else:
-        form = ProductForm()
+        return add_product_post(request, context)
+    return add_product_get(request, context)
 
-        return render_to_response('new_edit_article.html', {'form': form}, context)
+
+def add_product_post(request, context):
+    product = Product()
+    f = ProductForm(request.POST, instance=product)
+    product.invoice = None
+    if f.is_valid():
+        product.save()
+        request.session['toast'] = 'Opdracht toegevoegd'
+        if get_setting('auto_wunderlist', False):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(create_task_from_order(product))
+            loop.close()
+        return redirect('/')
+    else:
+        return render_to_response('new_edit_product.html',
+                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
+
+
+def add_product_get(request, context):
+    form = ProductForm()
+    return render_to_response('new_edit_product.html', {'form': form}, context)
 
 
 @login_required
-def edit_article(request, articleid=-1):
+def edit_product(request, product_id=-1):
     context = RequestContext(request)
     if request.method == 'GET':
-        try:
-            article = Product.objects.get(id=articleid)
-            f = ProductForm(instance=article)
+        return edit_product_get(request, context, product_id)
+    return edit_product_post(request, context, product_id)
 
-            return render_to_response('new_edit_article.html',
-                                      {'form': f, 'edit': True, 'articleid': articleid}, context)
-        except:
-            request.session['toast'] = 'Opdracht niet gevonden'
-            return redirect('/')
-    elif request.method == 'POST':
-        article = Product.objects.get(id=articleid)
-        f = ProductForm(request.POST, instance=article)
 
-        if f.is_valid():
-            f.save()
-            request.session['toast'] = 'Opdracht gewijzigd'
-            return redirect('/')
-        else:
-            return render_to_response('new_edit_article.html',
-                                      {'form': f, 'edit': True, 'articleid': articleid, 'toast': 'Ongeldig formulier'},
-                                      context)
+def edit_product_get(request, context, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        f = ProductForm(instance=product)
+        return render_to_response('new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id}, context)
+    except:
+        request.session['toast'] = 'Opdracht niet gevonden'
+        return redirect('/')
+
+
+def edit_product_post(request, context, product_id):
+    product = Product.objects.get(id=product_id)
+    f = ProductForm(request.POST, instance=product)
+
+    if f.is_valid():
+        f.save()
+        request.session['toast'] = 'Opdracht gewijzigd'
+        return redirect('/')
+    else:
+        return render_to_response('new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'},
+                                  context)
 
 
 @login_required
-def delete_article(request, articleid=-1):
+def delete_product(request, product_id=-1):
     try:
-        article_to_delete = Product.objects.get(id=articleid)
-        article_to_delete.delete()
+        product_to_delete = Product.objects.get(id=product_id)
+        product_to_delete.delete()
         request.session['toast'] = 'Opdracht verwijderd'
         return redirect('/')
     except:
@@ -191,7 +193,6 @@ def delete_article(request, articleid=-1):
 @login_required
 def user_logout(request):
     logout(request)
-
     return HttpResponseRedirect('/')
 
 
@@ -199,6 +200,7 @@ def user_login_placeholder_email(request):
     context = RequestContext(request)
     form = UserForm()
     return render_to_response('login.html', {'form': form, 'email': request.GET['email']}, context)
+
 
 def user_login(request):
     context = RequestContext(request)
@@ -217,6 +219,12 @@ def user_login(request):
             return render_to_response('login.html', {'error': "Ongeldige inloggegevens", 'form': form}, context)
     else:
         return render_to_response('login.html', {'form': form}, context)
+
+
+@login_required
+def get_list_of_orders_hourregistration(request):
+    orders = Product.objects.filter(done=False)
+    return HttpResponse(serializers.serialize('json', orders), content_type='json')
 
 
 @login_required

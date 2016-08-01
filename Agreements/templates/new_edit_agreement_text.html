@@ -15,11 +15,17 @@
     {% breadcrumb "Modelovereenkomst toevoegen/bewerken" "" %}
 {% endblock %}
 
+{% block model_agreements_active %}
+{% endblock %}
+{% block edit_new_model_agreement_active %}
+    active
+{% endblock %}
+
 {% block content %}
     {% if edit %}
-        <h1>Modelovereenkomst bewerken</h1>
+        <h4>Modelovereenkomst bewerken</h4>
     {% else %}
-        <h1>Modelovereenkomst toevoegen</h1>
+        <h4>Modelovereenkomst toevoegen</h4>
     {% endif %}
 
     <p>
@@ -72,7 +78,7 @@
             <i class="material-icons left">send</i>
         </button>
 
-        <a href="/agreements">Annuleren</a>
+        <a href="javascript: history.go(-1)" class="waves-effect waves-teal btn-flat">Annuleren</a>
     </form>
     </div>
 {% endblock %}

@@ -17,83 +17,94 @@
 
 {% block content %}
 
-<div class="container">
+    <div class="row">
 
-<h2>{{ invoice.title }}</h2>
-<table class="responsive-table">
-    <tr>
-            <td>
-                Datum aangemaakt
-            </td>
-            <td>
-                <b>{{ invoice.date_created }}</b>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Vervaldatum
-            </td>
-            <td>
-                <b>{{ invoice.expiration_date }}</b>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Betaald
-            </td>
-            <td>
-                <b>{% if invoice.paid %} Betaald {% else %} Niet betaald {% endif %}</b>
-            </td>
-        </tr>
+        <h4>{{ invoice.title }}</h4>
+        <table class="responsive-table bordered">
+            <tr>
+                <td>
+                    Datum aangemaakt
+                </td>
+                <td>
+                    <b>{{ invoice.date_created }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Vervaldatum
+                </td>
+                <td>
+                    <b>{{ invoice.expiration_date }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Betaald
+                </td>
+                <td>
+                    <b>{% if invoice.paid %} Ja {% else %} Nee {% endif %}</b>
+                </td>
+            </tr>
 
-    <tr>
-        <td>
-            Aan bedrijf
-        </td>
-        <td>
-            <b>{{ invoice.to_company }}</b>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Totaalbedrag
-        </td>
-        <td>
-            <b>{{ invoice.total_amount }}</b>
-        </td>
-    </tr>
-</table>
+            <tr>
+                <td>
+                    Aan bedrijf
+                </td>
+                <td>
+                    <b>{{ invoice.to_company }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Totaalbedrag
+                </td>
+                <td>
+                    <b>€{{ invoice.total_amount }}</b>
+                </td>
+            </tr>
+        </table>
 
-<h3>Opdrachten</h3>
-<table>
-    <thead>
-        <th>Opdracht</th>
-        <th>Aantal</th>
-        <th>Leverdatum</th>
-        <th>Overeenkomst</th>
-    </thead>
-    {% for product in invoice.product_set.all %}
-    <tr>
-        <td>
-            {{ product.title }}
-        </td>
-        <td>
-            {{ product.quantity }}
-        </td>
-        <td>
-            {{ product.date_deadline }}
-        </td>
-        <td>
-            {% if article.agreement %} <a href="/overeenkomsten/ondertekenen/{{ article.agreement.url }}">Openen</a> {% else %} Geen {% endif %}</td>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+        <h4>Opdrachten</h4>
+        <table class="responsive-table highlight">
+            <thead>
+            <th>Opdracht</th>
+            <th>Identificatienr.</th>
+            <th>Kwantiteit</th>
+            <th>Prijs per eenheid</th>
+            <th>Prijs</th>
+            </thead>
+            {% for product in invoice.product_set.all %}
+                <tr>
+                    <td>
+                        <a href="{% url "view_product" product.id product.title|slugify %}">{{ product.title }}</a>
+                    </td>
+                    <td>
+                        {{ product.identification_number }}
+                    </td>
+                    <td>
+                        {{ product.quantity }}
+                    </td>
+                    <td>
+                        €{{ product.price_per_quantity }}
+                    </td>
+                    <td>
+                        €{{ product.get_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
 
-<h3>Exporteren</h3>
-<a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
-<a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
-<a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>
-</div>
+        <h4>Exporteren</h4>
+        <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
+        <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
+        <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>
+    </div>
+
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
+            <i class="large material-icons">mode_edit</i>
+        </a>
+    </div>
 
 {% endblock %}

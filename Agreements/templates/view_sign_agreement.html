@@ -17,7 +17,7 @@
 
 {% block content %}
 
-    <h3>Overeenkomst van {{ agreement.created|date:"d-m-Y" }} met {{ agreement.client_name }}</h3>
+    <h4>Overeenkomst van {{ agreement.created|date:"d-m-Y" }} met {{ agreement.client_name }}</h4>
 
     Opdrachten in overeenkomst:
     <ul class="collection">
@@ -29,7 +29,7 @@
 
     Contactpersoon: {{ agreement.client_name }}
 
-    <h4>Overeenkomst</h4>
+    <h5>Overeenkomst</h5>
     <style>
         .small {
             height: 300px;
@@ -67,7 +67,7 @@
     {% endif %}
 
     {% if not agreement.signed_by_contractor and user.is_authenticated %}
-        <h4>Stap 1. Ondertekenen</h4>
+        <h5>Stap 1. Ondertekenen</h5>
         <div class="card-panel red" id="error-contractor" style="display:none;">
             <span class="error-contractor white-text"></span>
         </div>
@@ -124,14 +124,14 @@
             </div>
         </div>
     {% elif agreement.signed_by_contractor and user.is_authenticated and not agreement.signed_by_client %}
-        <h4>Stap 2. Opdrachtgever ondertekenen</h4>
+        <h5>Stap 2. Opdrachtgever ondertekenen</h5>
         U hebt de overeenkomst op {{ agreement.signed_by_contractor_at }} ondertekend. De opdrachtgever heeft de
         overeenkomst nog niet ondertekend. <br/>
         Kopieer de volgende link en stuur deze naar uw opdrachtgever, zodat deze de overeenkomst ook digitaal kan
         ondertekenen: <a href="{{ agreement.complete_url }}/">{{ agreement.complete_url }}</a>
     {% elif not agreement.signed_by_client and not user.is_authenticated %}
 
-        <h4>Ondertekenen</h4>
+        <h5>Ondertekenen</h5>
         <div class="card-panel red" id="error-client" style="display:none;">
             <span class="error-client"></span>
         </div>

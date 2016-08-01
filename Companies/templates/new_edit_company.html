@@ -10,6 +10,9 @@
 {% block header %}
 {% endblock %}
 
+{% block companies_active %}{% endblock %}
+{% block new_company_active %}active{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Opdrachtgever toevoegen/bewerken" "" %}
@@ -18,9 +21,9 @@
 
 {% block content %}
     {% if edit %}
-        <h1>Opdrachtgever bewerken</h1>
+        <h4>Opdrachtgever bewerken</h4>
     {% else %}
-        <h1>Nieuwe opdrachtgever toevoegen</h1>
+        <h4>Nieuwe opdrachtgever toevoegen</h4>
     {% endif %}
     {% if error %}
     {% endif %}
@@ -64,7 +67,7 @@
             <i class="material-icons left">send</i>
         </button>
 
-        <a href="/">Annuleren</a>
+        <a href="javascript: history.go(-1)" class="waves-effect waves-teal btn-flat">Annuleren</a>
     </form>
     </div>
 
