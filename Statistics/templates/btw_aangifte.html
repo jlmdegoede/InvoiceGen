@@ -10,6 +10,8 @@
 
 
 {% block side_menu %}
+    <a href="{% url "get_invoices" %}" class="collection-item">Uitgaande facturen beheren</a>
+    <a href="{% url "get_incoming_invoices" %}" class="collection-item">Inkomende facturen beheren</a>
     <a href="{% url "btw_aangifte" %}" class="active collection-item">BTW-aangifte</a>
 {% endblock %}
 

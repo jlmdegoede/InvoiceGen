@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
 from Invoices.models import OutgoingInvoice, IncomingInvoice
@@ -71,7 +71,7 @@ def view_btw_aangifte(request):
     incoming_invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
 
     outgoing_invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
-    outgoing_invoices = filter(lambda x: x.get_btw() is not 0, outgoing_invoices)
+    outgoing_invoices = [x for x in outgoing_invoices if x.get_btw() is not 0]
 
     return render(request, 'btw_aangifte.html',
                   {'incoming_btw': incoming_btw, 'outgoing_btw': outgoing_btw, 'difference_btw': str(difference_btw),
@@ -96,7 +96,7 @@ def get_btw_incoming(start_date, end_date):
 
 
 def get_previous_quarter_start_date(now, quarter):
-    quarter = quarter - 1 if quarter - 1 >= 0 else 3
+    quarter = quarter - 1 if quarter - 1 >= 0 else 3 # rollover
     year = now.year if quarter >= 0 else now.year - 1
 
     quarters = {

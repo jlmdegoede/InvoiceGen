@@ -17,7 +17,6 @@
 
 {% block side_menu %}
     <a href="#data" class="collection-item" id="data-link">Persoonlijke gegevens</a>
-    <a href="#color" class="collection-item">Personalisatie</a>
     <a href="#todo" class="collection-item">Integratie</a>
     <a href="#subscription" class="collection-item">InvoiceGen-abonnement</a>
 {% endblock %}
@@ -87,45 +86,6 @@
                 </div>
             </form>
         </div>
-        <div id="color" class="col s12 settings-tab" style="display:none;">
-            <h4>Personalisatie</h4>
-            <form method="post" action="{% url "set_colors" %}">
-                {% csrf_token %}
-                <div class="row">
-
-                    <div class="input-field col s12">
-                        <label for="{{ color_form.color_up.id_for_label }}">Kleur boven</label>
-                        <br/>
-                        <br/>
-                        Huidige kleur: {{ color_up }}
-                        <br/>
-                        <br/>
-                        {{ color_form.color_up }}
-                        {{ error.color_up }}
-                    </div>
-
-
-                    <div class="input-field col s12">
-                        <label for="{{ color_form.color_down.id_for_label }}">Kleur onder</label>
-                        <br/>
-                        <br/>
-                        Huidige kleur: {{ color_down }}
-                        <br/>
-                        <br/>
-                        {{ color_form.color_down }}
-                        {{ error.color_down }}
-                    </div>
-                    <br/>
-                </div>
-
-                <button class="btn waves-effect waves-light" type="submit" name="submit">Kleuren aanpassen
-                    <i class="material-icons left">send</i>
-                </button>
-                <br/>
-                <br/>
-                <a href="{% url "reset_colors" %}">Standaardkleuren herstellen</a>
-            </form>
-        </div>
         <div id="todo" class="col s12 settings-tab" style="display:none;">
             <h4>Wunderlist-integratie</h4>
             {% if todo != None %}
@@ -179,7 +139,7 @@
 
         <div id="subscription" style="display:none;" class="settings-tab">
             <h4>Mijn gegevens</h4>
-            <table class="table">
+            <table class="bordered">
                 <tr>
                     <td>Naam</td>
                     <td>{{ invoice_site.first_name }} {{ invoice_site.last_name }}</td>

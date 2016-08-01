@@ -24,14 +24,17 @@
         {% render_table company_table "../templates/table_materialize.html" %}
     </div>
 
-    <a class="btn-floating btn-large waves-effect waves-light red right" href="{% url "company_add" %}"><i
-            class="material-icons">add</i></a>
     {% if toast %}
         <script type="text/javascript">
             Materialize.toast('{{ toast }}', 4000)
         </script>
     {% endif %}
 
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "company_add" %}">
+            <i class="large material-icons">add</i>
+        </a>
+    </div>
 
     <!-- Modal Structure -->
     <div id="modal1" class="modal">
