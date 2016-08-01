@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
+
 @login_required
 def start_time_tracking(request, product_id):
     product = Product.objects.get(id=product_id)

@@ -2,7 +2,6 @@ from django.test import TestCase
 import datetime
 from django.test import Client
 from django.contrib.auth.models import User
-from .models import *
 from django.core.urlresolvers import reverse
 from Settings.models import UserSetting
 from HourRegistration.models import *
