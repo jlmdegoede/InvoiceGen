@@ -7,3 +7,4 @@ requests
 fpdf
 python-docx
 django-tables2
+pytz

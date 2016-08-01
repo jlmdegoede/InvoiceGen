@@ -62,9 +62,8 @@ class InvoicesTestCase(TestCase):
 
     def test_generate_invoice(self):
         self.c.login(username='testuser', password='secret')
-        data = {'articles[]': [1], 'volgnummer': 2}
-        response = self.c.post(reverse('generate_invoice'), data)
-        self.assertEqual(response.status_code, 302)
+        data = {'products[]': [1], 'volgnummer': 2}
+        self.c.post(reverse('generate_invoice'), data)
         invoice = OutgoingInvoice.objects.get(id=3)
         self.assertEqual(invoice.invoice_number, '2')
 

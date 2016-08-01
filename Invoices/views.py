@@ -301,28 +301,27 @@ def delete_incoming_invoice(request, invoiceid=-1):
 @login_required
 def generate_invoice(request):
     if request.method == 'POST':
-        articles = []
+        products = []
         totaalbedrag = 0
         invoice = OutgoingInvoice()
-        for articleId in request.POST.getlist('products[]'):
-            article = Product.objects.get(id=articleId)
-            articles.append(article)
-            totaalbedrag += article.quantity * article.price_per_quantity
+        for product_id in request.POST.getlist('products[]'):
+            product = Product.objects.get(id=product_id)
+            products.append(product)
+            totaalbedrag += product.quantity * product.price_per_quantity
 
         today = get_today_string()
         volgnummer = request.POST.get('volgnummer')
         invoice.invoice_number = volgnummer
         # create invoice and save it
-        with_tax_rate = articles[0].tax_rate != 0
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur " + str(today)
-        invoice.to_company = articles[0].from_company
+        invoice.to_company = products[0].from_company
         invoice.total_amount = totaalbedrag
         invoice.expiration_date = datetime.datetime.now() + timedelta(days=14)
         invoice.save()
 
-        for article in articles:
-            article.invoice = invoice
-            article.save()
+        for product in products:
+            product.invoice = invoice
+            product.save()
         return JsonResponse({'return_url': reverse(detail_outgoing_invoice, kwargs={'invoice_id': invoice.id})})
     return JsonResponse({'success': False})
