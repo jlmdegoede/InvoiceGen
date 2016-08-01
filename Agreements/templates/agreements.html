@@ -21,6 +21,7 @@
             <a href="{% url "index_model_agreements" %}" class="collection-item {% block model_agreements_active %}{% endblock %}">Modelovereenkomsten beheren</a>
             <a href="{% url "add_agreement_text" %}" class="collection-item {% block edit_new_model_agreement_active %}{% endblock %}">Nieuwe modelovereenkomst</a>
         {% endif %}
+            <a href="javascript:window.print()" class="collection-item">Afdrukken</a>
     {% endblock %}
 
 {% block content %}
