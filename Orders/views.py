@@ -18,7 +18,7 @@ from .tables import OrderTable
 from django_tables2 import RequestConfig
 from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
-
+from django.template import Context
 
 # Create your views here.
 
@@ -60,7 +60,7 @@ def fill_product_table_per_year(request):
 
 def add_agreements_to_products(products):
     for product in products:
-        product = add_agreements_to_product(product)
+        add_agreements_to_product(product)
     return products
 
 
@@ -101,7 +101,6 @@ def mark_products_as_done(request):
 
 @login_required
 def add_company_inline(request):
-    context = RequestContext(request)
     if request.method == 'POST':
         company = Company()
         f = CompanyForm(request.POST, instance=company)
@@ -111,18 +110,18 @@ def add_company_inline(request):
             return JsonResponse({'company_id': company.id, 'company_name': company.company_name})
     if request.method == 'GET':
         form = CompanyForm()
-        return render_to_response('new_company_inline.html', {'form': form}, context)
+        return render(request, 'new_company_inline.html', {'form': form})
 
 
 @login_required
 def add_product(request):
-    context = RequestContext(request)
+    context = Context(request)
     if request.method == 'POST':
-        return add_product_post(request, context)
-    return add_product_get(request, context)
+        return add_product_post(request)
+    return add_product_get(request)
 
 
-def add_product_post(request, context):
+def add_product_post(request):
     product = Product()
     f = ProductForm(request.POST, instance=product)
     product.invoice = None
@@ -136,35 +135,34 @@ def add_product_post(request, context):
             loop.close()
         return redirect('/')
     else:
-        return render_to_response('new_edit_product.html',
-                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors}, context)
+        return render(request, 'new_edit_product.html',
+                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors})
 
 
-def add_product_get(request, context):
+def add_product_get(request):
     form = ProductForm()
-    return render_to_response('new_edit_product.html', {'form': form}, context)
+    return render(request, 'new_edit_product.html', {'form': form})
 
 
 @login_required
 def edit_product(request, product_id=-1):
-    context = RequestContext(request)
     if request.method == 'GET':
-        return edit_product_get(request, context, product_id)
-    return edit_product_post(request, context, product_id)
+        return edit_product_get(request, product_id)
+    return edit_product_post(request, product_id)
 
 
-def edit_product_get(request, context, product_id):
+def edit_product_get(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
         f = ProductForm(instance=product)
-        return render_to_response('new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id}, context)
+        return render(request, 'new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id})
     except:
         request.session['toast'] = 'Opdracht niet gevonden'
         return redirect('/')
 
 
-def edit_product_post(request, context, product_id):
+def edit_product_post(request, product_id):
     product = Product.objects.get(id=product_id)
     f = ProductForm(request.POST, instance=product)
 
@@ -173,9 +171,8 @@ def edit_product_post(request, context, product_id):
         request.session['toast'] = 'Opdracht gewijzigd'
         return redirect('/')
     else:
-        return render_to_response('new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'},
-                                  context)
+        return render(request, 'new_edit_product.html',
+                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'})
 
 
 @login_required
@@ -197,13 +194,11 @@ def user_logout(request):
 
 
 def user_login_placeholder_email(request):
-    context = RequestContext(request)
     form = UserForm()
-    return render_to_response('login.html', {'form': form, 'email': request.GET['email']}, context)
+    return render(request, 'login.html', {'form': form, 'email': request.GET['email']})
 
 
 def user_login(request):
-    context = RequestContext(request)
     form = UserForm()
 
     if request.method == 'POST':
@@ -216,9 +211,9 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
         else:
-            return render_to_response('login.html', {'error': "Ongeldige inloggegevens", 'form': form}, context)
+            return render(request, 'login.html', {'error': "Ongeldige inloggegevens", 'form': form})
     else:
-        return render_to_response('login.html', {'form': form}, context)
+        return render(request, 'login.html', {'form': form})
 
 
 @login_required
@@ -254,4 +249,4 @@ def search(request):
                               {'query_string': query_string, 'found_products': found_products,
                                'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
                                'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies},
-                              context_instance=RequestContext(request))
+                              context_instance=Context(request))

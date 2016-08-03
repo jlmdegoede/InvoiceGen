@@ -9,7 +9,6 @@ from django_tables2 import RequestConfig
 
 @login_required
 def index(request):
-    context = RequestContext(request)
     companies = Company.objects.all()
     for company in companies:
         products = Product.objects.filter(from_company=company)
@@ -23,12 +22,11 @@ def index(request):
         del request.session['toast']
 
     RequestConfig(request).configure(company_table)
-    return render_to_response('index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast}, context)
+    return render(request, 'index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
 
 
 @login_required
 def add_company(request):
-    context = RequestContext(request)
     if request.method == 'POST':
         company = Company()
         form = CompanyForm(request.POST, instance=company)
@@ -36,20 +34,19 @@ def add_company(request):
             company.save()
             return redirect(to=index)
         else:
-            return render_to_response('new_edit_company.html', {'form': form, 'error': form.errors}, context)
+            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors})
     else:
         company_form = CompanyForm()
-        return render_to_response('new_edit_company.html', {'form': company_form}, context)
+        return render(request, 'new_edit_company.html', {'form': company_form})
 
 
 @login_required
 def edit_company(request, company_id):
-    context = RequestContext(request)
     if request.method == 'GET':
         try:
             company = Company.objects.get(id=company_id)
             form = CompanyForm(instance=company)
-            return render_to_response('new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id}, context)
+            return render(request, 'new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id})
         except:
             return redirect(to=index)
     elif request.method == 'POST':
@@ -59,12 +56,11 @@ def edit_company(request, company_id):
             company.save()
             return redirect(to=index)
         else:
-            return render_to_response('new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id}, context)
+            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id})
 
 
 @login_required
 def delete_company(request, company_id):
-    context = RequestContext(request)
     try:
         company = Company.objects.get(id=company_id)
         products = Product.objects.filter(from_company=company).count()
