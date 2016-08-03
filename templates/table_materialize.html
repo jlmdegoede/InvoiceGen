@@ -56,7 +56,9 @@
 {% with table.page.paginator.count as total %}
 {% with table.page.object_list|length as count %}
 {% block pagination %}
-<ul class="pagination">
+    <div class="row"></div>
+    {% if table.page.has_next or table.page.has_previous %}
+    <ul class="pagination">
     {% if table.page.has_previous %}
         {% block pagination.previous %}
             <li class="previous">
@@ -78,6 +80,7 @@
             </li>
         {% endblock pagination.next %}
     {% endif %}
+{% endif %}
 </ul>
 {% endblock pagination %}
 {% endwith %}

@@ -243,8 +243,8 @@ def edit_incoming_invoice(request, invoiceid=-1):
             invoice = IncomingInvoice.objects.get(id=invoiceid)
             f = IncomingInvoiceForm(instance=invoice)
 
-            return render_to_response('new_edit_incoming_invoice.html',
-                                      {'form': f, 'invoice': invoice, 'edit': True}, context)
+            return render(request, 'new_edit_incoming_invoice.html',
+                                      {'form': f, 'invoice': invoice, 'edit': True})
         except:
             request.session['toast'] = 'Factuur niet gevonden'
             return redirect('/facturen/inkomend')

@@ -10,6 +10,11 @@
 {% block header %}
 {% endblock %}
 
+{% block side_menu %}
+    {{ block.super }}
+    <a href="javascript:window.print()" class="collection-item">Afdrukken</a>
+{% endblock %}
+
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Overeenkomst ondertekenen" "" %}

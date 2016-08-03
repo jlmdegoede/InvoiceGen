@@ -1,8 +1,7 @@
-{% extends 'agreements.html' %}
+{% extends 'base_agreements.html' %}
 {% load django_bootstrap_breadcrumbs %}
 {% load render_table from django_tables2 %}
 {% load staticfiles %}
-{% block agreements_active %}active{% endblock %}
 
 {% block title %}
      Modelovereenkomsten
@@ -16,9 +15,7 @@
     {% breadcrumb "Modelovereenkomsten" "index_model_agreements" %}
 {% endblock %}
 
-{% block model_agreements_active %}
-    active
-{% endblock %}
+{% block model_agreements_active %}active{% endblock %}
 
 {% block content %}
     <h4>Modelovereenkomsten</h4>
