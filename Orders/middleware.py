@@ -13,7 +13,8 @@ from django.shortcuts import reverse
 
 class OrderMiddleware(object):
     def process_response(self, request, response):
-        if request.path.startswith(reverse('renew_subscription')):
+        print(request.path)
+        if '/instellingen/verlengen/' in str(request.path):
             return response
 
         utc = pytz.UTC
@@ -38,5 +39,4 @@ class OrderMiddleware(object):
         if now > valid_until:
             return render(request, 'subscription_expired.html', {'valid_until': get_formatted_string(valid_until)})
         else:
-            print(valid_until)
             return response

@@ -65,6 +65,8 @@ def get_current_settings(request):
     if request.method == 'POST':
         if 'key' in request.POST and request.POST['key'] == COMMUNICATION_KEY:
             get_current_settings_json()
+
+    get_current_settings_json()
     return HttpResponse('')
 
 
@@ -79,8 +81,8 @@ def get_current_settings_json():
         req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
         utc = pytz.UTC
         values = json.loads(req.content.decode('utf-8'))
-        valid_until = utc.localize(datetime.strptime(values['valid_until'], '%Y-%m-%d'))
-        save_setting('subscription_date', valid_until)
+        valid_until = utc.localize(datetime.strptime(values['valid_until'], '%Y-%m-%dT%H:%M:%SZ'))
+        setting = save_setting('subscription_date', valid_until)
         return values
     except:
         print("Error: could not get subscription status")
