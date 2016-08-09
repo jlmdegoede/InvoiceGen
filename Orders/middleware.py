@@ -32,7 +32,7 @@ class OrderMiddleware(object):
             req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY},
                                 {})
             invoice_site = json.loads(req.content.decode('utf-8'))
-            valid_until = utc.localize(datetime.strptime(invoice_site['valid_until'], '%Y-%m-%d'))
+            valid_until = utc.localize(datetime.strptime(invoice_site['valid_until'], '%Y-%m-%dT%H:%M:%SZ'))
             save_setting('subscription_date', valid_until)
 
         if now > valid_until:
