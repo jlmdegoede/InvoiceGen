@@ -8,7 +8,6 @@ from Settings.models import Setting
 import pytz
 from InvoiceGen.site_settings import COMMUNICATION_KEY
 from Settings.views import save_setting
-from django.shortcuts import reverse
 
 
 class OrderMiddleware(object):
