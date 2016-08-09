@@ -18,7 +18,6 @@
 {% block content %}
 
     <div class="row">
-
         <h4>{{ invoice.title }}</h4>
         <table class="responsive-table bordered">
             <tr>
@@ -63,7 +62,9 @@
                 </td>
             </tr>
         </table>
+    </div>
 
+    <div class="row">
         <h4>Opdrachten</h4>
         <table class="responsive-table highlight">
             <thead>
@@ -93,11 +94,20 @@
                 </tr>
             {% endfor %}
         </table>
-
+        </div>
+    <div class="row">
         <h4>Exporteren</h4>
-        <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light">Download Markdown</a>
-        <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light">Download PDF</a>
-        <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light">Download DOCX</a>
+        <div class="col s12">
+            <div class="container left">
+        <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
+
+        <div class="col s12">
+            <div class="container left">
+        <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download PDF</a></div></div>
+
+        <div class="col s12">
+            <div class="container left">
+        <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
     </div>
 
 

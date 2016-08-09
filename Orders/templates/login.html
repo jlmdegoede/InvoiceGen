@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-    <h4>Meld u aan om door te gaan</h4>
+    <h4>Meld je aan om door te gaan</h4>
 
     {% if error %}
         <h5>{{ error }}</h5>
@@ -23,13 +23,13 @@
         {% csrf_token %}
         <div class="row">
 
-            <div class="input-field col s6">
+            <div class="input-field col s12 m6">
                 {{ form.username }}
                 <label for="{{ form.username.id_for_label }}">E-mailadres</label>
             </div>
         </div>
         <div class="row">
-            <div class="input-field col s6">
+            <div class="input-field col s12 m6">
                 {{ form.password }}
                 <label for="{{ form.password.id_for_label }}">Wachtwoord</label>
             </div>
