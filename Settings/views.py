@@ -6,6 +6,7 @@ from Todo.models import *
 import json
 import Todo.views
 import requests
+import datetime
 from InvoiceGen.site_settings import COMMUNICATION_KEY
 # Create your views here.
 
@@ -62,7 +63,7 @@ def get_current_settings():
         req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
         return json.loads(req.content.decode('utf-8'))
     except:
-        print("Error")
+        print("Error: could not get subscription status")
 
 
 def convert_to_json_utf8(data):
@@ -75,7 +76,7 @@ def get_wunderlist_lists():
 
 def no_settings_created_yet():
     try:
-        user = UserSetting.objects.get(id=1)
+        UserSetting.objects.get(id=1)
         return False
     except:
         return True
