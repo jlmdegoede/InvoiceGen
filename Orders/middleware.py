@@ -12,7 +12,15 @@ from Settings.views import save_setting, get_current_settings_json
 
 class OrderMiddleware(object):
     def process_response(self, request, response):
-        if '/instellingen/verlengen/' in str(request.path):
+        if '/instellingen/verlengen/' == str(request.path):
+            return response
+        if '/' == str(request.path) and not request.user.is_authenticated():
+            return response
+        if '/accounts/login/' == str(request.path):
+            return response
+        if '/logout/' == str(request.path):
+            return response
+        if '/wachtwoord-vergeten' in str(request.path):
             return response
 
         utc = pytz.UTC
