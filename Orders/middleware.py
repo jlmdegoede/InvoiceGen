@@ -12,7 +12,6 @@ from Settings.views import save_setting, get_current_settings_json
 
 class OrderMiddleware(object):
     def process_response(self, request, response):
-        print(request.path)
         if '/instellingen/verlengen/' in str(request.path):
             return response
 
