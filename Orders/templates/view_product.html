@@ -70,6 +70,7 @@
                                 <div class="row">
                                     <div class="input-field col s6">
                                         <input id="date-{{ hourregistration.id }}" type="date" class="datepicker"
+                                               value="{{ today }}"
                                                required>
                                         <label for="date-{{ hourregistration.id }}">Einddatum</label>
                                     </div>
@@ -101,7 +102,8 @@
                     <form id="new-hourregistration-form">
                         <div class="row">
                             <div class="input-field col s6">
-                                <input id="start-date" type="date" class="datepicker validate" required>
+                                <input id="start-date" type="date" class="datepicker validate" required
+                                               value="{{ today }}">
                                 <label for="start-date">Startdatum</label>
                             </div>
                             <div class="input-field col s6">
@@ -109,7 +111,8 @@
                                 <label for="start-time">Starttijd</label>
                             </div>
                             <div class="input-field col s6">
-                                <input id="end-date" type="date" class="datepicker validate" required>
+                                <input id="end-date" type="date" class="datepicker validate" required
+                                               value="{{ today }}">
                                 <label for="end-date">Einddatum</label>
                             </div>
                             <div class="input-field col s6">
@@ -155,7 +158,7 @@
     <script type="text/javascript" src="/static/js/timepicker/materialize.clockpicker.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-
+            Materialize.updateTextFields();
             $('.datepicker').pickadate({
                 monthsFull: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
                 monthsShort: ['jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
