@@ -33,7 +33,7 @@ class OrderMiddleware(object):
             subscription_date = check_existing[0]
             if subscription_date.last_updated_at > day_ago:
                 subscription_date_value = subscription_date.value[:subscription_date.value.rindex(" ") + 9]
-                valid_until = utc.localize(datetime.strptime(subscription_date_value, '%Y-%d-%m %H:%M:%S'))
+                valid_until = utc.localize(datetime.strptime(subscription_date_value, '%Y-%m-%d %H:%M:%S'))
 
         if check_existing.count() is 0 or valid_until is None:
             req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY},
