@@ -9,3 +9,7 @@ def get_today_string():
 
 def get_formatted_string(date):
     return date.strftime("%d-%m-%Y")
+
+
+def get_formatted_string_date_time(date):
+    return date.strftime("%d-%m-%YT%H:%M:%SZ")

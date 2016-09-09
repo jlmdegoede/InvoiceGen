@@ -6,6 +6,9 @@ from Todo.models import *
 import json
 import Todo.views
 import requests
+import pytz
+from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
 from InvoiceGen.site_settings import COMMUNICATION_KEY
 # Create your views here.
 
@@ -40,7 +43,7 @@ def settings(request):
     wunderlist_enabled = False
     todo = None
     wunderlist_dict = None
-    invoice_site = get_current_settings()
+    invoice_site = get_current_settings_json()
 
     try:
         todo = TodoAuth.objects.get(id=1)
@@ -56,13 +59,23 @@ def settings(request):
                    'wunderlist_dict': wunderlist_dict,
                    'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
 
+@login_required
+def renew_subscription(request):
+    print("Redirecting...")
+    return HttpResponseRedirect('https://invoicegen.nl/betaling/start?key=' + COMMUNICATION_KEY)
 
-def get_current_settings():
+
+def get_current_settings_json():
     try:
         req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
-        return json.loads(req.content.decode('utf-8'))
-    except:
-        print("Error")
+        utc = pytz.UTC
+        values = json.loads(req.content.decode('utf-8'))
+        print(values['valid_until'])
+        valid_until = utc.localize(datetime.strptime(values['valid_until'], '%d-%m-%Y %H:%M:%S'))
+        save_setting('subscription_date', valid_until)
+        return values
+    except Exception as e:
+        print("Error: could not get subscription status:" + str(e))
 
 
 def convert_to_json_utf8(data):
@@ -75,7 +88,7 @@ def get_wunderlist_lists():
 
 def no_settings_created_yet():
     try:
-        user = UserSetting.objects.get(id=1)
+        UserSetting.objects.get(id=1)
         return False
     except:
         return True

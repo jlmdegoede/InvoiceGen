@@ -19,6 +19,7 @@ from django_tables2 import RequestConfig
 from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
 from django.template import Context
+from Utils.date_helper import get_today_string
 
 # Create your views here.
 
@@ -81,8 +82,10 @@ def view_product(request, product_id):
         total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
         total_hours = round((total_hours / 60) / 60, 2)
 
+        today = get_today_string()
+
         return render(request, 'view_product.html',
-                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours})
+                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
     except Exception as err:
         print(err)
         request.session['toast'] = 'Product niet gevonden'
@@ -98,6 +101,7 @@ def mark_products_as_done(request):
             product.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
 
 @login_required
 def add_company_inline(request):
@@ -115,7 +119,6 @@ def add_company_inline(request):
 
 @login_required
 def add_product(request):
-    context = Context(request)
     if request.method == 'POST':
         return add_product_post(request)
     return add_product_get(request)

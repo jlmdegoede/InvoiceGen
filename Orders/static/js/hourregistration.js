@@ -27,7 +27,7 @@ var HourRegistrationComponent = React.createClass({
                     <div className="card blue-grey darken-1">
                         <div className="card-content white-text">
                         <span className="card-title">Urenregistratie</span>
-                            <p>Kies een opdracht uit de lijst en klik op <b>Start</b> om de tijd bij te houden. Klik op <b>Stop</b> als u klaar bent of pauze neemt.</p>
+                            <p>Kies een opdracht uit de lijst en klik op <b>Start</b> om de tijd bij te houden. Klik op <b>Stop</b> als je klaar bent of pauze neemt.</p>
                 <div id="article-list-select">
                     <ArticleListComponent url="/opdracht/list-hourregistration/" />
                 </div>
@@ -93,7 +93,7 @@ var TimingComponent = React.createClass({
                     <DescriptionComponent pk={this.props.pk} />
                 </div>
                 <ul>
-                    <li>U werkt nu aan: <b>{this.props.title}</b></li>
+                    <li>Je werkt nu aan: <b>{this.props.title}</b></li>
                     <li>Gestart op: <b>{this.props.start}</b></li>
                 </ul>
             </div>
