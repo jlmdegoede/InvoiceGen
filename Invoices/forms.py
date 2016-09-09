@@ -13,6 +13,11 @@ class OutgoingInvoiceForm(forms.ModelForm):
         model = OutgoingInvoice
         fields = ('invoice_number', 'paid', 'title', 'expiration_date')
 
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance', None)
+        super(OutgoingInvoiceForm, self).__init__(*args, **kwargs)
+        self.fields['products'].initial = [c.pk for c in Product.objects.filter(invoice=instance.pk)]
+
 
 class IncomingInvoiceForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)

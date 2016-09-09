@@ -13,7 +13,7 @@ class InvoiceTable(tables.Table):
 class IncomingInvoiceTable(InvoiceTable):
     invoice_number = tables.LinkColumn('detail_incoming_invoice', args=[A('pk')], verbose_name='Volgnr.')
     title = tables.LinkColumn('detail_incoming_invoice', args=[A('pk')], verbose_name='Titel')
-    subtotal = tables.Column(verbose_name='Subtotaal')
+    subtotal = tables.TemplateColumn("€ {{ value }}", verbose_name='Subtotaal')
     btw = tables.Column(verbose_name='BTW')
     actions = tables.TemplateColumn('<a href="{% url "edit_incoming_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
 
@@ -26,7 +26,7 @@ class IncomingInvoiceTable(InvoiceTable):
 class OutgoingInvoiceTable(InvoiceTable):
     invoice_number = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Volgnr.')
     title = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Titel')
-    total_amount = tables.Column(verbose_name='Bedrag')
+    total_amount = tables.TemplateColumn("€ {{ value }}", verbose_name='Bedrag')
     actions = tables.TemplateColumn('<a href="{% url "edit_outgoing_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#modal1" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
 
     class Meta:
