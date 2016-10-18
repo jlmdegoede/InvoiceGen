@@ -60,7 +60,7 @@ def get_invoices(invoice_objects, request):
         if year not in yearList:
             yearList.append(year)
 
-            invoice_year_objs = objects.filter(date_created__contains=year)
+            invoice_year_objs = objects.filter(date_created__contains=year).order_by('-date_created')
             if invoice_objects == 'outgoing':
                 for invoice_obj in invoice_year_objs:
                     products = Product.objects.filter(invoice=invoice_obj)

@@ -26,7 +26,7 @@ class IncomingInvoiceTable(InvoiceTable):
 class OutgoingInvoiceTable(InvoiceTable):
     invoice_number = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Volgnr.')
     title = tables.LinkColumn('detail_outgoing_invoice', args=[A('pk')], verbose_name='Titel')
-    get_total_amount = tables.TemplateColumn("€ {{ value }}", verbose_name='Bedrag')
+    get_total_amount = tables.TemplateColumn("€ {{ value|floatformat:2 }}", verbose_name='Bedrag')
     actions = tables.TemplateColumn('<a href="{% url "edit_outgoing_invoice" record.id %}"><i class="material-icons">edit</i></a><a href="#modal1" class="modal-trigger delete" value="{{ record.id }}"><i class="material-icons">delete</i></a>', verbose_name='')
 
     class Meta:
