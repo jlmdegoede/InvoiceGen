@@ -65,16 +65,16 @@ def generate_geleverd(file, products, invoice, tax_rate):
     file.writelines("\\begin{tabular}{l l r l}\n")
     file.writelines("\\InvullenVierBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs}\n")
     for product in products:
-        file.writelines("\\InvullenVier{" + product.title + "}{" + str(product.identification_number ) + "}{" + str(product.quantity)+"x" + "}{" + str(product.get_price()) + "}\n")
+        file.writelines("\\InvullenVier{" + product.title + "}{" + str(product.identification_number ) + "}{" + str(product.quantity)+"x" + "}{" + str("%.2f" % product.get_price()) + "}\n")
 	
     if tax_rate:
         file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str(invoice.get_total_amount())+ "} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str("%.2f" % invoice.get_total_amount())+ "} \\\\ \n")
         file.writelines("\\multicolumn{3}{r}{\\large BTW} & {\\large \\euro" + str(invoice.get_btw()) + "} \\\\ \\cline{3-4}\n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_total_amount() + invoice.get_btw()) +" }} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % (invoice.get_total_amount() + invoice.get_btw())) +" }} \\\\ \n")
     else:
         file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_total_amount()) +" }} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % invoice.get_total_amount()) +" }} \\\\ \n")
 		
     file.writelines("\\end{tabular} \\\\\\\\ \n")
 

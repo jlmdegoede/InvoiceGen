@@ -1,6 +1,7 @@
 {% extends "statistics.html" %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
 {% block more_active %}active{% endblock %}
 
 {% block breadcrumbs %}
@@ -49,15 +50,15 @@
     <table class="bordered col s12">
         <tr>
             <td>Uitgaande BTW</td>
-            <td>€ {{ outgoing_btw }}</td>
+            <td>€ {{ outgoing_btw|floatformat:2 }}</td>
         </tr>
         <tr>
             <td width="350px">Inkomende BTW</td>
-            <td>€ {{ incoming_btw }}</td>
+            <td>€ {{ incoming_btw|floatformat:2 }}</td>
         </tr>
         <tr>
             <td>Te betalen BTW</td>
-            <td>€ {{ difference_btw|floatformat }}</td>
+            <td>€ {{ difference_btw|floatformat:2 }}</td>
         </tr>
     </table>
     </div>
@@ -81,10 +82,10 @@
                         {{ invoice.invoice_number }}
                     </td>
                     <td>
-                        € {{ invoice.subtotal }}
+                        € {{ invoice.subtotal|floatformat:2 }}
                     </td>
                     <td>
-                        € {{ invoice.btw_amount }}
+                        € {{ invoice.btw_amount|floatformat:2 }}
                     </td>
                 </tr>
             {% endfor %}
@@ -110,10 +111,10 @@
                         {{ invoice.to_company }}
                     </td>
                     <td>
-                        € {{ invoice.get_total_amount }}
+                        € {{ invoice.get_total_amount|floatformat:2 }}
                     </td>
                     <td>
-                        € {{ invoice.get_btw }}
+                        € {{ invoice.get_btw|floatformat:2 }}
                     </td>
                 </tr>
             {% endfor %}

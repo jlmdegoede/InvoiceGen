@@ -1,6 +1,7 @@
 {% extends 'outgoing_invoice_table.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
 {% block invoices_active %}active{% endblock %}
 
 {% block title %}
@@ -58,7 +59,7 @@
                     Totaalbedrag
                 </td>
                 <td>
-                    <b>€{{ invoice.get_total_amount }}</b>
+                    <b>€{{ invoice.get_total_amount|floatformat:2 }}</b>
                 </td>
             </tr>
         </table>
@@ -86,10 +87,10 @@
                         {{ product.quantity }}
                     </td>
                     <td>
-                        €{{ product.price_per_quantity }}
+                        €{{ product.price_per_quantity|floatformat:2 }}
                     </td>
                     <td>
-                        €{{ product.get_price }}
+                        €{{ product.get_price|floatformat:2 }}
                     </td>
                 </tr>
             {% endfor %}

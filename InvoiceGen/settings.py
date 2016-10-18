@@ -35,7 +35,8 @@ INSTALLED_APPS = (
     'Todo',
     'HourRegistration',
     'Statistics',
-    'django_tables2'
+    'django_tables2',
+    'django.contrib.humanize'
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

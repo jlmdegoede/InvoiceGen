@@ -42,8 +42,8 @@ def generate_docx_invoice(invoice, user, products, tax_rate):
         row_cells[0].text = str(product.title)
         row_cells[1].text = str(product.identification_number)
         row_cells[2].text = str(product.quantity)
-        row_cells[3].text = '€' + str(product.price_per_quantity)
-        row_cells[4].text = '€' + str(product.get_price())
+        row_cells[3].text = '€' + str("%.2f" % product.price_per_quantity)
+        row_cells[4].text = '€' + str("%.2f" % product.get_price())
 
     document.add_paragraph()
 
