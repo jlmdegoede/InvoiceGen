@@ -10,8 +10,6 @@ def generate_title(file, invoice):
     file.writelines("\\Huge\n")
     file.writelines("\\BgThispage\n")
     file.writelines("\\textcolor{black}{\\textbf {" + invoice.title + "}}\n")
-    file.writelines("\n")
-    file.writelines("\\textcolor{black}{\\textbf{" + get_today_string() + "}}\n")
     file.writelines("\\BgThispage\n")
     file.writelines("\\vspace*{20pt}\n")
     file.writelines("\n")
