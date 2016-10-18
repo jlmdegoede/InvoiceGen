@@ -15,11 +15,10 @@ class Invoice(models.Model):
 
 
 class OutgoingInvoice(Invoice):
-    total_amount = models.IntegerField()
     to_company = models.ForeignKey(to=Company)
     expiration_date = models.DateField()
 
-    def get_totaalbedrag(self):
+    def get_total_amount(self):
         from Orders.models import Product
         totaalbedrag = 0
         products = Product.objects.filter(invoice=self)

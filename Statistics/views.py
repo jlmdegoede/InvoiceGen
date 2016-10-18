@@ -47,6 +47,7 @@ def get_yearly_stats(year):
     return nr_of_articles, nr_of_words, totale_inkomsten, not_yet_invoiced
 
 
+@login_required
 def get_start_end_dates(request):
     start_date = None
     end_date = None
@@ -61,6 +62,7 @@ def get_start_end_dates(request):
     return start_date, end_date
 
 
+@login_required
 def view_btw_aangifte(request):
     start_date, end_date = get_start_end_dates(request)
 
@@ -68,7 +70,7 @@ def view_btw_aangifte(request):
     outgoing_btw = get_btw_outgoing(start_date, end_date)
     difference_btw = float(outgoing_btw) - float(incoming_btw)
 
-    incoming_invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
+    incoming_invoices = IncomingInvoice.objects.filter(received_date__gte=start_date, received_date__lte=end_date).exclude(btw_amount=0)
 
     outgoing_invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
     outgoing_invoices = [x for x in outgoing_invoices if x.get_btw() is not 0]

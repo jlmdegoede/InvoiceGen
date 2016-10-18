@@ -91,11 +91,9 @@ def add_outgoing_invoice(request):
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = datetime.datetime.now()
-            invoice.total_amount = 0
 
             products = f.cleaned_data['products']
             for product in products:
-                invoice.total_amount += product.price_per_quantity * product.quantity
                 invoice.to_company = product.from_company
 
             invoice.invoice_number = f.cleaned_data['invoice_number']
@@ -312,7 +310,6 @@ def generate_invoice(request):
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur " + str(today)
         invoice.to_company = products[0].from_company
-        invoice.total_amount = totaalbedrag
         invoice.expiration_date = datetime.datetime.now() + timedelta(days=14)
         invoice.save()
 

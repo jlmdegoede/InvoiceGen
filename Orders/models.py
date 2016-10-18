@@ -9,7 +9,7 @@ class Product(models.Model):
     date_deadline = models.DateField()
     quantity = models.IntegerField()
     from_company = models.ForeignKey(to=Company, null=True, blank=True)
-    identification_number = models.IntegerField(null=True)
+    identification_number = models.CharField(max_length=100, null=True)
     invoice = models.ForeignKey(OutgoingInvoice, null=True, blank=True)
     briefing = models.TextField(blank=True)
     done = models.BooleanField(default=False)

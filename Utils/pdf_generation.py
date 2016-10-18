@@ -69,12 +69,12 @@ def generate_geleverd(file, products, invoice, tax_rate):
 	
     if tax_rate:
         file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str(invoice.get_totaalbedrag())+ "} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str(invoice.get_total_amount())+ "} \\\\ \n")
         file.writelines("\\multicolumn{3}{r}{\\large BTW} & {\\large \\euro" + str(invoice.get_btw()) + "} \\\\ \\cline{3-4}\n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_totaalbedrag() + invoice.get_btw()) +" }} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_total_amount() + invoice.get_btw()) +" }} \\\\ \n")
     else:
         file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_totaalbedrag()) +" }} \\\\ \n")
+        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str(invoice.get_total_amount()) +" }} \\\\ \n")
 		
     file.writelines("\\end{tabular} \\\\\\\\ \n")
 

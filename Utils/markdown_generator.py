@@ -30,13 +30,13 @@ def create_markdown_file(invoice, user, company, date, products, with_tax_rate):
             markdown_file += "|" + product.title + "|" + str(product.identification_number) + "|" + str(
                 product.quantity) + "| &#8364;" + str(product.price_per_quantity) + "| &#8364;" + str(product.get_price()) + "|\n"
         markdown_file += '\n'
-        markdown_file += "- Subtotaal: &#8364;" + str(invoice.get_totaalbedrag()) + "\n\n"
+        markdown_file += "- Subtotaal: &#8364;" + str(invoice.get_total_amount()) + "\n\n"
         markdown_file += "- BTW: &#8364;" + str(invoice.get_btw()) + "\n\n"
-        markdown_file += "- Totaal te voldoen: &#8364;" + str(invoice.get_totaalbedrag() + invoice.get_btw()) + "\n\n"
+        markdown_file += "- Totaal te voldoen: &#8364;" + str(invoice.get_total_amount() + invoice.get_btw()) + "\n\n"
     else:
         for product in products:
             markdown_file = markdown_file + "|" + product.title + "|" + str(product.identification_number) + "|" + str(
                 product.quantity) + "| &#8364;" + str(product.get_price()) + "|\n"
-        markdown_file = markdown_file + "- Totaal te voldoen: &#8364;" + str(invoice.get_totaalbedrag())
+        markdown_file = markdown_file + "- Totaal te voldoen: &#8364;" + str(invoice.get_total_amount())
 
     return markdown_file

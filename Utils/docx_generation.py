@@ -51,14 +51,14 @@ def generate_docx_invoice(invoice, user, products, tax_rate):
         p = document.add_paragraph()
         run = p.add_run()
         run.add_break()
-        p.add_run('Subtotaal: \t €' + str(invoice.get_totaalbedrag()))
+        p.add_run('Subtotaal: \t €' + str("%.2f" % invoice.get_total_amount()))
         p.alignment = 2
-        p.add_run('\nBTW: \t\t €' + str(invoice.get_btw()))
+        p.add_run('\nBTW: \t\t €' + str("%.2f" % invoice.get_btw()))
         p.alignment = 2
-        p.add_run('\nTotaal te voldoen: \t €' + str(invoice.get_totaalbedrag() + invoice.get_btw()))
+        p.add_run('\nTotaal te voldoen: \t €' + str("%.2f" % (invoice.get_total_amount() + invoice.get_btw())))
         p.alignment = 2
     else:
-        document.add_paragraph('Totaal te voldoen: \t €' + str(invoice.get_totaalbedrag()))
+        document.add_paragraph('Totaal te voldoen: \t €' + str("%.2f" % invoice.get_total_amount()))
 
     document.add_paragraph()
     document.add_paragraph('Gelieve uw betaling uiterlijk te voldoen op ' + get_formatted_string(invoice.expiration_date) + ' op IBAN ' + user.iban)

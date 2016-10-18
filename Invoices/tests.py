@@ -18,11 +18,11 @@ class InvoicesTestCase(TestCase):
                                               company_city_and_zipcode='Testplaats 1234AB')
 
         self.invoice_current = OutgoingInvoice.objects.create(title='Factuur 1', date_created=datetime.now(),
-                                                      to_company=self.company, invoice_number=1, total_amount=250,
+                                                      to_company=self.company, invoice_number=1,
                                                       expiration_date=datetime.now() + timedelta(days=62))
 
         self.invoice_year_old = OutgoingInvoice.objects.create(title='Factuur 2', date_created=date(2015, 10, 1),
-                                                       to_company=self.company, invoice_number=2, total_amount=250,
+                                                       to_company=self.company, invoice_number=2,
                                                        expiration_date=date(2015, 11, 1))
         self.product = Product.objects.create(title='Testopdracht', date_deadline=datetime.now(),
                                                     date_received=datetime.now(), quantity=500,

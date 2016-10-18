@@ -110,7 +110,7 @@
                         {{ invoice.to_company }}
                     </td>
                     <td>
-                        € {{ invoice.total_amount }}
+                        € {{ invoice.get_total_amount }}
                     </td>
                     <td>
                         € {{ invoice.get_btw }}
