@@ -29,17 +29,20 @@ def generate_gegevens_factuur(file,invoice):
     file.writelines("\n")
 
 
-def generate_gegevens_leverancier(file,user):
+def generate_gegevens_leverancier(file, user):
     file.writelines("%% Gegevens Leverancier\n")
     file.writelines("\\LARGE \n")
     file.writelines("\\noindent\\colorbox{materialGreen}\n")
     file.writelines("{\\parbox[c][25pt][c]{\\textwidth}{\\hspace{15pt}\\textcolor{white}{\\textbf{Gegevens leverancier}}}}\n")
     file.writelines("\\begin{tabular}{l l}\n")
     file.writelines("\\InvullenTwee{Naam}{" + user.name + "}{0}   \n")
-    file.writelines("\\InvullenTwee{Adres}{" + user.address + "}{0}   \n")
-    file.writelines("\\InvullenTwee{Postcode, plaats}{" + user.city_and_zipcode + "}{0}   \n")
+    file.writelines("\\InvullenTwee{Adres}{" + user.address + ', ' + user.city_and_zipcode + "}{0}   \n")
     file.writelines("\\InvullenTwee{E-mail}{" + user.email + "}{0}   \n")
     file.writelines("\\InvullenTwee{IBAN}{" + user.iban + "}{0}   \n")
+    if user.kvk is not None:
+        file.writelines("\\InvullenTwee{KvK}{" + user.kvk + "}{0}   \n")
+    if user.btw_number is not None:
+        file.writelines("\\InvullenTwee{BTW-nummer}{" + user.btw_number + "}{0}   \n")
     file.writelines("\\end{tabular} \\\\ \n")
     file.writelines("\n")
 
@@ -52,7 +55,7 @@ def generate_gegevens_afnemer(file, invoice):
     file.writelines("\\begin{tabular}{l l}\n")
     file.writelines("\\InvullenTwee{Bedrijfsnaam}{" + invoice.to_company.company_name + "}{0}   \n")
     file.writelines("\\InvullenTwee{Adres}{" + invoice.to_company.company_address + "}{0}   \n")
-    file.writelines("\\InvullenTwee{Postcode, plaats}{" + invoice.to_company.company_city_and_zipcode + "}{0}   \n")
+    file.writelines("\\InvullenTwee{Plaats en postcode}{" + invoice.to_company.company_city_and_zipcode + "}{0}   \n")
     file.writelines("\\end{tabular} \\\\ \n")
     file.writelines("\n")
 
@@ -62,19 +65,19 @@ def generate_geleverd(file, products, invoice, tax_rate):
     file.writelines("\\LARGE \n")
     file.writelines("\\noindent\\colorbox{materialGreen}\n")
     file.writelines("{\\parbox[c][25pt][c]{\\textwidth}{\\hspace{15pt}\\textcolor{white}{\\textbf{Geleverd}}}}\n")
-    file.writelines("\\begin{tabular}{l l r l}\n")
-    file.writelines("\\InvullenVierBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs}\n")
+    file.writelines("\\begin{tabular}{l l l l l}\n")
+    file.writelines("\\InvullenVijfBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs per eenheid}{Prijs}\n")
     for product in products:
-        file.writelines("\\InvullenVier{" + product.title + "}{" + str(product.identification_number ) + "}{" + str(product.quantity)+"x" + "}{" + str("%.2f" % product.get_price()) + "}\n")
+        file.writelines("\\InvullenVijf{" + product.title + "}{" + str(product.identification_number)+ "}{" + str(product.quantity)+"x" + "}{" + str("%.2f" % product.price_per_quantity)  + "}{" + str("%.2f" % product.get_price()) + "}\n")
 	
     if tax_rate:
-        file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str("%.2f" % invoice.get_total_amount())+ "} \\\\ \n")
-        file.writelines("\\multicolumn{3}{r}{\\large BTW} & {\\large \\euro" + str(invoice.get_btw()) + "} \\\\ \\cline{3-4}\n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % (invoice.get_total_amount() + invoice.get_btw())) +" }} \\\\ \n")
+        file.writelines("\\cline{4-5} \n")
+        file.writelines("\\multicolumn{4}{r}{\\large \\textbf{Subtotaal}} & {\\large \\euro " + str("%.2f" % invoice.get_total_amount())+ "} \\\\ \n")
+        file.writelines("\\multicolumn{4}{r}{\\large BTW} & {\\large \\euro" + str("%.2f" % invoice.get_btw()) + "} \\\\ \\cline{4-5}\n")
+        file.writelines("\\multicolumn{4}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % (invoice.get_total_amount() + invoice.get_btw())) +" }} \\\\ \n")
     else:
-        file.writelines("\\cline{3-4} \n")
-        file.writelines("\\multicolumn{3}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % invoice.get_total_amount()) +" }} \\\\ \n")
+        file.writelines("\\cline{4-5} \n")
+        file.writelines("\\multicolumn{4}{r}{\\large \\textbf{Totaal}} & {\\large \\textbf{\\euro" + str("%.2f" % invoice.get_total_amount()) +" }} \\\\ \n")
 		
     file.writelines("\\end{tabular} \\\\\\\\ \n")
 
