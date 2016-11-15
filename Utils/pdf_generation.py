@@ -51,7 +51,7 @@ def generate_gegevens_afnemer(file, invoice):
     file.writelines("\\noindent\\colorbox{materialGreen}\n")
     file.writelines("{\\parbox[c][25pt][c]{\\textwidth}{\\hspace{15pt}\\textcolor{white}{\\textbf{Gegevens afnemer}}}}\n")
     file.writelines("\\begin{tabular}{l l}\n")
-    file.writelines("\\InvullenTwee{Bedrijfsnaam}{" + invoice.to_company.company_name + "}{0}   \n")
+    file.writelines("\\InvullenTwee{Bedrijfsnaam}{" + invoice.to_company.company_name.replace('&', '\&') + "}{0}   \n")
     file.writelines("\\InvullenTwee{Adres}{" + invoice.to_company.company_address + "}{0}   \n")
     file.writelines("\\InvullenTwee{Plaats en postcode}{" + invoice.to_company.company_city_and_zipcode + "}{0}   \n")
     file.writelines("\\end{tabular} \\\\ \n")
