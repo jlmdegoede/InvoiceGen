@@ -131,7 +131,7 @@
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
                     $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
-                    $('#modal1').openModal();
+                    $('#modal1').modal('open');
                 } else {
                     // factuurknop gedrukt
                     if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {
@@ -165,9 +165,9 @@
                             }
                         });
 
-                        $('#modal-invoice').openModal();
+                        $('#modal-invoice').modal('open');
                     } else {
-                        $('#modal-error').openModal();
+                        $('#modal-error').modal('open');
                     }
                 }
             });
