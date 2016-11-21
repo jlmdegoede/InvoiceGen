@@ -102,7 +102,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-
+            $('.modal').modal();
             saveTableTab('order_page');
 
             // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
@@ -131,7 +131,7 @@
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
                     $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
-                    $('#modal1').modal();
+                     $('#modal1').modal('open');
                 } else {
                     // factuurknop gedrukt
                     if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {
@@ -165,9 +165,9 @@
                             }
                         });
 
-                        $('#modal-invoice').modal();
+                        $('#modal-invoice').modal('open');
                     } else {
-                        $('#modal-error').modal();
+                        $('#modal-error').modal('open');
                     }
                 }
             });
