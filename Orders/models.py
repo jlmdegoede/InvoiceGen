@@ -14,7 +14,7 @@ class Product(models.Model):
     briefing = models.TextField(blank=True)
     done = models.BooleanField(default=False)
     price_per_quantity = models.FloatField()
-    tax_rate = models.IntegerField()
+    tax_rate = models.IntegerField(null=True)
 
     def __str__(self):
         return self.title
