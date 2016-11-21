@@ -144,7 +144,7 @@
                         $('#factureren').click(function () {
                             if ($('#volgnummer').val() != undefined && $('#volgnummer').val() != "") {
                                 follower_number = $('#volgnummer').val();
-                                $('#modal-invoice').closeModal();
+                                $('#modal-invoice').modal('close');
                                 $.ajax({
                                     type: "POST",
                                     url: '{% url "generate_invoice" %}',

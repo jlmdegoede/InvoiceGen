@@ -139,7 +139,7 @@
             });
         });
         window.closeModal = function (company_name, company_id) {
-            $('#modal-client').closeModal();
+            $('#modal-client').modal('close');
             $('#id_from_company').append($('<option/>', {
                 value: company_id,
                 text: company_name
