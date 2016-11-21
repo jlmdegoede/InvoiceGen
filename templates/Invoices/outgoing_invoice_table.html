@@ -1,46 +1,64 @@
-{% extends 'order_base.html' %}
+{% extends 'Invoices/invoice_table.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load render_table from django_tables2 %}
-{% block orders_active %}active{% endblock %}
+{% block invoices_active %}active{% endblock %}
 
 {% block title %}
-    Opdrachtgevers
+    Uitgaande facturen
 {% endblock %}
 
 {% block header %}
 {% endblock %}
 
-{% block companies_active %}active{% endblock %}
+{% block outgoing_invoice_active %}
+    active
+{% endblock %}
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "Opdrachtgevers beheren" "company_index" %}
+    {% breadcrumb "Uitgaande facturen" "get_invoices" %}
 {% endblock %}
 
 {% block content %}
-    <h4>Opdrachtgevers</h4>
+    <h4>Uitgaande facturen beheren</h4>
     <div class="row">
-        {% render_table company_table "../templates/table_materialize.html" %}
+        <div class="col s12">
+            <ul class="tabs">
+                {% for year in years %}
+                    {% if currentYear == year %}
+                        <li class="tab col s3"><a class="active" href="#{{ year }}">{{ year }}</a></li>
+                    {% else %}
+                        <li class="tab col s3"><a href="#{{ year }}">{{ year }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% for y, table in invoices.items %}
+            <div id="{{ y }}" class="col s12">
+                {% render_table table "../templates/table_materialize.html" %}
+            </div>
+        {% endfor %}
+
+        {% if toast %}
+            <script type="text/javascript">
+                Materialize.toast('{{ toast }}', 4000)
+            </script>
+        {% endif %}
     </div>
-
-    {% if toast %}
-        <script type="text/javascript">
-            Materialize.toast('{{ toast }}', 4000)
-        </script>
-    {% endif %}
-
     <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-        <a class="btn-floating btn-large red" href="{% url "company_add" %}">
+        <a class="btn-floating btn-large red" href="{% url "add_outgoing_invoice" %}">
             <i class="large material-icons">add</i>
         </a>
     </div>
 
+
     <!-- Modal Structure -->
     <div id="modal1" class="modal">
         <div class="modal-content">
-            <h4>Opdrachtgever verwijderen</h4>
-            <p id="confirmText">Weet u zeker dat u deze opdrachtgever wilt verwijderen?</p>
+            <h4>Factuur verwijderen</h4>
+            <p id="confirmText">Weet u zeker dat u deze factuur wilt verwijderen?</p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"
@@ -62,16 +80,17 @@
 
         $(document).ready(function () {
             $('.modal').modal();
+            saveTableTab('outgoing_invoice');
+
             // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
             $('.modal-trigger').click(function (event) {
                 if ($(this).hasClass("delete")) {
                     id = $(this).attr('value');
                     title = $(this).attr('name');
-                    $('#deleteLink').attr('href', "/opdrachtgevers/verwijderen/" + id);
-                    $('#confirmText').text("Weet u zeker dat u de opdrachtgever " + title + " wilt verwijderen?");
+                    $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
+                    $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
                     $('#modal1').modal('open');
-                }
-                else if ($(this).hasClass("dialog-trigger")) {
+                } else if ($(this).hasClass("product")) {
                     var page = "/opdracht/" + $(this).attr('value');
                     $('.article-iframe').attr('src', page)
                     $('#modal-article').modal('open');

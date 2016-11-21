@@ -33,14 +33,14 @@ AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 def agreement_index(request):
     agreements = AgreementTable(Agreement.objects.all())
     RequestConfig(request).configure(agreements)
-    return render(request, 'agreements.html', {'agreements': agreements})
+    return render(request, 'Agreements/agreements.html', {'agreements': agreements})
 
 
 @login_required
 def index_model_agreements(request):
     model_agreements = AgreementTextTable(AgreementText.objects.all())
     RequestConfig(request).configure(model_agreements)
-    return render(request, 'model_agreements.html', {'model_agreements': model_agreements})
+    return render(request, 'Agreements/model_agreements.html', {'model_agreements': model_agreements})
 
 
 @login_required
@@ -62,12 +62,12 @@ def add_agreement(request):
             request.session['toast'] = 'Overeenkomst toegevoegd'
             return redirect('/overeenkomsten/')
         else:
-            return render(request, 'new_edit_agreement.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form})
+            return render(request, 'Agreements/new_edit_agreement.html',
+                          {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form})
     else:
         form = AgreementForm()
         articles = Product.objects.filter(done=False)
-        return render(request, 'new_edit_agreement.html', {'form': form, 'articles': articles})
+        return render(request, 'Agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
 
 
 
@@ -77,7 +77,7 @@ def view_agreement(request, url):
         0] + '/overeenkomsten/ondertekenen/' + agreement.url
     agreement.full_name = Settings.views.get_user_fullname()
     if request.method == 'GET':
-        return render(request, 'view_sign_agreement.html', {'agreement': agreement})
+        return render(request, 'Agreements/view_sign_agreement.html', {'agreement': agreement})
 
 
 @login_required
@@ -180,14 +180,14 @@ def edit_model_agreement(request, model_agreement_id):
             form.save()
             return redirect('/overeenkomsten')
         else:
-            return render(request, 'new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors,
+            return render(request, 'Agreements/new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors,
                                                                        'model_agreement_id': model_agreement.id})
     else:
         try:
             model_agreement = AgreementText.objects.get(id=model_agreement_id)
             form = AgreementTextForm(instance=model_agreement)
-            return render(request, 'new_edit_agreement_text.html',
-                                      {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id})
+            return render(request, 'Agreements/new_edit_agreement_text.html',
+                          {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id})
         except:
             return redirect(to=index_model_agreements)
 
@@ -204,9 +204,9 @@ def add_agreement_text(request):
             request.session['toast'] = 'Modelovereenkomst toegevoegd'
             return redirect('/overeenkomsten')
         else:
-            return render(request, 'new_edit_agreement_text.html',
-                                      {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form,
+            return render(request, 'Agreements/new_edit_agreement_text.html',
+                          {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form,
                                        'error': agree_text_form.errors})
     else:
         form = AgreementTextForm()
-        return render(request, 'new_edit_agreement_text.html', {'form': form})
+        return render(request, 'Agreements/new_edit_agreement_text.html', {'form': form})

@@ -1,64 +1,60 @@
-{% extends 'invoice_table.html' %}
+{% extends 'Agreements/base_agreements.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load render_table from django_tables2 %}
-{% block invoices_active %}active{% endblock %}
+{% block agreements_active %}active{% endblock %}
 
 {% block title %}
-    Uitgaande facturen
+    Overeenkomsten
 {% endblock %}
 
 {% block header %}
 {% endblock %}
 
-{% block outgoing_invoice_active %}
-    active
+{% block breadcrumbs %}
+    {{ super.block }}
+    {% breadcrumb "Overeenkomsten" "agreement_index" %}
 {% endblock %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    {% breadcrumb "Uitgaande facturen" "get_invoices" %}
-{% endblock %}
 
 {% block content %}
-    <h4>Uitgaande facturen beheren</h4>
-    <div class="row">
-        <div class="col s12">
-            <ul class="tabs">
-                {% for year in years %}
-                    {% if currentYear == year %}
-                        <li class="tab col s3"><a class="active" href="#{{ year }}">{{ year }}</a></li>
-                    {% else %}
-                        <li class="tab col s3"><a href="#{{ year }}">{{ year }}</a></li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
+    <h4>Overeenkomsten beheren</h4>
+    {% csrf_token %}
+    {% render_table agreements "../templates/table_materialize.html" %}
+    {% if toast %}
+        <script type="text/javascript">
+            Materialize.toast('{{ toast }}', 4000)
+        </script>
+    {% endif %}
+
+
+    <div id="modal-invoice" class="modal">
+        <div class="modal-content">
+            <h4>Modelovereenkomst aanmaken</h4>
+            <p id="confirmText">Geef het gewenste volgnummer op:
+                <input type="number" id="volgnummer" placeholder="Volgnummer" min="1">
+            </p>
+
         </div>
-
-        {% for y, table in invoices.items %}
-            <div id="{{ y }}" class="col s12">
-                {% render_table table "../templates/table_materialize.html" %}
-            </div>
-        {% endfor %}
-
-        {% if toast %}
-            <script type="text/javascript">
-                Materialize.toast('{{ toast }}', 4000)
-            </script>
-        {% endif %}
+        <div class="modal-footer">
+            <a href="#" class=" modal-action waves-effect waves-green btn-flat" id="factureren">Aanmaken</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
     </div>
+
     <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-        <a class="btn-floating btn-large red" href="{% url "add_outgoing_invoice" %}">
+        <a class="btn-floating btn-large red" href="{% url "add_agreement" %}">
             <i class="large material-icons">add</i>
         </a>
     </div>
 
+    <div id="dialog" title="Artikel"></div>
 
     <!-- Modal Structure -->
     <div id="modal1" class="modal">
         <div class="modal-content">
-            <h4>Factuur verwijderen</h4>
-            <p id="confirmText">Weet u zeker dat u deze factuur wilt verwijderen?</p>
+            <h4>Artikel verwijderen</h4>
+            <p id="confirmText">Weet je zeker dat je deze overeenkomst wilt verwijderen?</p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"
@@ -66,6 +62,7 @@
             <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
         </div>
     </div>
+
 
     <div id="modal-article" class="modal" style="height:600px">
         <div class="modal-content" style="height:500px">
@@ -80,20 +77,14 @@
 
         $(document).ready(function () {
             $('.modal').modal();
-            saveTableTab('outgoing_invoice');
-
             // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
             $('.modal-trigger').click(function (event) {
                 if ($(this).hasClass("delete")) {
                     id = $(this).attr('value');
                     title = $(this).attr('name');
-                    $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
-                    $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
+                    $('#deleteLink').attr('href', "/overeenkomsten/verwijderen/" + id);
+                    $('#confirmText').text("Weet je zeker dat je deze overeenkomst wilt verwijderen?");
                     $('#modal1').modal('open');
-                } else if ($(this).hasClass("product")) {
-                    var page = "/opdracht/" + $(this).attr('value');
-                    $('.article-iframe').attr('src', page)
-                    $('#modal-article').modal('open');
                 }
             });
         });

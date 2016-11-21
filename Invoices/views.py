@@ -29,7 +29,7 @@ def get_outgoing_invoices(request):
         del request.session['toast']
 
     dict['toast'] = toast
-    return render(request, 'outgoing_invoice_table.html', dict)
+    return render(request, 'Invoices/outgoing_invoice_table.html', dict)
 
 
 @login_required
@@ -42,7 +42,7 @@ def get_incoming_invoices(request):
         del request.session['toast']
 
     dict['toast'] = toast
-    return render(request, 'incoming_invoice_table.html', dict)
+    return render(request, 'Invoices/incoming_invoice_table.html', dict)
 
 
 def get_invoices(invoice_objects, request):
@@ -82,8 +82,8 @@ def add_outgoing_invoice(request):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(instance=invoice)
 
-        return render(request, 'new_edit_outgoing_invoice.html',
-                                  {'form': f, 'invoceid': invoice.id, 'edit': False})
+        return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+                      {'form': f, 'invoceid': invoice.id, 'edit': False})
     elif request.method == 'POST':
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(request.POST, instance=invoice)
@@ -103,8 +103,8 @@ def add_outgoing_invoice(request):
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen')
         else:
-            return render(request, 'new_edit_outgoing_invoice.html',
-                                      {'form': f, 'invoceid': invoice.id, 'edit': False,
+            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+                          {'form': f, 'invoceid': invoice.id, 'edit': False,
                                        'toast': "Formulier ongeldig!"})
 
 
@@ -126,8 +126,8 @@ def add_incoming_invoice(request):
         invoice = IncomingInvoice()
         f = IncomingInvoiceForm(instance=invoice)
 
-        return render(request, 'new_edit_incoming_invoice.html',
-                                  {'form': f, 'invoceid': invoice.id, 'edit': False})
+        return render(request, 'Invoices/new_edit_incoming_invoice.html',
+                      {'form': f, 'invoceid': invoice.id, 'edit': False})
     elif request.method == 'POST':
         invoice = IncomingInvoice()
         f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
@@ -141,21 +141,21 @@ def add_incoming_invoice(request):
             request.session['toast'] = 'Factuur aangemaakt'
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'new_edit_incoming_invoice.html',
-                                      {'form': f, 'invoceid': invoice.id, 'edit': False,
+            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+                          {'form': f, 'invoceid': invoice.id, 'edit': False,
                                        'toast': "Formulier ongeldig!"})
 
 
 @login_required
 def detail_incoming_invoice(request, invoice_id):
     invoice = IncomingInvoice.objects.get(id=invoice_id)
-    return render(request, 'view_incoming_invoice.html', {'invoice': invoice})
+    return render(request, 'Invoices/view_incoming_invoice.html', {'invoice': invoice})
 
 
 @login_required
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    return render(request, 'view_outgoing_invoice.html', {'invoice': invoice})
+    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
 
 
 @login_required
@@ -207,8 +207,8 @@ def edit_outgoing_invoice(request, invoiceid=-1):
             f = OutgoingInvoiceForm(instance=invoice)
             products = Product.objects.filter(invoice=invoice)
 
-            return render(request, 'new_edit_outgoing_invoice.html',
-                                      {'form': f, 'products': products, 'edit': True,
+            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+                          {'form': f, 'products': products, 'edit': True,
                                        'invoiceid': invoiceid})
         except:
             request.session['toast'] = 'Factuur niet gevonden'
@@ -230,8 +230,8 @@ def edit_outgoing_invoice(request, invoiceid=-1):
             request.session['toast'] = 'Factuur gewijzigd'
             return redirect('/facturen')
         else:
-            return render(request, 'new_edit_outgoing_invoice.html',
-                                      {'form': f, 'products': old_products, 'invoiceid': invoice.id, 'edit': True,
+            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+                          {'form': f, 'products': old_products, 'invoiceid': invoice.id, 'edit': True,
                                        'toast': "Formulier ongeldig!"})
 
 
@@ -242,8 +242,8 @@ def edit_incoming_invoice(request, invoiceid=-1):
             invoice = IncomingInvoice.objects.get(id=invoiceid)
             f = IncomingInvoiceForm(instance=invoice)
 
-            return render(request, 'new_edit_incoming_invoice.html',
-                                      {'form': f, 'invoice': invoice, 'edit': True})
+            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+                          {'form': f, 'invoice': invoice, 'edit': True})
         except:
             request.session['toast'] = 'Factuur niet gevonden'
             return redirect('/facturen/inkomend')
@@ -258,8 +258,8 @@ def edit_incoming_invoice(request, invoiceid=-1):
             request.session['toast'] = 'Factuur gewijzigd'
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'new_edit_incoming_invoice.html',
-                                      {'form': f, 'invoiceid': invoice.id, 'edit': True,
+            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+                          {'form': f, 'invoiceid': invoice.id, 'edit': True,
                                        'toast': "Formulier ongeldig!"})
 
 

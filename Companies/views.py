@@ -22,7 +22,7 @@ def index(request):
         del request.session['toast']
 
     RequestConfig(request).configure(company_table)
-    return render(request, 'index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
+    return render(request, 'Companies/index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
 
 
 @login_required
@@ -34,10 +34,10 @@ def add_company(request):
             company.save()
             return redirect(to=index)
         else:
-            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'error': form.errors})
     else:
         company_form = CompanyForm()
-        return render(request, 'new_edit_company.html', {'form': company_form})
+        return render(request, 'Companies/new_edit_company.html', {'form': company_form})
 
 
 @login_required
@@ -46,7 +46,7 @@ def edit_company(request, company_id):
         try:
             company = Company.objects.get(id=company_id)
             form = CompanyForm(instance=company)
-            return render(request, 'new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id})
         except:
             return redirect(to=index)
     elif request.method == 'POST':
@@ -56,7 +56,7 @@ def edit_company(request, company_id):
             company.save()
             return redirect(to=index)
         else:
-            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id})
 
 
 @login_required

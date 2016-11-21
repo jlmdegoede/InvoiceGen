@@ -35,7 +35,7 @@ def index(request):
 
     RequestConfig(request).configure(active_products_table)
 
-    return render(request, 'index.html',
+    return render(request, 'Orders/index.html',
                   {'products': products, 'active_products_table': active_products_table, 'toast': toast,
                    'years': year_list, 'first_time': no_settings_notification})
 
@@ -84,7 +84,7 @@ def view_product(request, product_id):
 
         today = get_today_string()
 
-        return render(request, 'view_product.html',
+        return render(request, 'Orders/view_product.html',
                       {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
     except Exception as err:
         print(err)
@@ -114,7 +114,7 @@ def add_company_inline(request):
             return JsonResponse({'company_id': company.id, 'company_name': company.company_name})
     if request.method == 'GET':
         form = CompanyForm()
-        return render(request, 'new_company_inline.html', {'form': form})
+        return render(request, 'Orders/new_company_inline.html', {'form': form})
 
 
 @login_required
@@ -138,13 +138,13 @@ def add_product_post(request):
             loop.close()
         return redirect('/')
     else:
-        return render(request, 'new_edit_product.html',
-                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors})
+        return render(request, 'Orders/new_edit_product.html',
+                      {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors})
 
 
 def add_product_get(request):
     form = ProductForm()
-    return render(request, 'new_edit_product.html', {'form': form})
+    return render(request, 'Orders/new_edit_product.html', {'form': form})
 
 
 @login_required
@@ -158,8 +158,8 @@ def edit_product_get(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
         f = ProductForm(instance=product)
-        return render(request, 'new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id})
+        return render(request, 'Orders/new_edit_product.html',
+                      {'form': f, 'edit': True, 'productid': product_id})
     except:
         request.session['toast'] = 'Opdracht niet gevonden'
         return redirect('/')
@@ -174,8 +174,8 @@ def edit_product_post(request, product_id):
         request.session['toast'] = 'Opdracht gewijzigd'
         return redirect('/')
     else:
-        return render(request, 'new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'})
+        return render(request, 'Orders/new_edit_product.html',
+                      {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'})
 
 
 @login_required
@@ -198,7 +198,7 @@ def user_logout(request):
 
 def user_login_placeholder_email(request):
     form = UserForm()
-    return render(request, 'login.html', {'form': form, 'email': request.GET['email']})
+    return render(request, 'Orders/login.html', {'form': form, 'email': request.GET['email']})
 
 
 def user_login(request):
@@ -214,9 +214,9 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
         else:
-            return render(request, 'login.html', {'error': "Ongeldige inloggegevens", 'form': form})
+            return render(request, 'Orders/login.html', {'error': "Ongeldige inloggegevens", 'form': form})
     else:
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'Orders/login.html', {'form': form})
 
 
 @login_required
@@ -248,7 +248,7 @@ def search(request):
         found_outgoing_invoices = OutgoingInvoice.objects.filter(outgoing_invoice_query).order_by('-date_created')
         found_companies = Company.objects.filter(companies_query)
 
-    return render(request, 'search_results.html',
-                              {'query_string': query_string, 'found_products': found_products,
+    return render(request, 'Orders/search_results.html',
+                  {'query_string': query_string, 'found_products': found_products,
                                'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
                                'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies})
