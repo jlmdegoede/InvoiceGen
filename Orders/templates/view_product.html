@@ -235,7 +235,7 @@
             });
 
             $('.modal-trigger').click(function (e) {
-                $('#modal1').openModal();
+                $('#modal1').modal('open');
                 var hour_id = $(this).attr('data-id');
                 $('#deleteLink').click(function (e) {
                     e.preventDefault();

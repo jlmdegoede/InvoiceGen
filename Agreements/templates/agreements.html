@@ -83,7 +83,7 @@
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "/overeenkomsten/verwijderen/" + id);
                     $('#confirmText').text("Weet je zeker dat je deze overeenkomst wilt verwijderen?");
-                    $('#modal1').openModal();
+                    $('#modal1').modal('open');
                 }
             });
         });

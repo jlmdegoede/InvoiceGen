@@ -88,11 +88,11 @@
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "/facturen/verwijderen/" + id);
                     $('#confirmText').text("Weet u zeker dat u de factuur " + title + " wilt verwijderen?");
-                    $('#modal1').openModal();
+                    $('#modal1').modal('open');
                 } else if ($(this).hasClass("product")) {
                     var page = "/opdracht/" + $(this).attr('value');
                     $('.article-iframe').attr('src', page)
-                    $('#modal-article').openModal();
+                    $('#modal-article').modal('open');
                 }
             });
         });

@@ -133,8 +133,8 @@
 
             $('.modal-trigger').click(function (event) {
                 var page = "{% url "add_company_inline" %}";
-                $('.client-iframe').attr('src', page)
-                $('#modal-client').openModal();
+                $('.client-iframe').attr('src', page);
+                $('#modal-client').modal('open');
             });
         });
         window.closeModal = function (company_name, company_id) {
