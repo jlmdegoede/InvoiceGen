@@ -248,7 +248,7 @@ def search(request):
         found_outgoing_invoices = OutgoingInvoice.objects.filter(outgoing_invoice_query).order_by('-date_created')
         found_companies = Company.objects.filter(companies_query)
 
-    return render(request, 'Orders/search_results.html',
+    return render(request, 'search_results.html',
                   {'query_string': query_string, 'found_products': found_products,
                                'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
                                'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies})

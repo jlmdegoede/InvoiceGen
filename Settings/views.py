@@ -27,7 +27,7 @@ def settings(request):
             form.save()
             toast = 'Instellingen opgeslagen'
         else:
-            return render(request, 'settings.html',
+            return render(request, 'Settings/settings.html',
                           {'form': form, 'toast': toast, 'error': form.errors})
     user_i = UserSetting.objects.all().first()
 
@@ -54,7 +54,7 @@ def settings(request):
         print("Geen Wunderlist-integratie")
         wunderlist_dict = Todo.views.get_wunderlist_url(request)
 
-    return render(request, 'settings.html',
+    return render(request, 'Settings/settings.html',
                   {'form': form, 'color_form': color_form, 'toast': toast, 'todo': todo, 'lists': lists,
                    'wunderlist_dict': wunderlist_dict,
                    'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
