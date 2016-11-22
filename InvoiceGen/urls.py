@@ -41,8 +41,6 @@ urlpatterns = [
     url(r'^md/(?P<invoice_id>\d+)/$', Invoices.views.get_invoice_markdown, name='download_markdown'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
-    url(r'^instellingen/kleuren/$', Settings.views.set_colors, name='set_colors'),
-    url(r'^instellingen/reset-kleuren/$', Settings.views.reset_colors, name='reset_colors'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
 
     url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),

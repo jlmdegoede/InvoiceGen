@@ -10,6 +10,7 @@ import pytz
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from InvoiceGen.site_settings import COMMUNICATION_KEY
+from InvoiceGen.settings import DEFAULT_COLOR
 # Create your views here.
 
 
@@ -24,6 +25,7 @@ def settings(request):
         form = UserSettingForm(request.POST, instance=user)
         if form.is_valid():
             save_website_name(form)
+            save_colors(form)
             form.save()
             toast = 'Instellingen opgeslagen'
         else:
@@ -37,13 +39,14 @@ def settings(request):
     site_name = get_setting('site_name', 'InvoiceGen')
     form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
 
-    color_form = ColorForm()
     lists = None
     current_list = None
     wunderlist_enabled = False
     todo = None
     wunderlist_dict = None
     invoice_site = get_current_settings_json()
+    color_up = get_setting('color_up', DEFAULT_COLOR)
+    color_down = get_setting('color_down', DEFAULT_COLOR)
 
     try:
         todo = TodoAuth.objects.get(id=1)
@@ -55,8 +58,8 @@ def settings(request):
         wunderlist_dict = Todo.views.get_wunderlist_url(request)
 
     return render(request, 'Settings/settings.html',
-                  {'form': form, 'color_form': color_form, 'toast': toast, 'todo': todo, 'lists': lists,
-                   'wunderlist_dict': wunderlist_dict,
+                  {'form': form, 'toast': toast, 'todo': todo, 'lists': lists,
+                   'wunderlist_dict': wunderlist_dict, 'color_up': color_up,
                    'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
 
 @login_required
@@ -64,6 +67,11 @@ def renew_subscription(request):
     print("Redirecting...")
     return HttpResponseRedirect('https://invoicegen.nl/betaling/start?key=' + COMMUNICATION_KEY)
 
+def save_colors(form):
+    color_up = form.cleaned_data['color_up']
+    save_setting('color_up', color_up)
+    color_down = form.cleaned_data['color_down']
+    save_setting('color_down', color_down)
 
 def get_current_settings_json():
     try:
@@ -138,62 +146,8 @@ def save_setting(key, value):
     return setting
 
 
-@login_required
-def set_colors(request):
-    if request.method == 'POST':
-        form = ColorForm(request.POST)
-        if form.is_valid():
-            color_up_f = form.cleaned_data['color_up']
-            color_down_f = form.cleaned_data['color_down']
-
-            color_up = Setting.objects.filter(key='color_up')
-            color_down = Setting.objects.filter(key='color_down')
-
-            if color_up is not None:
-                if color_up.count() == 0:
-                    color_up = Setting(key='color_up', value=color_up_f)
-                else:
-                    color_up = color_up[0]
-                    color_up.value = color_up_f
-                color_up.save()
-
-            if color_down is not None:
-                if color_down.count() == 0:
-                    color_down = Setting(key='color_down', value=color_down_f)
-                else:
-                    color_down = color_down[0]
-                    color_down.value = color_down_f
-                color_down.save()
-    return redirect(to='settings')
-
-
-@login_required
-def reset_colors(request):
-    color_up = Setting.objects.filter(key='color_up')
-    color_down = Setting.objects.filter(key='color_down')
-
-    if color_up is not None:
-        if color_up.count() == 0:
-            color_up = Setting(key='color_up', value='#009688')
-        else:
-            color_up = color_up[0]
-            color_up.value = '#009688'
-        color_up.save()
-
-    if color_down is not None:
-        if color_down.count() == 0:
-            color_down = Setting(key='color_down', value='#009688')
-        else:
-            color_down = color_down[0]
-            color_down.value = '#009688'
-        color_down.save()
-
-    return redirect(to='settings')
-
-
 def save_website_name(form):
     site_name_f = form.cleaned_data['site_name']
-
     site_name = Setting.objects.filter(key='site_name')
 
     if site_name is not None:

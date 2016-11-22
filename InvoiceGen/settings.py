@@ -119,6 +119,8 @@ USE_TZ = True
 
 DECIMAL_SEPARATOR = ','
 
+DEFAULT_COLOR = '#009688'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/

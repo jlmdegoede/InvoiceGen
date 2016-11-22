@@ -80,6 +80,18 @@
                         {{ error.site_name }}
                     </div>
 
+                    <legend>Bedrijfskleuren</legend>
+                    <div class="input-field col s12">
+                      <label for="background-color-up">Selecteer een kleur voor boven:</label><br><br>
+                      <input id="background-color-up" name="color_up" type="color" value="{{ color_up }}" />
+                    </div>
+
+                    <div class="input-field col s12">
+                      <label for="background-color-down">Selecteer een kleur voor onder:</label><br><br>
+                      <input id="background-color-down" name="color_down" type="color" value="{{ color_down }}" />
+
+                      <br><br><br>
+                    </div>
                     <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
                         <i class="material-icons left">send</i>
                     </button>
