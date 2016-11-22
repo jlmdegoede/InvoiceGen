@@ -38,20 +38,24 @@
             <td>Openstaande opdrachten
             <td>€{{ not_yet_invoiced|last }}</td>
         </tr>
+        <tr>
+            <td>Totaanaantal vastgelegde uren
+            <td>{{ total_hours }}</td>
+        </tr>
     </table>
     <h4>Afgelopen 5 jaar</h4>
     <div class="row">
-        <div class="col s12 m12 l4">
+        <div class="col s12 m12 l6">
             <h5>Totaalaantal opdrachten</h5>
             <canvas id="yoy_nr_of_articles" width="400" height="400"></canvas>
         </div>
 
-        <div class="col s12 m12 l4">
+        <div class="col s12 m12 l6">
             <h5>Totaalaantal kwantiteit</h5>
             <canvas id="yoy_nr_of_words" width="400" height="400"></canvas>
         </div>
 
-        <div class="col s12 m12 l4">
+        <div class="col s12 m12 l6">
             <h5>Totaalaantal inkomsten</h5>
             <canvas id="totale_inkomsten" width="400" height="400"></canvas>
         </div>

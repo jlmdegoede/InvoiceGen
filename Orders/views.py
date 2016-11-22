@@ -18,9 +18,8 @@ from .tables import OrderTable
 from django_tables2 import RequestConfig
 from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
-from django.template import Context
 from Utils.date_helper import get_today_string
-
+from Statistics.views import get_unique_hours, get_total_hours
 # Create your views here.
 
 
@@ -74,22 +73,16 @@ def add_agreements_to_product(product):
 
 @login_required
 def view_product(request, product_id):
-    try:
-        product = Product.objects.get(id=product_id)
-        product = add_agreements_to_product(product)
+    product = Product.objects.get(id=product_id)
+    product = add_agreements_to_product(product)
 
-        hour_registration = HourRegistration.objects.filter(product=product)
-        total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
-        total_hours = round((total_hours / 60) / 60, 2)
+    hour_registration = HourRegistration.objects.filter(product=product)
+    total_hours = get_total_hours(2016, hour_registration)
 
-        today = get_today_string()
+    today = get_today_string()
 
-        return render(request, 'Orders/view_product.html',
-                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
-    except Exception as err:
-        print(err)
-        request.session['toast'] = 'Product niet gevonden'
-        return redirect('/')
+    return render(request, 'Orders/view_product.html',
+                  {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
 
 
 @login_required
