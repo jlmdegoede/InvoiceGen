@@ -1,5 +1,5 @@
 django
-django-colorful
+celery
 django-bootstrap-breadcrumbs
 markdown
 pillow

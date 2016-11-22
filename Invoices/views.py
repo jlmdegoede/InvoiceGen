@@ -10,11 +10,10 @@ from Invoices.forms import *
 from Settings.models import UserSetting
 from Utils.date_helper import *
 from Utils.docx_generation import *
-from Utils.pdf_generation import *
 from .models import *
 from .tables import *
 from django_tables2 import RequestConfig
-
+from .tasks import generate_pdf_task
 
 # Create your views here.
 
@@ -160,14 +159,8 @@ def detail_outgoing_invoice(request, invoice_id):
 
 @login_required
 def get_invoice_pdf(request, invoice_id):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    products = Product.objects.filter(invoice=invoice)
-    user = UserSetting.objects.first()
-    generate_pdf(products, user, invoice)
-    response = HttpResponse(open(BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/main.pdf", 'rb').read())
-    response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.pdf'
-    response['Content-Type'] = 'application/pdf'
-    return response
+    test = generate_pdf_task.apply_async((invoice_id,))
+    return None
 
 
 @login_required
