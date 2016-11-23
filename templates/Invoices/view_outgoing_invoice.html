@@ -100,15 +100,22 @@
         <h4>Exporteren</h4>
         <div class="col s12">
             <div class="container left">
-        <a href="{% url "download_markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
+        <a href="#" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
 
         <div class="col s12">
             <div class="container left">
-        <a href="{% url "download_pdf" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download PDF</a></div></div>
+                <a href="#" id="pdf" class="btn waves-effect waves-light btn-flat">Download PDF</a>
+            </div>
+        </div>
 
         <div class="col s12">
             <div class="container left">
-        <a href="{% url "download_docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
+        <a href="#" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
+
+        <div class="col s12">
+            <div class="container left" id="result-div">
+            </div>
+        </div>
     </div>
 
 
@@ -117,5 +124,38 @@
             <i class="large material-icons">mode_edit</i>
         </a>
     </div>
+
+    <script>
+    $(function() {
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var ws_path = ws_scheme + '://' + window.location.host + '/output/';
+        var socket = new ReconnectingWebSocket(ws_path);
+
+        socket.onmessage = function(message) {
+            var data = JSON.parse(message.data);
+            if (data.action == 'started') {
+              $("#result-div").html("Maken PDF gestart... Een ogenblik geduld");
+            }
+
+            if (data.action == 'completed') {
+              $("#result-div").html("Maken PDF voltooid: ");
+                var downloadLink = $("<a />", {
+                    href : "/factuur/downloaden/pdf/",
+                    text : "Nu downloaden"
+                }).appendTo("#result-div");
+            }
+        };
+
+        $("#pdf").on("click", function(event) {
+            var message = {
+                action: "start_pdf",
+                invoice_id: "{{ invoice.id }}",
+            };
+            socket.send(JSON.stringify(message));
+            return false;
+        });
+    });
+
+    </script>
 
 {% endblock %}

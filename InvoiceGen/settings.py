@@ -35,8 +35,20 @@ INSTALLED_APPS = (
     'HourRegistration',
     'Statistics',
     'django_tables2',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'channels'
 )
+
+# In settings.py
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
+        "CONFIG": {
+           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
+         },
+        "ROUTING": "InvoiceGen.routing.channel_routing",
+    },
+}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -127,3 +139,7 @@ DEFAULT_COLOR = '#009688'
 STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR + '/static/files/'
 MEDIA_URL = '/files/'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

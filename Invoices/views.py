@@ -14,7 +14,7 @@ from .models import *
 from .tables import *
 from django_tables2 import RequestConfig
 from .tasks import generate_pdf_task
-
+from Invoices.consumers import *
 # Create your views here.
 
 
@@ -120,6 +120,19 @@ def remove_invoice_from_products(products):
 
 
 @login_required
+def download_latest_generated_invoice(request, file_type):
+    switcher = {"pdf": get_latest_pdf()}
+    return switcher[file_type]
+
+
+def get_latest_pdf():
+    response = HttpResponse(open(BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/main.pdf", 'rb').read())
+    response['Content-Disposition'] = 'attachment; filename=factuur.pdf'
+    response['Content-Type'] = 'application/pdf'
+    return response
+
+
+@login_required
 def add_incoming_invoice(request):
     if request.method == 'GET':
         invoice = IncomingInvoice()
@@ -160,8 +173,9 @@ def detail_outgoing_invoice(request, invoice_id):
 @login_required
 def get_invoice_pdf(request, invoice_id):
     test = generate_pdf_task.apply_async((invoice_id,))
+    content = Content('output')
+    content.send("Output ready")
     return None
-
 
 @login_required
 def get_invoice_markdown(request, invoice_id):

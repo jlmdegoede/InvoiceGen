@@ -8,3 +8,4 @@ fpdf
 python-docx
 django-tables2
 pytz
+channels
