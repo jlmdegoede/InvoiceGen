@@ -30,7 +30,6 @@ INSTALLED_APPS = (
     'Invoices',
     'Companies',
     'Settings',
-    'colorful',
     'django_bootstrap_breadcrumbs',
     'Todo',
     'HourRegistration',
