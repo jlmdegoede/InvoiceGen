@@ -100,7 +100,7 @@
         <h4>Exporteren</h4>
         <div class="col s12">
             <div class="container left">
-        <a href="#" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
+        <a href="{% url "download_invoice" "markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
 
         <div class="col s12">
             <div class="container left">
@@ -110,7 +110,7 @@
 
         <div class="col s12">
             <div class="container left">
-        <a href="#" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
+        <a href="{% url "download_invoice" "docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
 
         <div class="col s12">
             <div class="container left" id="result-div">
@@ -134,14 +134,15 @@
         socket.onmessage = function(message) {
             var data = JSON.parse(message.data);
             if (data.action == 'started') {
-              $("#result-div").html("Maken PDF gestart... Een ogenblik geduld");
+              $("#result-div").html("Bezig met maken van document... Een ogenblik geduld");
             }
 
             if (data.action == 'completed') {
-              $("#result-div").html("Maken PDF voltooid: ");
+              $("#result-div").html("Document gemaakt: ");
                 var downloadLink = $("<a />", {
-                    href : "/factuur/downloaden/pdf/",
-                    text : "Nu downloaden"
+                    href : "/factuur/downloaden/pdf/{{ invoice.id }}/",
+                    text : "nu downloaden",
+                    class: "btn waves-effect waves-light btn-flat"
                 }).appendTo("#result-div");
             }
         };

@@ -120,17 +120,42 @@ def remove_invoice_from_products(products):
 
 
 @login_required
-def download_latest_generated_invoice(request, file_type):
-    switcher = {"pdf": get_latest_pdf()}
-    return switcher[file_type]
+def download_latest_generated_invoice(request, file_type, invoice_id):
+    switcher = {"pdf": get_latest_pdf, "docx": get_latest_docx, "markdown": get_latest_markdown}
+    return switcher[file_type](invoice_id)
 
 
-def get_latest_pdf():
+def get_latest_pdf(invoice_id):
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
     response = HttpResponse(open(BASE_DIR + "/InvoiceTemplates/MaterialDesign/temp/main.pdf", 'rb').read())
-    response['Content-Disposition'] = 'attachment; filename=factuur.pdf'
+    response['Content-Disposition'] = 'attachment; filename={0}.pdf'.format(invoice.title)
     response['Content-Type'] = 'application/pdf'
     return response
 
+def get_latest_markdown(invoice_id):
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
+    products = Product.objects.filter(invoice=invoice)
+    with_tax_rate = products[0].tax_rate != 0
+    contents = Utils.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
+                                                             products[0].from_company,
+                                                             get_today_string(),
+                                                             products,
+                                                             with_tax_rate)
+
+
+    response = HttpResponse(contents, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=invoice{0}.md'.format(str(invoice.date_created))
+    return response
+
+def get_latest_docx(invoice_id):
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
+    products = Product.objects.filter(invoice=invoice)
+    user = UserSetting.objects.first()
+    doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    doc.save(response)
+    response['Content-Disposition'] = 'attachment; filename={0}.docx'.format(invoice.title)
+    return response
 
 @login_required
 def add_incoming_invoice(request):
@@ -168,42 +193,6 @@ def detail_incoming_invoice(request, invoice_id):
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
-
-
-@login_required
-def get_invoice_pdf(request, invoice_id):
-    test = generate_pdf_task.apply_async((invoice_id,))
-    content = Content('output')
-    content.send("Output ready")
-    return None
-
-@login_required
-def get_invoice_markdown(request, invoice_id):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    products = Product.objects.filter(invoice=invoice)
-    with_tax_rate = products[0].tax_rate != 0
-    contents = Utils.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
-                                                             products[0].from_company,
-                                                             get_today_string(),
-                                                             products,
-                                                             with_tax_rate)
-
-
-    response = HttpResponse(contents, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=invoice' + str(invoice.date_created) + '.md'
-    return response
-
-
-@login_required
-def get_invoice_docx(request, invoice_id):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    products = Product.objects.filter(invoice=invoice)
-    user = UserSetting.objects.first()
-    doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    doc.save(response)
-    response['Content-Disposition'] = 'attachment; filename=' + invoice.title + '.docx'
-    return response
 
 
 @login_required

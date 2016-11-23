@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^facturen/inkomend/verwijderen/(?P<invoiceid>\d+)/$', Invoices.views.delete_incoming_invoice, name='delete_incoming_invoice'),
     url(r'^factuur/inkomend/(?P<invoice_id>\d+)/$', Invoices.views.detail_incoming_invoice, name='detail_incoming_invoice'),
     url(r'^factuur/uitgaand/(?P<invoice_id>\d+)/$', Invoices.views.detail_outgoing_invoice, name='detail_outgoing_invoice'),
-    url(r'^factuur/downloaden/(?P<file_type>\w+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
+    url(r'^factuur/downloaden/(?P<file_type>\w+)/(?P<invoice_id>\d+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
