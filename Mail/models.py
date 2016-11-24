@@ -11,6 +11,7 @@ class Email(models.Model):
     contents = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     sent = models.BooleanField(default=False)
+    sent_at = models.DateTimeField(null=True)
     document_attached = models.BooleanField(default=False)
 
     def convert_to_django_email(self):

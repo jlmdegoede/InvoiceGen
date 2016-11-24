@@ -337,6 +337,6 @@ def generate_invoice(request):
     return JsonResponse({'success': False})
 
 class SendOutgoingInvoicePerEmail(View):
-    def get(request, invoice_id):
+    def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
-        return Mail.views.get_email_form(to=invoice.to_company.company_email)
+        return Mail.views.get_email_form(request, to=invoice.to_company.company_email)

@@ -1,0 +1,33 @@
+{% extends 'Mail/email_base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
+{% block more_active %}active{% endblock %}
+
+{% block title %}
+    Verzonden e-mailberichten
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block sent_email_active %}active{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Verzonden e-mailberichten" "sent_email_list" %}
+{% endblock %}
+
+{% block content %}
+    <h4>Verzonden e-mailberichten</h4>
+    <div class="row">
+        {% render_table table "../templates/table_materialize.html" %}
+    </div>
+
+    {% if toast %}
+        <script type="text/javascript">
+            Materialize.toast('{{ toast }}', 4000)
+        </script>
+    {% endif %}
+
+{% endblock %}

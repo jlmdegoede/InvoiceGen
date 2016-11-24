@@ -1,8 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'Mail/email_base.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% load render_table from django_tables2 %}
-{% block orders_active %}active{% endblock %}
+{% block more_active %}active{% endblock %}
+{% block email_templates_active %}active{% endblock %}
 
 {% block title %}
     E-mailtemplates inzien
@@ -13,6 +14,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
+    {% breadcrumb "E-mailtemplates" "" %}
 {% endblock %}
 
 {% block content %}
@@ -36,8 +38,8 @@
     <!-- Modal Structure -->
     <div id="modal1" class="modal">
         <div class="modal-content">
-            <h4>Opdrachtgever verwijderen</h4>
-            <p id="confirmText">Weet u zeker dat u deze opdrachtgever wilt verwijderen?</p>
+            <h4>E-mailtemplate verwijderen</h4>
+            <p id="confirmText">Weet je zeker dat je deze opdrachtgever wilt verwijderen?</p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"

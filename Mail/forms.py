@@ -11,7 +11,7 @@ class EmailForm(forms.ModelForm):
 
     class Meta:
         model = Email
-        fields = '__all__'
+        exclude = ('sent_at', 'sent', 'document_attached',)
 
 class EmailTemplateForm(forms.ModelForm):
     subject = forms.CharField(label="Onderwerp", max_length=200)

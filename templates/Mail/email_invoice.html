@@ -13,47 +13,48 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "Factuur inzien" "" %}
+    {% breadcrumb "Factuur per e-mail versturen" "" %}
 {% endblock %}
 
 {% block content %}
 
     <div class="row">
-      Een ontvanger per veld
-      <h4>Factuur {{ invoice.title }} per e-mail versturen</h4>
-        <form id="email_form" class="col s12" method="post" action="{% url "add_incoming_invoice" %}" enctype="multipart/form-data">
+      <h4>Factuur per e-mail versturen</h4>
+
+      <div class="col s12 m6">
+            Kies je e-mailtemplate:
+      <select>
+        <option value="" disabled selected>Geen e-mailtemplate</option>
+        {% for etemplate in emailtemplates %}
+          <option value="{{ etemplate.id }}">{{ etemplate.subject }}</option>
+        {% endfor %}
+      </select>
+    </div>
+        <form id="email_form" class="col s12" method="post" action="{% url "save_and_send_email" %}">
           {% csrf_token %}
           <div class="row">
               <div class="input-field col s12">
-                  <input id="id_subject" maxlength="200" name="subject" type="text" required="" value="Nieuwe factuur: {{ invoice.title }}">
+                  {{ form.subject }}
                   <label for="{{ form.subject.id_for_label }}">Onderwerp</label>
-                  {{ form.errors.title }}
+                  {{ form.errors.subject }}
               </div>
               <div class="input-field col s12">
-                  <input id="id_to" maxlength="200" name="to" type="text" required="" value="{{ invoice.to_company.company_email }}">
+                  {{ form.to }}
                   <label for="{{ form.to.id_for_label }}">Aan</label>
                   {{ form.errors.to }}
               </div>
-              <div class="input-field col s12">
+              <div class="input-field col s6">
                   {{ form.cc }}
                   <label for="{{ form.cc.id_for_label }}">CC</label>
                   {{ form.errors.cc }}
               </div>
-              <div class="input-field col s12">
+              <div class="input-field col s6">
                   {{ form.bcc }}
                   <label for="{{ form.bcc.id_for_label }}">BCC</label>
                   {{ form.errors.bcc }}
               </div>
               <div class="input-field col s12">
-                  <textarea class="materialize-textarea" cols="40" id="id_contents" name="contents" rows="10" required="">
-                    Geachte heer/mevrouw,
-
-                    Er staat een nieuwe factuur klaar op:
-                    {{ invoice.get_complete_url }}
-
-                    Met vriendelijke groet,
-                    {{ naam }}
-                  </textarea>
+                  {{ form.contents }}
                   <label for="{{ form.contents.id_for_label }}">Bericht</label>
                   {{ form.errors.contents }}
               </div>
@@ -67,7 +68,29 @@
               <i class="material-icons left">send</i>
           </button>
       </form>
-
     </div>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('select').material_select();
+
+          $('select').change(function() {
+            var selectedOption = this.value
+            $.ajax({
+                type: "POST",
+                url: '{% url "get_template" %}',
+                data: {
+                    email_template_id: selectedOption,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data) {
+                  $('#id_subject').val(data.subject);
+                  $('#id_contents').text(data.contents);
+                  Materialize.updateTextFields();
+                },
+            });
+          });
+      });
+    </script>
 
 {% endblock %}

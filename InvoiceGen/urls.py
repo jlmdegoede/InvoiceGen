@@ -42,9 +42,14 @@ urlpatterns = [
     url(r'^factuur/delen/(?P<invoice_id>\d+)/$', Invoices.views.share_link_to_outgoing_invoice, name='share_link_to_outgoing_invoice'),
     url(r'^factuur/email/(?P<invoice_id>\d+)/$', login_required(Invoices.views.SendOutgoingInvoicePerEmail.as_view()), name='email_outgoing_invoice'),
     url(r'^factuur/downloaden/(?P<file_type>\w+)/(?P<invoice_id>\d+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
+
     url(r'^email/templates/$', Mail.views.list_view_templates, name='list_view_templates'),
     url(r'^email/templates/nieuw/$', Mail.views.NewEditEmailTemplate.as_view(), name='new_email_template'),
     url(r'^email/templates/bewerken/(?P<email_template_id>\d+)/$', Mail.views.NewEditEmailTemplate.as_view(), name='edit_email_template'),
+    url(r'^email/verzonden/$', login_required(Mail.views.SentEmailListView.as_view()), name='sent_email_list'),
+    url(r'^email/verzenden/$', Mail.views.save_and_send_email, name='save_and_send_email'),
+    url(r'^email/inhoud/$', Mail.views.get_email_contents, name='get_email_contents'),
+    url(r'^email/get-template/$', Mail.views.get_template, name='get_template'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),

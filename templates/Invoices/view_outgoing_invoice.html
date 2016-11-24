@@ -159,6 +159,11 @@
                 </div>
             </div>
           {% endif %}
+          <div class="col s12">
+              <div class="container left">
+                <a href="{% url "email_outgoing_invoice" invoice.id %}" class="btn waves-effect waves-light btn-flat">Factuur per e-mail verzenden</a>
+              </div>
+          </div>
         {% endif %}
 
         <div class="col s12">
@@ -168,11 +173,11 @@
     </div>
 
     {% if user.is_authenticated %}
-    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-        <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
-            <i class="large material-icons">mode_edit</i>
-        </a>
-    </div>
+      <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+          <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
+              <i class="large material-icons">mode_edit</i>
+          </a>
+      </div>
     {% endif %}
 
 
