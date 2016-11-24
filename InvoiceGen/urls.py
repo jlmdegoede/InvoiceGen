@@ -8,6 +8,7 @@ import Settings.views
 import Todo.views
 import HourRegistration.views
 import Statistics.views
+import Mail.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
@@ -41,6 +42,9 @@ urlpatterns = [
     url(r'^factuur/delen/(?P<invoice_id>\d+)/$', Invoices.views.share_link_to_outgoing_invoice, name='share_link_to_outgoing_invoice'),
     url(r'^factuur/email/(?P<invoice_id>\d+)/$', login_required(Invoices.views.SendOutgoingInvoicePerEmail.as_view()), name='email_outgoing_invoice'),
     url(r'^factuur/downloaden/(?P<file_type>\w+)/(?P<invoice_id>\d+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
+    url(r'^email/templates/$', Mail.views.list_view_templates, name='list_view_templates'),
+    url(r'^email/templates/nieuw/$', Mail.views.NewEditEmailTemplate.as_view(), name='new_email_template'),
+    url(r'^email/templates/bewerken/(?P<email_template_id>\d+)/$', Mail.views.NewEditEmailTemplate.as_view(), name='edit_email_template'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),

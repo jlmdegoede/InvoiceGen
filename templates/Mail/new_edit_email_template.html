@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block orders_active %}active{% endblock %}
+
+{% block title %}
+    E-mailtemplate toevoegen/bewerken
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "E-mailtemplate toevoegen/bewerken" "" %}
+{% endblock %}
+
+
+{% block content %}
+    {% if edit %}
+        <h4>E-mailtemplate bewerken</h4>
+    {% else %}
+        <h4>Nieuwe e-mailtemplate toevoegen</h4>
+    {% endif %}
+    {% if error %}
+    {% endif %}
+    {% if toast %}
+        <script type="text/javascript">
+         // Materialize.toast(message, displayLength, className, completeCallback);
+            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
+         </script>
+    {% endif %}
+    {% if edit %}
+        <form id="email_template_form" class="col s12" method="post" action="{% url "new_email_template" email_template_id %}">
+    {% else %}
+        <form id="email_template_form" class="col s12" method="post" action="{% url "new_email_template" %}">
+    {% endif %}
+        {% csrf_token %}
+
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.subject }}
+                    <label for="{{ form.company_name.id_for_label }}">Onderwerp</label>
+                    {{ error.subject }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.contents }}
+                    <label for="{{ form.company_address.id_for_label }}">Inhoud van bericht</label>
+                    {{ error.contents }}
+                </div>
+            </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="submit">
+            {% if edit %}
+                Bewerken
+            {% else %}
+                Toevoegen
+            {% endif %}
+            <i class="material-icons left">send</i>
+        </button>
+
+        <a href="javascript: history.go(-1)" class="waves-effect waves-teal btn-flat">Annuleren</a>
+    </form>
+    </div>
+
+
+ <div id="modal-client" class="modal" style="height:600px">
+    <div class="modal-content" style="height:500px">
+      <iframe class="client-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+    </div>
+  </div>
+    <script type="text/javascript">
+        $('.datepicker').pickadate({
+        monthsFull: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+		monthsShort: [ 'jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+		weekdaysFull: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+		weekdaysShort: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+		today: 'Vandaag',
+		clear: 'Legen',
+		close: 'Sluit',
+		firstDay: 1,
+		format: 'dd-mm-yyyy',
+		formatSubmit: 'yyyy/mm/dd',
+		selectMonths: true,
+	    selectYears: 15
+  });
+
+    var dateTypeVar = $('#datepicker').datepicker('getDate');
+    $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
+    </script>
+{% endblock %}

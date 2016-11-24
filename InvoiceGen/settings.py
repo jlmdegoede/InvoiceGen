@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'Todo',
     'HourRegistration',
     'Statistics',
+    'Mail',
     'django_tables2',
     'django.contrib.humanize',
     'channels'

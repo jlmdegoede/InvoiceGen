@@ -16,6 +16,8 @@ from django_tables2 import RequestConfig
 from .tasks import generate_pdf_task
 from Invoices.consumers import *
 from django.utils.crypto import get_random_string
+from django.views import View
+import Mail.views
 # Create your views here.
 
 
@@ -323,7 +325,7 @@ def generate_invoice(request):
         invoice.invoice_number = volgnummer
         # create invoice and save it
         invoice.date_created = datetime.date.today()
-        invoice.title = "Factuur " + str(today)
+        invoice.title = "Factuur {0}".format(str(today))
         invoice.to_company = products[0].from_company
         invoice.expiration_date = datetime.datetime.now() + timedelta(days=14)
         invoice.save()
@@ -333,3 +335,8 @@ def generate_invoice(request):
             product.save()
         return JsonResponse({'return_url': reverse(detail_outgoing_invoice, kwargs={'invoice_id': invoice.id})})
     return JsonResponse({'success': False})
+
+class SendOutgoingInvoicePerEmail(View):
+    def get(request, invoice_id):
+        invoice = OutgoingInvoice.objects.get(id=invoice_id)
+        return Mail.views.get_email_form(to=invoice.to_company.company_email)
