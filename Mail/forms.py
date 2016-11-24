@@ -7,11 +7,11 @@ class EmailForm(forms.ModelForm):
     cc = forms.EmailField(label="CC", max_length=200, required=False)
     bcc = forms.EmailField(label="BCC", max_length=200, required=False)
     contents = forms.CharField(widget=forms.Textarea(attrs={'class':'materialize-textarea'}))
-    attach_pdf = forms.BooleanField(label="Voeg PDF als bijlage toe", required=False)
+    document_attached = forms.BooleanField(label="Voeg PDF als bijlage toe", required=False)
 
     class Meta:
         model = Email
-        exclude = ('sent_at', 'sent', 'document_attached',)
+        exclude = ('sent_at', 'sent',)
 
 class EmailTemplateForm(forms.ModelForm):
     subject = forms.CharField(label="Onderwerp", max_length=200)

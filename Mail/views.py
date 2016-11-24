@@ -8,13 +8,15 @@ from .tables import EmailTemplateTable, EmailTable
 from django.shortcuts import *
 from .tasks import send_email
 from django.http import JsonResponse
+from Invoices.tasks import generate_pdf_task
 
 # Create your views here.
-def get_email_form(request, to=None):
+def get_email_form(request, to=None, invoice_id=0):
     initial_values = {'to': to}
     email_form = EmailForm(initial=initial_values)
     email_templates = EmailTemplate.objects.all()
-    return render(request, 'Mail/email_invoice.html', {'form': email_form, 'emailtemplates': email_templates})
+    return render(request, 'Mail/email_invoice.html', {'form': email_form, 'emailtemplates': email_templates,
+                                                       'invoice_id': invoice_id})
 
 @login_required
 def get_template(request):
@@ -27,10 +29,17 @@ def get_template(request):
 def save_and_send_email(request):
     new_email = Email()
     email_form = EmailForm(request.POST, instance=new_email)
+    invoice_id = request.POST['invoice_id']
     if email_form.is_valid():
         new_email.save()
-        send_email.delay(new_email)
-    else: return render(request, 'Mail/email_invoice.html', {'form': email_form})
+        if new_email.document_attached:
+            generate_pdf_task.apply_async((invoice_id,None), link=send_email.si(new_email.id))
+        else:
+            send_email.delay(new_email.id)
+        return JsonResponse({'email': 'sending'})
+    else:
+        email_templates = EmailTemplate.objects.all()
+        return render(request, 'Mail/email_invoice.html', {'form': email_form, 'email_templates': email_templates, 'invoice_id': invoice_id})
 
 @login_required
 def list_view_templates(request):

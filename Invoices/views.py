@@ -340,4 +340,4 @@ def generate_invoice(request):
 class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
-        return Mail.views.get_email_form(request, to=invoice.to_company.company_email)
+        return Mail.views.get_email_form(request, to=invoice.to_company.company_email, invoice_id=invoice_id)
