@@ -16,7 +16,6 @@ from django_tables2 import RequestConfig
 from .tasks import generate_pdf_task
 from Invoices.consumers import *
 from django.utils.crypto import get_random_string
-from django.views import View
 # Create your views here.
 
 
@@ -171,10 +170,6 @@ def share_link_to_outgoing_invoice(request, invoice_id):
     invoice.save()
     return JsonResponse(return_dict)
 
-@login_required
-class SendOutgoingInvoicePerEmail(View):
-    def get(self, request, invoice_id):
-        return render(request, 'Invoices/email_invoice.html', {})
 
 def view_outgoing_invoice_guest(request, invoice_url):
     invoice = OutgoingInvoice.objects.get(url=invoice_url)

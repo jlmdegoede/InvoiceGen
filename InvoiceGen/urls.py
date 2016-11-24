@@ -11,6 +11,7 @@ import Statistics.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     url(r'^$', Orders.views.index, name='index'),
@@ -38,7 +39,7 @@ urlpatterns = [
     url(r'^factuur/uitgaand/(?P<invoice_id>\d+)/$', Invoices.views.detail_outgoing_invoice, name='detail_outgoing_invoice'),
     url(r'^factuur/bekijken/(?P<invoice_url>\w+)/$', Invoices.views.view_outgoing_invoice_guest, name='view_outgoing_invoice_guest'),
     url(r'^factuur/delen/(?P<invoice_id>\d+)/$', Invoices.views.share_link_to_outgoing_invoice, name='share_link_to_outgoing_invoice'),
-    url(r'^factuur/email/(?P<invoice_id>\d+)/$', Invoices.views.SendOutgoingInvoicePerEmail.as_view(), name='email_outgoing_invoice'),
+    url(r'^factuur/email/(?P<invoice_id>\d+)/$', login_required(Invoices.views.SendOutgoingInvoicePerEmail.as_view()), name='email_outgoing_invoice'),
     url(r'^factuur/downloaden/(?P<file_type>\w+)/(?P<invoice_id>\d+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),

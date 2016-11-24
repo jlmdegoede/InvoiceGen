@@ -1,6 +1,7 @@
 from Companies.models import *
 from django.core.exceptions import ValidationError
-
+from InvoiceGen.site_settings import ALLOWED_HOSTS
+from django.core.urlresolvers import reverse
 
 class Invoice(models.Model):
     title = models.CharField(max_length=200)
@@ -37,6 +38,10 @@ class OutgoingInvoice(Invoice):
         for product in products:
             btw += product.get_price() * (float(product.tax_rate / 100))
         return btw
+
+    def get_complete_url(self):
+        if self.url is not None:
+            return 'https://{0}{1}'.format(ALLOWED_HOSTS[0], reverse('view_outgoing_invoice_guest', args=[self.url]))
 
 
 class IncomingInvoice(Invoice):

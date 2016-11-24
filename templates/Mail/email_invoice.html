@@ -1,0 +1,73 @@
+{% extends 'Invoices/outgoing_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+      Een ontvanger per veld
+      <h4>Factuur {{ invoice.title }} per e-mail versturen</h4>
+        <form id="email_form" class="col s12" method="post" action="{% url "add_incoming_invoice" %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+              <div class="input-field col s12">
+                  <input id="id_subject" maxlength="200" name="subject" type="text" required="" value="Nieuwe factuur: {{ invoice.title }}">
+                  <label for="{{ form.subject.id_for_label }}">Onderwerp</label>
+                  {{ form.errors.title }}
+              </div>
+              <div class="input-field col s12">
+                  <input id="id_to" maxlength="200" name="to" type="text" required="" value="{{ invoice.to_company.company_email }}">
+                  <label for="{{ form.to.id_for_label }}">Aan</label>
+                  {{ form.errors.to }}
+              </div>
+              <div class="input-field col s12">
+                  {{ form.cc }}
+                  <label for="{{ form.cc.id_for_label }}">CC</label>
+                  {{ form.errors.cc }}
+              </div>
+              <div class="input-field col s12">
+                  {{ form.bcc }}
+                  <label for="{{ form.bcc.id_for_label }}">BCC</label>
+                  {{ form.errors.bcc }}
+              </div>
+              <div class="input-field col s12">
+                  <textarea class="materialize-textarea" cols="40" id="id_contents" name="contents" rows="10" required="">
+                    Geachte heer/mevrouw,
+
+                    Er staat een nieuwe factuur klaar op:
+                    {{ invoice.get_complete_url }}
+
+                    Met vriendelijke groet,
+                    {{ naam }}
+                  </textarea>
+                  <label for="{{ form.contents.id_for_label }}">Bericht</label>
+                  {{ form.errors.contents }}
+              </div>
+
+              <p style="margin-left:10px">
+                  {{ form.attach_pdf }}
+                  <label for="{{ form.paid.id_for_label }}">Voeg PDF als bijlage toe</label>
+              </p>
+          </div>
+          <button class="btn waves-effect waves-light" type="submit" name="submit">Mail verzenden
+              <i class="material-icons left">send</i>
+          </button>
+      </form>
+
+    </div>
+
+{% endblock %}
