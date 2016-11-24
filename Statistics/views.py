@@ -146,7 +146,7 @@ def get_start_end_dates(request):
         start_date = datetime.strptime(request.POST['start_date'], '%d-%m-%Y')
         end_date = datetime.strptime(request.POST['end_date'], '%d-%m-%Y')
     if not start_date or not end_date or end_date < start_date:
-        now = datetime.now()
+        now = timezone.now()
         quarter = (now.month - 1) // 3
         start_date = get_previous_quarter_start_date(now, quarter)
         end_date = get_previous_quarter_end_date(now, quarter)

@@ -20,6 +20,7 @@ from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
 from Utils.date_helper import get_today_string
 from Statistics.views import get_unique_hours, get_total_hours
+from django.utils import timezone
 # Create your views here.
 
 
@@ -43,7 +44,7 @@ def fill_product_table_per_year(request):
     year_list = []
     products = {}
 
-    now = datetime.now()
+    now = timezone.now()
 
     for year in range(now.year - 5, now.year + 1):
         products_year = Product.objects.filter(date_deadline__contains=year, done=True)

@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
 from Agreements.models import *
 from Agreements.forms import AgreementTextForm, AgreementForm, SignatureForm
-import datetime
 from Orders.models import Company
 from Settings.models import UserSetting
 from django.utils.crypto import get_random_string
@@ -13,6 +12,7 @@ import InvoiceGen.site_settings
 import Settings.views
 from .tables import AgreementTable, AgreementTextTable
 from django_tables2 import RequestConfig
+from django.utils import timezone
 
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
 CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
@@ -51,7 +51,7 @@ def add_agreement(request):
         if agreement_form.is_valid():
             data = agreement_form.cleaned_data
             agreement_form.save(commit=False)
-            agreement.created = datetime.datetime.now()
+            agreement.created = timezone.now()
             agreement.url = get_random_string(length=32)
             agreement.agreement_text_copy = replace_text(agreement.agree_text.text, data['article_concerned'])
             agreement.company = data['company']
@@ -88,7 +88,7 @@ def sign_agreement_contractor(request, url):
             'signee_name'].strip() and request.POST['signee_name'].strip():
             image_data = request.POST['signature'].split(',')
             image_data = b64decode(image_data[1])
-            now = datetime.datetime.now()
+            now = timezone.now()
             file_name = 'signature-of-' + request.POST['signee_name'] + '-at-' + str(now) + '.png'
             agreement.signature_file_contractor = ContentFile(image_data, file_name)
             agreement.signed_by_contractor_at = now
@@ -108,16 +108,20 @@ def sign_agreement_client(request, url):
             'signee_name'].strip() and request.POST['signee_name'].strip():
             image_data = request.POST['signature'].split(',')
             image_data = b64decode(image_data[1])
-            now = datetime.datetime.now()
+            now = timezone.now()
             file_name = 'signature-of-' + request.POST['signee_name'] + '-at-' + str(now) + '.png'
             agreement.signature_file_client = ContentFile(image_data, file_name)
             agreement.signed_by_client_at = now
             agreement.signed_by_client = True
             agreement.save()
+
             return JsonResponse({'success': True})
         else:
             return JsonResponse({'error': 'Naam of handtekening ontbreekt'})
 
+
+def send_push_notification_signed_agreement():
+    pass
 
 @login_required
 def delete_agreement(request, agreement_id=-1):
@@ -199,7 +203,7 @@ def add_agreement_text(request):
         agree_text_form = AgreementTextForm(request.POST, instance=agree_text)
         if agree_text_form.is_valid():
             agree_text_form.save(commit=False)
-            agree_text.edited_at = datetime.datetime.now()
+            agree_text.edited_at = timezone.now()
             agree_text.save()
             request.session['toast'] = 'Modelovereenkomst toegevoegd'
             return redirect('/overeenkomsten')

@@ -18,6 +18,7 @@ from Invoices.consumers import *
 from django.utils.crypto import get_random_string
 from django.views import View
 import Mail.views
+from django.utils import timezone
 # Create your views here.
 
 
@@ -92,7 +93,7 @@ def add_outgoing_invoice(request):
 
         if f.is_valid():
             f.save(commit=False)
-            invoice.date_created = datetime.datetime.now()
+            invoice.date_created = timezone.now()
 
             products = f.cleaned_data['products']
             for product in products:
@@ -192,7 +193,7 @@ def add_incoming_invoice(request):
 
         if f.is_valid():
             f.save(commit=False)
-            invoice.date_created = datetime.datetime.now()
+            invoice.date_created = timezone.now()
             if 'invoice_file' in request.FILES:
                 invoice.invoice_file = request.FILES['invoice_file']
             invoice.save()
@@ -327,7 +328,7 @@ def generate_invoice(request):
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur {0}".format(str(today))
         invoice.to_company = products[0].from_company
-        invoice.expiration_date = datetime.datetime.now() + timedelta(days=14)
+        invoice.expiration_date = timezone.now() + timedelta(days=14)
         invoice.save()
 
         for product in products:

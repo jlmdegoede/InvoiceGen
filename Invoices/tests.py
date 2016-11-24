@@ -1,14 +1,14 @@
 from django.test import TestCase
 from Agreements.models import Agreement, AgreementText
 from Companies.models import Company
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 from django.test import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from .models import OutgoingInvoice
 from Settings.models import UserSetting
 from Orders.models import Product
-from datetime import datetime
+from django.utils import timezone
 # Create your tests here.
 
 
@@ -17,15 +17,15 @@ class InvoicesTestCase(TestCase):
         self.company = Company.objects.create(company_name='Testbedrijf', company_address='Testadres',
                                               company_city_and_zipcode='Testplaats 1234AB')
 
-        self.invoice_current = OutgoingInvoice.objects.create(title='Factuur 1', date_created=datetime.now(),
+        self.invoice_current = OutgoingInvoice.objects.create(title='Factuur 1', date_created=timezone.now(),
                                                       to_company=self.company, invoice_number=1,
-                                                      expiration_date=datetime.now() + timedelta(days=62))
+                                                      expiration_date=timezone.now() + timedelta(days=62))
 
         self.invoice_year_old = OutgoingInvoice.objects.create(title='Factuur 2', date_created=date(2015, 10, 1),
                                                        to_company=self.company, invoice_number=2,
                                                        expiration_date=date(2015, 11, 1))
-        self.product = Product.objects.create(title='Testopdracht', date_deadline=datetime.now(),
-                                                    date_received=datetime.now(), quantity=500,
+        self.product = Product.objects.create(title='Testopdracht', date_deadline=timezone.now(),
+                                                    date_received=timezone.now(), quantity=500,
                                                     from_company=self.company,
                                                     identification_number=0, price_per_quantity=0.25, tax_rate=0)
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
@@ -36,8 +36,8 @@ class InvoicesTestCase(TestCase):
         self.c.login(username='testuser', password='secret')
         response = self.c.get(reverse('get_invoices'))
         self.assertTrue(2015 in response.context['years'])
-        self.assertTrue(datetime.now().year in response.context['years'])
-        self.assertTrue(self.invoice_current.title in response.context['invoices'][datetime.now().year].rows[0].get_cell(1))
+        self.assertTrue(timezone.now().year in response.context['years'])
+        self.assertTrue(self.invoice_current.title in response.context['invoices'][timezone.now().year].rows[0].get_cell(1))
         self.assertTrue(self.invoice_year_old.title in response.context['invoices'][2015].rows[0].get_cell(1))
 
     def test_delete_valid_invoice(self):
@@ -53,12 +53,12 @@ class InvoicesTestCase(TestCase):
     def test_creating_invoice_valid(self):
         self.c.login(username='testuser', password='secret')
         data = {'title': 'Factuur 1', 'invoice_number': 1, 'total_amount': 250,
-                'expiration_date': datetime.now().strftime('%d-%m-%Y'), 'paid': False, 'products': [1]}
+                'expiration_date': timezone.now().strftime('%d-%m-%Y'), 'paid': False, 'products': [1]}
         response = self.c.post(reverse('add_outgoing_invoice'), data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue('facturen' in response.url)
         response_index = self.c.get(reverse('get_invoices'))
-        self.assertEqual(response_index.context['invoices'][datetime.now().year].paginator.count, 2)
+        self.assertEqual(response_index.context['invoices'][timezone.now().year].paginator.count, 2)
 
     def test_generate_invoice(self):
         self.c.login(username='testuser', password='secret')

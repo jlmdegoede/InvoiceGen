@@ -29,7 +29,7 @@ def save_and_send_email(request):
     email_form = EmailForm(request.POST, instance=new_email)
     if email_form.is_valid():
         new_email.save()
-        send_email.delay(new_email, )
+        send_email.delay(new_email)
     else: return render(request, 'Mail/email_invoice.html', {'form': email_form})
 
 @login_required

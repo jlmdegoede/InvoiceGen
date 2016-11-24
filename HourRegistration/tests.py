@@ -12,7 +12,7 @@ from django.utils import timezone
 
 class HourRegistrationTestClass(TestCase):
     def setUp(self):
-        now = datetime.datetime.now()
+        now = timezone.now()
         next_week = now + datetime.timedelta(7)
         self.company = Company.objects.create(company_name='Testbedrijf', company_address='Testadres',
                                               company_city_and_zipcode='Testplaats 1234AB')

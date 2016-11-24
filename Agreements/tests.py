@@ -1,10 +1,10 @@
 from django.test import TestCase
 from Agreements.models import Agreement, AgreementText
 from Companies.models import Company
-import datetime
 from django.test import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 # Create your tests here.
 
@@ -15,12 +15,12 @@ class AgreementTestCase(TestCase):
                                               company_city_and_zipcode='Testplaats 1234AB')
         self.text = AgreementText.objects.create(title='Model',
                                                  text='TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST',
-                                                 edited_at=datetime.datetime.now())
+                                                 edited_at=timezone.now())
         self.agreement = Agreement.objects.create(agree_text=self.text, client_name='test',
                                                   client_emailaddress='test@test.nl',
                                                   company=self.company,
                                                   agreement_text_copy='TEST TEST TEST TEST',
-                                                  created=datetime.datetime.now(), url='23556')
+                                                  created=timezone.now(), url='23556')
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
         self.c = Client()
 
