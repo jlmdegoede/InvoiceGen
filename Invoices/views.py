@@ -15,6 +15,8 @@ from .tables import *
 from django_tables2 import RequestConfig
 from .tasks import generate_pdf_task
 from Invoices.consumers import *
+from django.utils.crypto import get_random_string
+from django.views import View
 # Create your views here.
 
 
@@ -156,6 +158,28 @@ def get_latest_docx(invoice_id):
     doc.save(response)
     response['Content-Disposition'] = 'attachment; filename={0}.docx'.format(invoice.title)
     return response
+
+@login_required
+def share_link_to_outgoing_invoice(request, invoice_id):
+    invoice = OutgoingInvoice.objects.get(id=invoice_id)
+    return_dict = {}
+    if invoice.url is None:
+        invoice.url = get_random_string(length=32)
+        return_dict['url'] = request.build_absolute_uri(reverse('view_outgoing_invoice_guest', args=[invoice.url]))
+    else:
+        invoice.url = None
+    invoice.save()
+    return JsonResponse(return_dict)
+
+@login_required
+class SendOutgoingInvoicePerEmail(View):
+    def get(self, request, invoice_id):
+        return render(request, 'Invoices/email_invoice.html', {})
+
+def view_outgoing_invoice_guest(request, invoice_url):
+    invoice = OutgoingInvoice.objects.get(url=invoice_url)
+    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
+
 
 @login_required
 def add_incoming_invoice(request):

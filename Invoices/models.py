@@ -17,6 +17,7 @@ class Invoice(models.Model):
 class OutgoingInvoice(Invoice):
     to_company = models.ForeignKey(to=Company)
     expiration_date = models.DateField()
+    url = models.CharField(max_length=32, null=True)
 
     def get_total_amount(self):
         from Orders.models import Product
@@ -25,6 +26,9 @@ class OutgoingInvoice(Invoice):
         for product in products:
             totaalbedrag += product.get_price()
         return totaalbedrag
+
+    def get_total_amount_including_btw(self):
+        return self.get_total_amount() + self.get_btw()
 
     def get_btw(self):
         from Orders.models import Product

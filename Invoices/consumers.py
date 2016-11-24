@@ -12,10 +12,8 @@ def ws_connect(message):
         })
     })
 
-
 @channel_session
 def ws_receive(message):
-    print(message)
     data = json.loads(message['text'])
     reply_channel = message.reply_channel.name
 

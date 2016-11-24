@@ -45,10 +45,9 @@
                     <b>{% if invoice.paid %} Ja {% else %} Nee {% endif %}</b>
                 </td>
             </tr>
-
             <tr>
                 <td>
-                    Aan bedrijf
+                    Opdrachtgever
                 </td>
                 <td>
                     <b>{{ invoice.to_company }}</b>
@@ -56,10 +55,10 @@
             </tr>
             <tr>
                 <td>
-                    Totaalbedrag
+                    Volgnummer
                 </td>
                 <td>
-                    <b>€{{ invoice.get_total_amount|floatformat:2 }}</b>
+                    <b>{{ invoice.invoice_number }}</b>
                 </td>
             </tr>
         </table>
@@ -94,13 +93,45 @@
                     </td>
                 </tr>
             {% endfor %}
+            <tr>
+              <td colspan="3"></td>
+                <td>
+                  <b>Subtotaal</b>
+                </td>
+                <td>
+                  €{{ invoice.get_total_amount|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+              <td colspan="3"></td>
+                <td>
+                  <b>BTW</b>
+                </td>
+                <td>
+                  €{{ invoice.get_btw|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+              <td colspan="3"></td>
+                <td>
+                  <b>Totaalbedrag</b>
+                </td>
+                <td>
+                  €{{ invoice.get_total_amount_including_btw|floatformat:2 }}
+                </td>
+            </tr>
         </table>
         </div>
     <div class="row">
         <h4>Exporteren</h4>
+
         <div class="col s12">
             <div class="container left">
-        <a href="{% url "download_invoice" "markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a></div></div>
+              <a href="{% url "download_invoice" "markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a>
+            </div>
+        </div>
 
         <div class="col s12">
             <div class="container left">
@@ -110,7 +141,25 @@
 
         <div class="col s12">
             <div class="container left">
-        <a href="{% url "download_invoice" "docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a></div></div>
+              <a href="{% url "download_invoice" "docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a>
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+          {% if invoice.url is not None %}
+            <div class="col s12">
+                <div class="container left">
+                  <a href="#" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur niet langer delen</a>
+                </div>
+            </div>
+          {% else %}
+            <div class="col s12">
+                <div class="container left">
+                  <a href="#" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur delen</a>
+                </div>
+            </div>
+          {% endif %}
+        {% endif %}
 
         <div class="col s12">
             <div class="container left" id="result-div">
@@ -118,14 +167,44 @@
         </div>
     </div>
 
-
+    {% if user.is_authenticated %}
     <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
             <i class="large material-icons">mode_edit</i>
         </a>
     </div>
+    {% endif %}
+
+
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <h4>Link delen</h4>
+            Kopieer en plak de volgende link naar deze factuur: <p id="link"></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="location.reload()">Sluiten</a>
+        </div>
+    </div>
 
     <script>
+    $(document).ready(function() {
+      $('.modal').modal();
+      $('.modal-trigger').click(function (event) {
+          $.ajax({
+              type: "GET",
+              url: '{% url "share_link_to_outgoing_invoice" invoice.id %}',
+              success: function(data) {
+                  if (data.url == undefined) {
+                    location.reload()
+                  } else {
+                    var link = "<a href='" + data.url + "'>" + data.url + "</a>"
+                    $('#link').html(link)
+                 }
+              },
+          });
+             $('#share-modal').modal('open');
+           });
+       });
     $(function() {
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         var ws_path = ws_scheme + '://' + window.location.host + '/output/';
