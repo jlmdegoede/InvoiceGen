@@ -65,10 +65,9 @@
                 <ul id="slide-out" class="side-nav">
                     <li>
                         <div class="userView">
-                            <img class="background" src="/static/images/background.jpg">
                             <a href="#!user"><img class="circle white" src="/static/images/user.png"></a>
-                            <a href="#!name"><span class="white-text name">{{ request.user }}</span></a>
-                            <a href="#!email"><span class="white-text email">{{ request.user.email }}</span></a>
+                            <a href="#!name"><span class="name">{{ request.user }}</span></a>
+                            <a href="#!email"><span class="email">{{ request.user.email }}</span></a>
                         </div>
                     </li>
                     <li><a href="{% url "index" %}">Opdrachten</a></li>
@@ -118,6 +117,13 @@
         </div>
     </div>
 </main>
+
+<script type="text/javascript">
+     $(document).ready(function () {
+        $(".button-collapse").sideNav();
+        $(".dropdown-button").dropdown();
+    });
+</script>
 
 <footer class="page-footer" style="background-color: {{ color_down }} !important;">
     <div class="container">
