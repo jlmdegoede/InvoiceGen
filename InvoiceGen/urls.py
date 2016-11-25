@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
     url(r'^instellingen/nieuwe-gebruiker$', Settings.views.create_new_user, name='create_new_user'),
+    url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', Settings.views.EditUserView.as_view(), name='edit_user'),
 
     url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),
 

@@ -13,6 +13,7 @@ import Settings.views
 from .tables import AgreementTable, AgreementTextTable
 from django_tables2 import RequestConfig
 from django.utils import timezone
+from django.contrib.auth.decorators import permission_required
 
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
 CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
@@ -30,6 +31,7 @@ AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 
 
 @login_required
+@permission_required('Agreements.view_agreement')
 def agreement_index(request):
     agreements = AgreementTable(Agreement.objects.all())
     RequestConfig(request).configure(agreements)
@@ -37,6 +39,7 @@ def agreement_index(request):
 
 
 @login_required
+@permission_required('Agreements.view_agreementtext')
 def index_model_agreements(request):
     model_agreements = AgreementTextTable(AgreementText.objects.all())
     RequestConfig(request).configure(model_agreements)
@@ -44,6 +47,7 @@ def index_model_agreements(request):
 
 
 @login_required
+@permission_required('Agreements.add_agreement')
 def add_agreement(request):
     if request.method == 'POST':
         agreement = Agreement()
@@ -70,7 +74,7 @@ def add_agreement(request):
         return render(request, 'Agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
 
 
-
+@permission_required('Agreements.view_agreement')
 def view_agreement(request, url):
     agreement = Agreement.objects.get(url=url)
     agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
@@ -81,6 +85,7 @@ def view_agreement(request, url):
 
 
 @login_required
+@permission_required('Agreements.change_agreement')
 def sign_agreement_contractor(request, url):
     agreement = Agreement.objects.get(url=url)
     if request.method == 'POST':
@@ -124,6 +129,7 @@ def send_push_notification_signed_agreement():
     pass
 
 @login_required
+@permission_required('Agreements.delete_agreement')
 def delete_agreement(request, agreement_id=-1):
     try:
         agreement_to_delete = Agreement.objects.get(id=agreement_id)
@@ -136,6 +142,7 @@ def delete_agreement(request, agreement_id=-1):
 
 
 @login_required
+@permission_required('Agreements.delete_agreementtext')
 def delete_model_agreement(request, model_agreement_text_id=-1):
     try:
         agreement_text_to_delete = AgreementText.objects.get(id=model_agreement_text_id)
@@ -176,6 +183,7 @@ def replace_text(agree_text, products):
 
 
 @login_required
+@permission_required('Agreements.change_agreementtext')
 def edit_model_agreement(request, model_agreement_id):
     if request.method == 'POST':
         model_agreement = AgreementText.objects.get(id=model_agreement_id)
@@ -197,6 +205,7 @@ def edit_model_agreement(request, model_agreement_id):
 
 
 @login_required
+@permission_required('Agreements.add_agreementtext')
 def add_agreement_text(request):
     if request.method == 'POST':
         agree_text = AgreementText()

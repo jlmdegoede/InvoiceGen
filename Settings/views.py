@@ -81,19 +81,30 @@ def create_new_user(request):
             return redirect(to=settings)
         else: return render(request, 'Settings/settings.html', {'new_user_form': user_form})
 
+class EditUserView(View):
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        user_form = UserForm(instance=user)
+        print(user_form)
+        return render(request, 'Settings/edit_user.html', {'form': user_form})
 
 def create_user_group():
-    product_group = Group.objects.get_or_create(name='product_group')
-    print(product_group[0])
-    permission = Permission.objects.filter(codename='change_invoice')[1]
-    print(permission)
-    product_group[0].permissions.add(permission)
-    product_group[0].save()
-    user = User.objects.get(username='test1')
-    print(user)
-    user.groups.add(product_group[0])
-    user.save()
-    print(user.has_perm('Invoices.view_invoice'))
+    product_group = Group.objects.get_or_create(name='Opdrachten')
+    invoice_group = Group.objects.get_or_create(name='Facturen')
+    agreements_group = Group.objects.get_or_create(name='Overeenkomsten')
+    companies_group = Group.objects.get_or_create(name='Opdrachtgevers')
+    hour_registration_group = Group.objects.get_or_create(name='Urenregistratie')
+    email_group = Group.objects.get_or_create(name='E-mail')
+    statistics_group = Group.objects.get_or_create(name='Statistieken')
+    settings_group = Group.objects.get_or_create(name='Instellingen')
+
+    #permission = Permission.objects.filter(codename='change_invoice')[1]
+    #product_group[0].permissions.add(permission)
+    #product_group[0].save()
+    #user = User.objects.get(username='test1')
+    #user.groups.add(product_group[0])
+    #user.save()
+    #print(user.has_perm('Invoices.view_invoice'))
 
 
 @login_required
