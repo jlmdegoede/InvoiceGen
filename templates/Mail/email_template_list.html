@@ -36,10 +36,11 @@
     </div>
 
     <!-- Modal Structure -->
-    <div id="modal1" class="modal">
+    <div id="modal-email-template" class="modal bottom-sheet">
         <div class="modal-content">
+          <i class="large material-icons right">delete</i>
             <h4>E-mailtemplate verwijderen</h4>
-            <p id="confirmText">Weet je zeker dat je deze opdrachtgever wilt verwijderen?</p>
+            <p id="confirmText">Weet je zeker dat je deze e-mailtemplate wilt verwijderen?</p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"
@@ -67,13 +68,7 @@
                     id = $(this).attr('value');
                     title = $(this).attr('name');
                     $('#deleteLink').attr('value', id)
-                    $('#confirmText').text("Weet je zeker dat je deze e-mailtemplate wilt verwijderen?");
-                    $('#modal1').modal('open');
-                }
-                else if ($(this).hasClass("dialog-trigger")) {
-                    var page = "/opdracht/" + $(this).attr('value');
-                    $('.article-iframe').attr('src', page)
-                    $('#modal-article').modal('open');
+                    $('#modal-email-template').modal('open');
                 }
             });
 

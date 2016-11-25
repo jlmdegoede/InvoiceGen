@@ -51,9 +51,10 @@
 <div id="dialog" title="Artikel"></div>
 
      <!-- Modal Structure -->
-  <div id="modal1" class="modal">
+  <div id="modal-agreements" class="modal bottom-sheet">
     <div class="modal-content">
-      <h4>Artikel verwijderen</h4>
+      <i class="large material-icons right">delete</i>
+      <h4>Modelovereenkomst verwijderen</h4>
       <p id="confirmText">Weet je zeker dat je deze overeenkomst wilt verwijderen?</p>
     </div>
     <div class="modal-footer">
@@ -62,34 +63,22 @@
     </div>
   </div>
 
-
- <div id="modal-article" class="modal" style="height:600px">
-    <div class="modal-content" style="height:500px">
-      <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
-    </div>
-  </div>
-
     <script type="text/javascript">
+        $(document).ready(function(){
+            $('.modal').modal();
+             // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            $('.modal-trigger').click(function (event) {
+                if ($(this).hasClass("delete")) {
+                    id = $(this).attr('value');
+                    title = $(this).attr('name');
+                    $('#deleteLink').attr('href', "/overeenkomsten/verwijderen/" + id);
+                    $('#modal-agreements').modal('open');
+                }
+            });
+          });
 
-    $(document).ready(function(){
-        $('.modal').modal();
-         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-        $('.modal-trigger').click(function (event) {
-            if ($(this).hasClass("delete")) {
-                id = $(this).attr('value');
-                title = $(this).attr('name');
-                $('#deleteLink').attr('href', "/overeenkomsten/verwijderen/" + id);
-                $('#confirmText').text("Weet je zeker dat je deze overeenkomst wilt verwijderen?");
-                $('#modal1').modal('open');
-            }
-        });
-  });
-
-    function getId(id) {
-        return $('.modal-trigger').attr("value")
-    }
+        function getId(id) {
+            return $('.modal-trigger').attr("value")
+        }
     </script>
 {% endblock %}

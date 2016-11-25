@@ -37,24 +37,16 @@
     </div>
 
     <!-- Modal Structure -->
-    <div id="modal1" class="modal">
+    <div id="modal-delete-company" class="modal bottom-sheet">
+      <i class="large material-icons right">delete</i>
         <div class="modal-content">
             <h4>Opdrachtgever verwijderen</h4>
-            <p id="confirmText">Weet u zeker dat u deze opdrachtgever wilt verwijderen?</p>
+            <p id="confirmText"></p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"
                class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
             <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
-        </div>
-    </div>
-
-    <div id="modal-article" class="modal" style="height:600px">
-        <div class="modal-content" style="height:500px">
-            <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
         </div>
     </div>
 
@@ -68,13 +60,8 @@
                     id = $(this).attr('value');
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "/opdrachtgevers/verwijderen/" + id);
-                    $('#confirmText').text("Weet u zeker dat u de opdrachtgever " + title + " wilt verwijderen?");
-                    $('#modal1').modal('open');
-                }
-                else if ($(this).hasClass("dialog-trigger")) {
-                    var page = "/opdracht/" + $(this).attr('value');
-                    $('.article-iframe').attr('src', page)
-                    $('#modal-article').modal('open');
+                    $('#confirmText').text("Weet je zeker dat je de opdrachtgever " + title + " wilt verwijderen?");
+                    $('#modal-delete-company').modal('open');
                 }
             });
         });

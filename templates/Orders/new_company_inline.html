@@ -1,7 +1,8 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <h4>Nieuwe opdrachtgever toevoegen</h4>
 
     <form id="company_form" class="col s12" method="post" action="{% url "add_company_inline" %}">
         {% csrf_token %}
@@ -18,6 +19,10 @@
                 <div class="input-field col s12">
                     {{ form.company_city_and_zipcode }}
                     <label for="{{ form.company_city_and_zipcode.id_for_label }}">Plaats en postcode</label>
+                </div>
+                <div class="input-field col s12">
+                    {{ form.company_email }}
+                    <label for="{{ form.company_email.id_for_label }}">E-mailadres opdrachtgever</label>
                 </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">Toevoegen

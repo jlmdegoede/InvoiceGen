@@ -65,27 +65,29 @@
 
     <div id="urenregistratie"></div>
 
-    <div id="modal-invoice" class="modal">
+    <div id="modal-invoice" class="modal bottom-sheet">
         <div class="modal-content">
+          <i class="large material-icons right">credit_card</i>
             <h4>Factuur aanmaken</h4>
-            <p id="confirmText">Geef het gewenste volgnummer op:
-                <input type="number" id="volgnummer" placeholder="Volgnummer" min="1">
+            <p id="confirmText">Geef het volgnummer van de factuur op
+                <input type="text" id="volgnummer" placeholder="Volgnummer">
             </p>
 
         </div>
         <div class="modal-footer">
-            <a href="#" class=" modal-action waves-effect waves-green btn-flat" id="factureren">Aanmaken</a>
             <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+            <a href="#" class=" modal-action waves-effect waves-green btn" id="factureren">Aanmaken</a>
         </div>
     </div>
 
     <div id="dialog" title="Artikel"></div>
 
     <!-- Modal Structure -->
-    <div id="modal1" class="modal">
+    <div id="modal1" class="modal bottom-sheet">
         <div class="modal-content">
+            <i class="large material-icons right">delete</i>
             <h4>Opdracht verwijderen</h4>
-            <p id="confirmText">Weet u zeker dat u deze opdracht wilt verwijderen?</p>
+            <p id="confirmText">Weet je zeker dat je deze opdracht wilt verwijderen?</p>
         </div>
         <div class="modal-footer">
             <a href="#" id="deleteLink"
@@ -130,7 +132,7 @@
                     id = $(this).attr('value');
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
-                    $('#confirmText').text("Weet u zeker dat u de opdracht " + title + " wilt verwijderen?");
+                    $('#confirmText').text("Weet je zeker dat je de opdracht " + title + " wilt verwijderen?");
                      $('#modal1').modal('open');
                 } else {
                     // factuurknop gedrukt

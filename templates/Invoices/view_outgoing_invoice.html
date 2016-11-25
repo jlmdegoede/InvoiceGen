@@ -125,52 +125,72 @@
         </table>
         </div>
     <div class="row">
-        <h4>Exporteren</h4>
-
-        <div class="col s12">
-            <div class="container left">
-              <a href="{% url "download_invoice" "markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download Markdown</a>
-            </div>
-        </div>
-
-        <div class="col s12">
-            <div class="container left">
-                <a href="#" id="pdf" class="btn waves-effect waves-light btn-flat">Download PDF</a>
-            </div>
-        </div>
-
-        <div class="col s12">
-            <div class="container left">
-              <a href="{% url "download_invoice" "docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">Download DOCX</a>
-            </div>
-        </div>
-
-        {% if user.is_authenticated %}
-          {% if invoice.url is not None %}
-            <div class="col s12">
-                <div class="container left">
-                  <a href="#" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur niet langer delen</a>
-                </div>
-            </div>
-          {% else %}
-            <div class="col s12">
-                <div class="container left">
-                  <a href="#" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur delen</a>
-                </div>
-            </div>
-          {% endif %}
-          <div class="col s12">
-              <div class="container left">
-                <a href="{% url "email_outgoing_invoice" invoice.id %}" class="btn waves-effect waves-light btn-flat">Factuur per e-mail verzenden</a>
-              </div>
+      <div class="col s12">
+          <div class="container left">
+            <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur exporteren</a>
           </div>
-        {% endif %}
+      </div>
 
-        <div class="col s12">
-            <div class="container left" id="result-div">
-            </div>
+      <!-- Modal Structure -->
+      <div id="modal-export-invoice" class="modal bottom-sheet">
+        <i class="large material-icons right">import_export</i>
+          <div class="modal-content">
+              <h4>Factuur exporteren</h4>
+                <div class="col s12">
+                    <div class="container left">
+                      <a href="{% url "download_invoice" "markdown" invoice.id %}" class="btn waves-effect waves-light btn-flat">Markdown</a>
+                    </div>
+                </div>
+
+                <div class="col s12">
+                    <div class="container left">
+                        <a href="#" id="pdf" class="btn waves-effect waves-light btn-flat">PDF</a>
+                    </div>
+                </div>
+
+                <div class="col s12">
+                    <div class="container left">
+                      <a href="{% url "download_invoice" "docx" invoice.id %}" class="btn waves-effect waves-light btn-flat">DOCX</a>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                  {% if invoice.url is not None %}
+                    <div class="col s12">
+                        <div class="container left">
+                          <a href="#" class="modal-trigger btn waves-effect waves-light btn-flat">Link niet langer delen</a>
+                        </div>
+                    </div>
+                  {% else %}
+                    <div class="col s12">
+                        <div class="container left">
+                          <a href="#" class="open-share-modal btn waves-effect waves-light btn-flat">Link delen</a>
+                        </div>
+                    </div>
+                  {% endif %}
+                  <div class="col s12">
+                      <div class="container left">
+                        <a href="{% url "email_outgoing_invoice" invoice.id %}" class="btn waves-effect waves-light btn-flat">E-mail</a>
+                      </div>
+                  </div>
+                {% endif %}
+          </div>
+          <div class="modal-footer">
+              <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+          </div>
+      </div>
+
+      <!-- Modal Structure -->
+      <div id="modal-result-pdf" class="modal bottom-sheet">
+        <i class="large material-icons right">announcement</i>
+          <div class="modal-content">
+              <h4>PDF exporteren</h4>
+              <div id="result-div"></div>
+          </div>
+          <div class="modal-footer">
+              <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+          </div>
         </div>
-    </div>
 
     {% if user.is_authenticated %}
       <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
@@ -181,20 +201,20 @@
     {% endif %}
 
 
-    <div id="share-modal" class="modal">
+    <div id="share-modal" class="modal bottom-sheet">
         <div class="modal-content">
             <h4>Link delen</h4>
             Kopieer en plak de volgende link naar deze factuur: <p id="link"></p>
         </div>
         <div class="modal-footer">
-            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="location.reload()">Sluiten</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
         </div>
     </div>
 
     <script>
     $(document).ready(function() {
       $('.modal').modal();
-      $('.modal-trigger').click(function (event) {
+      $('.open-share-modal').click(function (event) {
           $.ajax({
               type: "GET",
               url: '{% url "share_link_to_outgoing_invoice" invoice.id %}',
@@ -236,6 +256,7 @@
                 action: "start_pdf",
                 invoice_id: "{{ invoice.id }}",
             };
+            $('#modal-result-pdf').modal('open');
             socket.send(JSON.stringify(message));
             return false;
         });
