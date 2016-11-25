@@ -33,7 +33,7 @@ def index(request):
     RequestConfig(request).configure(active_products_table)
 
     return render(request, 'Orders/index.html',
-                  {'products': products, 'active_products_table': active_products_table, 'toast': toast,
+                  {'products': products, 'active_products_table': active_products_table,
                    'years': year_list, 'first_time': no_settings_notification})
 
 
@@ -129,8 +129,9 @@ def add_product_post(request):
             loop.close()
         return redirect('/')
     else:
+        request.session['toast'] = 'Formulier onjuist ingevuld'
         return render(request, 'Orders/new_edit_product.html',
-                      {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors})
+                      {'form': f, 'error': f.errors})
 
 
 def add_product_get(request):
@@ -165,8 +166,9 @@ def edit_product_post(request, product_id):
         request.session['toast'] = 'Opdracht gewijzigd'
         return redirect('/')
     else:
+        request.session['toast'] = 'Ongeldig formulier'
         return render(request, 'Orders/new_edit_product.html',
-                      {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'})
+                      {'form': f, 'edit': True, 'productid': product_id})
 
 
 @login_required
