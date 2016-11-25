@@ -16,7 +16,7 @@ def index(request):
             company.recent_products = products[:3]
     company_table = CompanyTable(companies)
     RequestConfig(request).configure(company_table)
-    return render(request, 'Companies/index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
+    return render(request, 'Companies/index_companies.html', {'companies': companies, 'company_table': company_table})
 
 
 @login_required
