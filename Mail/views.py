@@ -71,6 +71,16 @@ class SentEmailListView(View):
         return render(request, 'Mail/sent_emails.html', {'table': email_table})
 
 @login_required
-def get_email_contents(request, email_id):
-    email = Email.objects.get(id=email_id)
-    return JsonResponse({'contents': email.contents})
+def get_email_contents(request):
+    if request.POST and 'email_id' in request.POST:
+        email_id = request.POST['email_id']
+        email = Email.objects.get(id=email_id)
+        return JsonResponse({'contents': email.contents})
+
+@login_required
+def delete_email_template(request):
+    if request.POST and 'email_template_id' in request.POST:
+        email_template_id = request.POST['email_template_id']
+        email_template = EmailTemplate.objects.get(id=email_template_id)
+        email_template.delete()
+        return JsonResponse({'success': True})

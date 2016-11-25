@@ -66,8 +66,8 @@
                 if ($(this).hasClass("delete")) {
                     id = $(this).attr('value');
                     title = $(this).attr('name');
-                    $('#deleteLink').attr('href', "/opdrachtgevers/verwijderen/" + id);
-                    $('#confirmText').text("Weet u zeker dat u de opdrachtgever " + title + " wilt verwijderen?");
+                    $('#deleteLink').attr('value', id)
+                    $('#confirmText').text("Weet je zeker dat je deze e-mailtemplate wilt verwijderen?");
                     $('#modal1').modal('open');
                 }
                 else if ($(this).hasClass("dialog-trigger")) {
@@ -76,6 +76,21 @@
                     $('#modal-article').modal('open');
                 }
             });
+
+            $('#deleteLink').click(function() {
+              email_template_id = $(this).attr('value');
+              $.ajax({
+                  type: "POST",
+                  url: '{% url "delete_email_template" %}',
+                  data: {
+                      email_template_id: email_template_id,
+                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                  },
+                  success: function (data) {
+                      location.reload();
+                  },
+              });
+            })
         });
 
         function getId(id) {
