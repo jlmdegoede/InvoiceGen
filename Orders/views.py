@@ -20,10 +20,12 @@ from datetime import datetime
 from Utils.date_helper import get_today_string
 from Statistics.views import get_unique_hours, get_total_hours
 from django.utils import timezone
+from django.contrib.auth.decorators import permission_required
 # Create your views here.
 
 
 @login_required
+@permission_required('Orders.view_order')
 def index(request):
     products, year_list = fill_product_table_per_year(request)
 
@@ -70,6 +72,7 @@ def add_agreements_to_product(product):
 
 
 @login_required
+@permission_required('Orders.view_order')
 def view_product(request, product_id):
     product = Product.objects.get(id=product_id)
     product = add_agreements_to_product(product)
@@ -84,6 +87,7 @@ def view_product(request, product_id):
 
 
 @login_required
+@permission_required('change_order')
 def mark_products_as_done(request):
     if request.method == 'POST':
         for productId in request.POST.getlist('products[]'):
@@ -95,6 +99,7 @@ def mark_products_as_done(request):
 
 
 @login_required
+@permission_required('Orders.new_order')
 def add_company_inline(request):
     if request.method == 'POST':
         company = Company()
@@ -109,6 +114,7 @@ def add_company_inline(request):
 
 
 @login_required
+@permission_required('products.view_order')
 def add_product(request):
     if request.method == 'POST':
         return add_product_post(request)
@@ -140,6 +146,7 @@ def add_product_get(request):
 
 
 @login_required
+@permission_required('Orders.change_order')
 def edit_product(request, product_id=-1):
     if request.method == 'GET':
         return edit_product_get(request, product_id)
@@ -172,6 +179,7 @@ def edit_product_post(request, product_id):
 
 
 @login_required
+@permission_required('Orders.delete_order')
 def delete_product(request, product_id=-1):
     try:
         product_to_delete = Product.objects.get(id=product_id)

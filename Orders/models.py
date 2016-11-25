@@ -26,3 +26,8 @@ class Product(models.Model):
         return {"title": self.title, "date": str(self.date_received), "deadline": str(self.date_deadline),
                 "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
                 "wordcount": self.word_count, "briefing": self.briefing, "server_id": self.id}
+
+    class Meta:
+        permissions = (
+            ('view_product', "Kan opdrachten inzien"),
+        )

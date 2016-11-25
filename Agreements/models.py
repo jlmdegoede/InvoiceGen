@@ -12,6 +12,11 @@ class AgreementText(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        permissions = (
+            ('view_agreementtext', 'Kan modelovereenkomst aanmaken'),
+        )
+
 
 class Agreement(models.Model):
     agree_text = models.ForeignKey(to=AgreementText)
@@ -30,4 +35,10 @@ class Agreement(models.Model):
     url = models.CharField(max_length=50)
 
     def __str__(self):
-        return "Overeenkomst met " + self.company.company_name + " gemaakt op " + self.created.strftime('%m-%d-%Y')
+        return "Overeenkomst met {0} gemaakt op {1}".format(self.company.company_name,
+                                                            self.created.strftime('%m-%d-%Y'))
+
+    class Meta:
+        permissions = (
+            ('view_agreement', 'Kan overeenkomst bekijken'),
+        )

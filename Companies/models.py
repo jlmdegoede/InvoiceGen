@@ -9,3 +9,8 @@ class Company(models.Model):
 
     def __str__(self):
         return self.company_name
+
+    class Meta:
+        permissions = (
+            ('view_company', 'Kan opdrachtgever bekijken'),
+        )

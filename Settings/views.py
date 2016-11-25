@@ -11,12 +11,15 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from InvoiceGen.site_settings import COMMUNICATION_KEY
 from InvoiceGen.settings import DEFAULT_COLOR
+from django.views import View
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+from django.contrib.auth.models import Group, Permission
 # Create your views here.
 
 
 @login_required
 def settings(request):
-    toast = ''
     if request.method == 'POST':
         try:
             user = UserSetting.objects.get(id=1)
@@ -27,10 +30,10 @@ def settings(request):
             save_website_name(form)
             save_colors(form)
             form.save()
-            toast = 'Instellingen opgeslagen'
+            request.session['toast'] = 'Instellingen opgeslagen'
         else:
             return render(request, 'Settings/settings.html',
-                          {'form': form, 'toast': toast, 'error': form.errors})
+                          {'form': form,  'error': form.errors})
     user_i = UserSetting.objects.all().first()
 
     if not user_i:
@@ -47,6 +50,9 @@ def settings(request):
     invoice_site = get_current_settings_json()
     color_up = get_setting('color_up', DEFAULT_COLOR)
     color_down = get_setting('color_down', DEFAULT_COLOR)
+    new_user_form = UserForm()
+    user_list = User.objects.all()
+    create_user_group()
 
     try:
         todo = TodoAuth.objects.get(id=1)
@@ -58,14 +64,43 @@ def settings(request):
         wunderlist_dict = Todo.views.get_wunderlist_url(request)
 
     return render(request, 'Settings/settings.html',
-                  {'form': form, 'toast': toast, 'todo': todo, 'lists': lists,
-                   'wunderlist_dict': wunderlist_dict, 'color_up': color_up,
+                  {'form': form, 'todo': todo, 'lists': lists, 'user_list': user_list,
+                   'wunderlist_dict': wunderlist_dict, 'color_up': color_up, 'new_user_form': new_user_form,
                    'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
+
+@login_required
+def create_new_user(request):
+    if request.POST:
+        user_form = UserForm(request.POST)
+        if user_form.is_valid():
+            username = user_form.cleaned_data['username']
+            email = user_form.cleaned_data['email']
+            password = get_random_string(20)
+            new_user = User.objects.create_user(username, email, password)
+            print('Gebruiker {0} met wachtwoord: {1}'.format(username, password))
+            return redirect(to=settings)
+        else: return render(request, 'Settings/settings.html', {'new_user_form': user_form})
+
+
+def create_user_group():
+    product_group = Group.objects.get_or_create(name='product_group')
+    print(product_group[0])
+    permission = Permission.objects.filter(codename='change_invoice')[1]
+    print(permission)
+    product_group[0].permissions.add(permission)
+    product_group[0].save()
+    user = User.objects.get(username='test1')
+    print(user)
+    user.groups.add(product_group[0])
+    user.save()
+    print(user.has_perm('Invoices.view_invoice'))
+
 
 @login_required
 def renew_subscription(request):
     print("Redirecting...")
     return HttpResponseRedirect('https://invoicegen.nl/betaling/start?key=' + COMMUNICATION_KEY)
+
 
 def save_colors(form):
     color_up = form.cleaned_data['color_up']
@@ -73,12 +108,12 @@ def save_colors(form):
     color_down = form.cleaned_data['color_down']
     save_setting('color_down', color_down)
 
+
 def get_current_settings_json():
     try:
         req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
         utc = pytz.UTC
         values = json.loads(req.content.decode('utf-8'))
-        print(values['valid_until'])
         valid_until = utc.localize(datetime.strptime(values['valid_until'], '%d-%m-%Y %H:%M:%S'))
         save_setting('subscription_date', valid_until)
         return values
@@ -108,7 +143,6 @@ def get_user_fullname():
         return user.name
     except:
         return ""
-
 
 @login_required
 def save_wunderlist_settings(request):

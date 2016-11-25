@@ -19,10 +19,12 @@ from django.utils.crypto import get_random_string
 from django.views import View
 import Mail.views
 from django.utils import timezone
+from django.contrib.auth.decorators import permission_required
 # Create your views here.
 
 
 @login_required
+@permission_required('Invoices.view_invoice')
 def get_outgoing_invoices(request):
     dict = get_invoices('outgoing', request)
 
@@ -67,6 +69,7 @@ def get_invoices(invoice_objects, request):
 
 
 @login_required
+@permission_required('Invoices.add_invoice')
 def add_outgoing_invoice(request):
     if request.method == 'GET':
         invoice = OutgoingInvoice()
@@ -167,6 +170,7 @@ def view_outgoing_invoice_guest(request, invoice_url):
 
 
 @login_required
+@permission_required('Invoices.add_invoice')
 def add_incoming_invoice(request):
     if request.method == 'GET':
         invoice = IncomingInvoice()
@@ -193,18 +197,21 @@ def add_incoming_invoice(request):
 
 
 @login_required
+@permission_required('Invoices.view_invoice')
 def detail_incoming_invoice(request, invoice_id):
     invoice = IncomingInvoice.objects.get(id=invoice_id)
     return render(request, 'Invoices/view_incoming_invoice.html', {'invoice': invoice})
 
 
 @login_required
+@permission_required('Invoices.view_invoice')
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
 
 
 @login_required
+@permission_required('Invoices.change_invoice')
 def edit_outgoing_invoice(request, invoiceid=-1):
     if request.method == 'GET':
         try:
@@ -241,6 +248,7 @@ def edit_outgoing_invoice(request, invoiceid=-1):
 
 
 @login_required
+@permission_required('Invoices.change_invoice')
 def edit_incoming_invoice(request, invoiceid=-1):
     if request.method == 'GET':
         try:
@@ -269,6 +277,7 @@ def edit_incoming_invoice(request, invoiceid=-1):
 
 
 @login_required
+@permission_required('Invoices.delete_invoice')
 def delete_outgoing_invoice(request, invoiceid=-1):
     try:
         invoice = OutgoingInvoice.objects.get(id=invoiceid)
@@ -286,6 +295,7 @@ def delete_outgoing_invoice(request, invoiceid=-1):
 
 
 @login_required
+@permission_required('Invoices.delete_invoice')
 def delete_incoming_invoice(request, invoiceid=-1):
     try:
         invoice = IncomingInvoice.objects.get(id=invoiceid)

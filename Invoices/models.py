@@ -13,6 +13,9 @@ class Invoice(models.Model):
         return self.title
     class Meta:
         abstract = True
+        permissions = (
+            ('view_invoice', 'Kan factuur bekijken'),
+        )
 
 
 class OutgoingInvoice(Invoice):

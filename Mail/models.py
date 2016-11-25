@@ -19,6 +19,11 @@ class Email(models.Model):
                             'no-reply@invoicegen.nl', [self.to], [self.bcc],
                             cc=[self.cc])
 
+    class Meta:
+        permissions = (
+            ('view_email', 'Kan verzonden e-mailberichten bekijken'),
+        )
+
 class EmailTemplate(models.Model):
     subject = models.CharField(max_length=100)
     contents = models.TextField()

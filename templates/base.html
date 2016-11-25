@@ -129,6 +129,32 @@
         $(".button-collapse").sideNav();
         $(".dropdown-button").dropdown();
     });
+
+    $(function() {
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var ws_path = ws_scheme + '://' + window.location.host + '/output/';
+        var socket = new ReconnectingWebSocket(ws_path);
+
+        socket.onmessage = function(message) {
+            var data = JSON.parse(message.data);
+            if (data.toast != undefined) {
+              Materialize.toast(data.toast, 4000)
+            }
+
+            if (data.action == 'started') {
+              $("#result-div").html("Bezig met maken van document... Een ogenblik geduld");
+            }
+
+            if (data.action == 'completed') {
+              $("#result-div").html("Document gemaakt: ");
+                var downloadLink = $("<a />", {
+                    href : "/factuur/downloaden/pdf/{{ invoice.id }}/",
+                    text : "nu downloaden",
+                    class: "btn waves-effect waves-light btn-flat"
+                }).appendTo("#result-div");
+            }
+        };
+      });
 </script>
 
 <footer class="page-footer" style="background-color: {{ color_down }} !important;">
