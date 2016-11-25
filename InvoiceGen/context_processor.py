@@ -26,3 +26,11 @@ def color_down(request):
     else:
         color_down = "#009688"
     return {'color_down': color_down}
+
+def attach_toast_to_response(request):
+    toast = None
+    if request.session.get('toast'):
+        toast = request.session.get('toast')
+        del request.session['toast']
+
+    return {'toast': toast}

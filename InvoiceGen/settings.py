@@ -109,6 +109,7 @@ TEMPLATES = [
                 'InvoiceGen.context_processor.website_name',
                 'InvoiceGen.context_processor.color_up',
                 'InvoiceGen.context_processor.color_down',
+                'InvoiceGen.context_processor.attach_toast_to_response',
                 'django.template.context_processors.request',
             ],
         },

@@ -20,12 +20,6 @@
     {% if error %}
         {{ error }}
     {% endif %}
-    {% if toast %}
-        <script type="text/javascript">
-         // Materialize.toast(message, displayLength, className, completeCallback);
-            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
-         </script>
-    {% endif %}
     <form id="article_form" class="col s12" method="post" action="{% url "add_agreement" %}">
         {% csrf_token %}
 

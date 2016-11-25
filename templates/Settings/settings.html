@@ -208,11 +208,4 @@
             });
         </script>
 
-    {% if toast %}
-        <script type="text/javascript">
-            $(document).ready(function () {
-                Materialize.toast('{{ toast }}', 4000)
-            });
-        </script>
-    {% endif %}
 {% endblock %}

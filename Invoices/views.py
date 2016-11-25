@@ -26,25 +26,12 @@ from django.utils import timezone
 def get_outgoing_invoices(request):
     dict = get_invoices('outgoing', request)
 
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
-    dict['toast'] = toast
     return render(request, 'Invoices/outgoing_invoice_table.html', dict)
 
 
 @login_required
 def get_incoming_invoices(request):
     dict = get_invoices('incoming', request)
-
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
-    dict['toast'] = toast
     return render(request, 'Invoices/incoming_invoice_table.html', dict)
 
 

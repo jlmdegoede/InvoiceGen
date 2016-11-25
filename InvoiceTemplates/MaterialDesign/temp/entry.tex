@@ -3,9 +3,7 @@
 \vspace*{25pt}
 \Huge
 \BgThispage
-\textcolor{black}{\textbf {Test}}
-
-\textcolor{black}{\textbf{19-07-2016}}
+\textcolor{black}{\textbf {Testfactuur}}
 \BgThispage
 \vspace*{20pt}
 
@@ -14,8 +12,8 @@
 \noindent\colorbox{materialGreen}
 {\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens factuur}}}}
 \begin{tabular}{l l}
-\InvullenTwee{Volgnummer}{12}{20}   
-\InvullenTwee{Datum}{19-07-2016}{20}
+\InvullenTwee{Volgnummer}{45}{20}   
+\InvullenTwee{Datum}{25-11-2016}{20}
 \end{tabular} \\ 
 
 %% Gegevens Leverancier
@@ -24,10 +22,11 @@
 {\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens leverancier}}}}
 \begin{tabular}{l l}
 \InvullenTwee{Naam}{InvoiceGen.nl}{0}   
-\InvullenTwee{Adres}{Clara van Sparwoudestraat 40}{0}   
-\InvullenTwee{Postcode, plaats}{2612SP Delft}{0}   
+\InvullenTwee{Adres}{Clara van Sparwoudestraat 40, 2612SP Delft}{0}   
 \InvullenTwee{E-mail}{jochemdegoede@gmail.com}{0}   
 \InvullenTwee{IBAN}{NL00 INGB 0000 0000 00}{0}   
+\InvullenTwee{KvK}{123456}{0}   
+\InvullenTwee{BTW-nummer}{12212121212121212}{0}   
 \end{tabular} \\ 
 
 %% Gegevens Afnemer
@@ -37,16 +36,20 @@
 \begin{tabular}{l l}
 \InvullenTwee{Bedrijfsnaam}{Testopdrachtgever}{0}   
 \InvullenTwee{Adres}{Testadres}{0}   
-\InvullenTwee{Postcode, plaats}{Testplaats 1234AB}{0}   
+\InvullenTwee{Plaats en postcode}{Testplaats 1234AB}{0}   
 \end{tabular} \\ 
 
 %% Geleverd
 \LARGE 
 \noindent\colorbox{materialGreen}
 {\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Geleverd}}}}
-\begin{tabular}{l l r l}
-\InvullenVierBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs}
-\InvullenVier{Mijn eerste opdracht}{50}{500x}{125.0}
-\cline{3-4} 
-\multicolumn{3}{r}{\large \textbf{Totaal}} & {\large \textbf{\euro125.0 }} \\ 
+\begin{tabular}{l l l l l}
+\InvullenVijfBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs per eenheid}{Prijs}
+\InvullenVijf{Mijn eerste opdracht}{50}{500x}{0.25}{125.00}
+\InvullenVijf{Testopdracht}{11}{500x}{25.00}{12500.00}
+\InvullenVijf{Test 2}{12}{12x}{12.00}{144.00}
+\cline{4-5} 
+\multicolumn{4}{r}{\large \textbf{Subtotaal}} & {\large \euro 12769.00} \\ 
+\multicolumn{4}{r}{\large BTW} & {\large \euro2668.53} \\ \cline{4-5}
+\multicolumn{4}{r}{\large \textbf{Totaal}} & {\large \textbf{\euro15437.53 }} \\ 
 \end{tabular} \\\\ 

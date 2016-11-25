@@ -15,12 +15,6 @@ def index(request):
         if products.count() is not 0:
             company.recent_products = products[:3]
     company_table = CompanyTable(companies)
-
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
     RequestConfig(request).configure(company_table)
     return render(request, 'Companies/index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
 

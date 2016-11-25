@@ -24,12 +24,6 @@
         {% render_table company_table "../templates/table_materialize.html" %}
     </div>
 
-    {% if toast %}
-        <script type="text/javascript">
-            Materialize.toast('{{ toast }}', 4000)
-        </script>
-    {% endif %}
-
     <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         <a class="btn-floating btn-large red" href="{% url "company_add" %}">
             <i class="large material-icons">add</i>

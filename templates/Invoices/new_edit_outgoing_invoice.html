@@ -16,12 +16,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if toast %}
-        <script type="text/javascript">
-         // Materialize.toast(message, displayLength, className, completeCallback);
-            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
-         </script>
-    {% endif %}
     {% if edit %}
         <h4>Uitgaande factuur bewerken</h4>
     {% else %}

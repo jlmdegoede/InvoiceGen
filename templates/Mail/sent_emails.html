@@ -24,12 +24,6 @@
         {% render_table table "../templates/table_materialize.html" %}
     </div>
 
-    {% if toast %}
-        <script type="text/javascript">
-            Materialize.toast('{{ toast }}', 4000)
-        </script>
-    {% endif %}
-
     <div id="modal-contents" class="modal">
         <div class="modal-content">
             <h4>Inhoud van e-mail</h4>

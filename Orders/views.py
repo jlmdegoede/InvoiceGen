@@ -16,7 +16,6 @@ import asyncio
 from HourRegistration.models import HourRegistration
 from .tables import OrderTable
 from django_tables2 import RequestConfig
-from Utils.session_helper import get_toast_and_cleanup_session
 from datetime import datetime
 from Utils.date_helper import get_today_string
 from Statistics.views import get_unique_hours, get_total_hours
@@ -27,8 +26,6 @@ from django.utils import timezone
 @login_required
 def index(request):
     products, year_list = fill_product_table_per_year(request)
-
-    toast = get_toast_and_cleanup_session(request)
 
     active_products_table = OrderTable(Product.objects.filter(done=False), prefix='openstaand-', order_by='date_deadline')
     no_settings_notification = Settings.views.no_settings_created_yet()

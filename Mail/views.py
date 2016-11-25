@@ -33,10 +33,12 @@ def save_and_send_email(request):
     if email_form.is_valid():
         new_email.save()
         if new_email.document_attached:
+            request.session['toast'] = 'PDF wordt gemaakt'
             generate_pdf_task.apply_async((invoice_id,None), link=send_email.si(new_email.id))
         else:
             send_email.delay(new_email.id)
-        return JsonResponse({'email': 'sending'})
+        request.session['toast'] = 'E-mail wordt verzonden'
+        return redirect(reverse('detail_outgoing_invoice', args=[invoice_id]))
     else:
         email_templates = EmailTemplate.objects.all()
         return render(request, 'Mail/email_invoice.html', {'form': email_form, 'email_templates': email_templates, 'invoice_id': invoice_id})

@@ -24,12 +24,6 @@
     {% endif %}
     {% if error %}
     {% endif %}
-    {% if toast %}
-        <script type="text/javascript">
-         // Materialize.toast(message, displayLength, className, completeCallback);
-            Materialize.toast('{{ toast }}', 4000) // 4000 is the duration of the toast
-         </script>
-    {% endif %}
     {% if email_template_id %}
         <form id="email_template_form" class="col s12" method="post" action="{% url "edit_email_template" email_template_id %}">
     {% else %}
