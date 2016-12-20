@@ -18,9 +18,50 @@ from django.contrib.auth.models import Group, Permission
 # Create your views here.
 
 
-@login_required
-def settings(request):
-    if request.method == 'POST':
+class GetIntegrationSettings(View):
+    def get(self, request):
+        wunderlist_enabled = False
+        todo = None
+        wunderlist_dict = None
+
+        try:
+            todo = TodoAuth.objects.get(id=1)
+            lists = get_wunderlist_lists()
+            current_list = get_setting('wunderlist', 0)
+            wunderlist_enabled = get_setting('auto_wunderlist', False)
+        except:
+            print("Geen Wunderlist-integratie geactiveerd")
+            wunderlist_dict = Todo.views.get_wunderlist_url(request)
+
+        return render(request, 'Settings/settings.html',
+                      {'todo': todo, 'lists': lists, 'wunderlist_dict': wunderlist_dict,
+                       'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled })
+
+
+class GetPersonalSettings(View):
+
+    def get(self, request):
+        user_i = UserSetting.objects.all().first()
+
+        if not user_i:
+            user_i = UserSetting()
+
+        site_name = get_setting('site_name', 'InvoiceGen')
+        form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
+
+        invoice_site = get_current_settings_json()
+        color_up = get_setting('color_up', DEFAULT_COLOR)
+        color_down = get_setting('color_down', DEFAULT_COLOR)
+        new_user_form = UserForm()
+        user_list = User.objects.all()
+        create_user_group()
+
+        return render(request, 'Settings/settings.html',
+                      {'form': form, 'user_list': user_list,
+                       'color_up': color_up, 'color_down': color_down, 'new_user_form': new_user_form,
+                       'invoice_site': invoice_site})
+
+    def post(self, request):
         try:
             user = UserSetting.objects.get(id=1)
         except:
@@ -34,39 +75,12 @@ def settings(request):
         else:
             return render(request, 'Settings/settings.html',
                           {'form': form,  'error': form.errors})
-    user_i = UserSetting.objects.all().first()
 
-    if not user_i:
-        user_i = UserSetting()
 
-    site_name = get_setting('site_name', 'InvoiceGen')
-    form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
+@login_required
+def settings(request):
+    pass
 
-    lists = None
-    current_list = None
-    wunderlist_enabled = False
-    todo = None
-    wunderlist_dict = None
-    invoice_site = get_current_settings_json()
-    color_up = get_setting('color_up', DEFAULT_COLOR)
-    color_down = get_setting('color_down', DEFAULT_COLOR)
-    new_user_form = UserForm()
-    user_list = User.objects.all()
-    create_user_group()
-
-    try:
-        todo = TodoAuth.objects.get(id=1)
-        lists = get_wunderlist_lists()
-        current_list = get_setting('wunderlist', 0)
-        wunderlist_enabled = get_setting('auto_wunderlist', False)
-    except:
-        print("Geen Wunderlist-integratie")
-        wunderlist_dict = Todo.views.get_wunderlist_url(request)
-
-    return render(request, 'Settings/settings.html',
-                  {'form': form, 'todo': todo, 'lists': lists, 'user_list': user_list,
-                   'wunderlist_dict': wunderlist_dict, 'color_up': color_up, 'new_user_form': new_user_form,
-                   'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
 
 @login_required
 def create_new_user(request):

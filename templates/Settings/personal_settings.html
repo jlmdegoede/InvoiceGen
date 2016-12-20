@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="data" class="col s12 settings-tab" style="display:none;">
+            <h4>Persoonlijke gegevens</h4>
+            <form id="login_form" method="post" action="{% url "settings" %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s12">
+                        {{ form.name }}
+                        <label for="{{ form.name.id_for_label }}">Naam</label>
+                        {{ error.title }}
+                    </div>
+
+
+                    <div class="input-field col s12">
+                        {{ form.email }}
+                        <label for="{{ form.email.id_for_label }}">E-mailadres</label>
+                        {{ error.title }}
+                    </div>
+
+
+                    <div class="input-field col s6">
+                        {{ form.address }}
+                        <label for="{{ form.address.id_for_label }}">Adres</label>
+                        {{ error.title }}
+                    </div>
+
+
+                    <div class="input-field col s6">
+                        {{ form.city_and_zipcode }}
+                        <label for="{{ form.city_and_zipcode.id_for_label }}">Plaats en postcode</label>
+                        {{ error.title }}
+                    </div>
+
+                    <div class="input-field col s12">
+                        {{ form.iban }}
+                        <label for="{{ form.iban.id_for_label }}">IBAN</label>
+                        {{ error.title }}
+                    </div>
+
+                    <div class="input-field col s6">
+                        {{ form.kvk }}
+                        <label for="{{ form.kvk.id_for_label }}">KvK-nummer (optioneel)</label>
+                        {{ error.kvk }}
+                    </div>
+
+                    <div class="input-field col s6">
+                        {{ form.btw_number }}
+                        <label for="{{ form.btw_number.id_for_label }}">BTW-nummer (optioneel)</label>
+                        {{ error.kvk }}
+                    </div>
+
+                    <div class="input-field col s12">
+                        {{ form.site_name }}
+                        <label for="{{ form.site_name.id_for_label }}">Websitenaam</label>
+                        {{ error.site_name }}
+                    </div>
+
+                    <legend>Bedrijfskleuren</legend>
+                    <div class="input-field col s12">
+                      <label for="background-color-up">Selecteer een kleur voor boven:</label><br><br>
+                      <input id="background-color-up" name="color_up" type="color" value="{{ color_up }}" />
+                    </div>
+
+                    <div class="input-field col s12">
+                      <label for="background-color-down">Selecteer een kleur voor onder:</label><br><br>
+                      <input id="background-color-down" name="color_down" type="color" value="{{ color_down }}" />
+
+                      <br><br><br>
+                    </div>
+                    <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
+                        <i class="material-icons left">send</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+{% endblock %}
