@@ -8,19 +8,92 @@ import Todo.views
 import requests
 import pytz
 from datetime import datetime
-from django.views.decorators.csrf import csrf_exempt
 from InvoiceGen.site_settings import COMMUNICATION_KEY
 from InvoiceGen.settings import DEFAULT_COLOR
 from django.views import View
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 # Create your views here.
 
 
-@login_required
-def settings(request):
-    if request.method == 'POST':
+class IntegrationSettings(View):
+
+    def get_integration_settings(self, request):
+        wunderlist_enabled = False
+        todo = None
+        wunderlist_dict = None
+        lists = []
+        current_list = None
+
+        try:
+            todo = TodoAuth.objects.get(id=1)
+            lists = get_wunderlist_lists()
+            current_list = get_setting('wunderlist', 0)
+            wunderlist_enabled = get_setting('auto_wunderlist', False)
+        except:
+            print("Geen Wunderlist-integratie geactiveerd")
+            wunderlist_dict = Todo.views.get_wunderlist_url(request)
+
+        return {'todo': todo, 'lists': lists, 'wunderlist_dict': wunderlist_dict,
+                       'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled }
+
+    def post(self, request):
+        if 'new_list' in request.POST and request.POST['new_list'] != "":
+            # create new list
+            json = Todo.views.create_new_list(request.POST['new_list'])
+            save_setting('wunderlist', json['id'])
+        else:
+            selected_list = request.POST['existing_list']
+            save_setting('wunderlist', selected_list)
+        save_setting('auto_wunderlist', request.POST['auto_add_to_wunderlist'] == 'on')
+        return redirect(to=settings)
+
+
+class UserSettings(View):
+
+    def get_user_settings(self, request):
+        user_list = User.objects.all()
+        return {'user_list': user_list, 'new_user_form': UserForm()}
+
+    def post(self, request):
+        user_form = UserForm(request.POST)
+        if user_form.is_valid():
+            username = user_form.cleaned_data['username']
+            email = user_form.cleaned_data['email']
+            password = get_random_string(20)
+            User.objects.create_user(username, email, password)
+            print('Gebruiker {0} met wachtwoord: {1}'.format(username, password))
+            return redirect(to=settings)
+        else:
+            return render(request, 'Settings/settings.html', {'new_user_form': user_form})
+
+
+class SubscriptionSettings(View):
+
+    def get_subscription_settings(self, request):
+        invoice_site = get_current_settings_json()
+        return {'invoice_site': invoice_site}
+
+
+class PersonalSettings(View):
+
+    def get_personal_settings(self, request):
+        user_i = UserSetting.objects.all().first()
+
+        if not user_i:
+            user_i = UserSetting()
+
+        site_name = get_setting('site_name', 'InvoiceGen')
+        form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
+
+        color_up = get_setting('color_up', DEFAULT_COLOR)
+        color_down = get_setting('color_down', DEFAULT_COLOR)
+        create_user_group()
+
+        return {'form': form, 'color_up': color_up, 'color_down': color_down}
+
+    def post(self, request):
         try:
             user = UserSetting.objects.get(id=1)
         except:
@@ -31,62 +104,33 @@ def settings(request):
             save_colors(form)
             form.save()
             request.session['toast'] = 'Instellingen opgeslagen'
+            return redirect(to=settings)
         else:
+            color_up = get_setting('color_up', DEFAULT_COLOR)
+            color_down = get_setting('color_down', DEFAULT_COLOR)
             return render(request, 'Settings/settings.html',
-                          {'form': form,  'error': form.errors})
-    user_i = UserSetting.objects.all().first()
+                          {'personal': {'form': form,  'error': form.errors,
+                                        'color_up': color_up, 'color_down': color_down}})
 
-    if not user_i:
-        user_i = UserSetting()
-
-    site_name = get_setting('site_name', 'InvoiceGen')
-    form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
-
-    lists = None
-    current_list = None
-    wunderlist_enabled = False
-    todo = None
-    wunderlist_dict = None
-    invoice_site = get_current_settings_json()
-    color_up = get_setting('color_up', DEFAULT_COLOR)
-    color_down = get_setting('color_down', DEFAULT_COLOR)
-    new_user_form = UserForm()
-    user_list = User.objects.all()
-    create_user_group()
-
-    try:
-        todo = TodoAuth.objects.get(id=1)
-        lists = get_wunderlist_lists()
-        current_list = get_setting('wunderlist', 0)
-        wunderlist_enabled = get_setting('auto_wunderlist', False)
-    except:
-        print("Geen Wunderlist-integratie")
-        wunderlist_dict = Todo.views.get_wunderlist_url(request)
-
-    return render(request, 'Settings/settings.html',
-                  {'form': form, 'todo': todo, 'lists': lists, 'user_list': user_list,
-                   'wunderlist_dict': wunderlist_dict, 'color_up': color_up, 'new_user_form': new_user_form,
-                   'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled, 'invoice_site': invoice_site})
 
 @login_required
-def create_new_user(request):
-    if request.POST:
-        user_form = UserForm(request.POST)
-        if user_form.is_valid():
-            username = user_form.cleaned_data['username']
-            email = user_form.cleaned_data['email']
-            password = get_random_string(20)
-            new_user = User.objects.create_user(username, email, password)
-            print('Gebruiker {0} met wachtwoord: {1}'.format(username, password))
-            return redirect(to=settings)
-        else: return render(request, 'Settings/settings.html', {'new_user_form': user_form})
+def settings(request):
+    return_dict = {}
+    return_dict['personal'] = PersonalSettings().get_personal_settings(request)
+    return_dict['users'] = UserSettings().get_user_settings(request)
+    return_dict['integration'] = IntegrationSettings().get_integration_settings(request)
+    return_dict['subscription'] = SubscriptionSettings().get_subscription_settings(request)
+    return render(request, 'Settings/settings.html', return_dict)
+
 
 class EditUserView(View):
+
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         user_form = UserForm(instance=user)
         print(user_form)
         return render(request, 'Settings/edit_user.html', {'form': user_form})
+
 
 def create_user_group():
     product_group = Group.objects.get_or_create(name='Opdrachten')
@@ -154,20 +198,6 @@ def get_user_fullname():
         return user.name
     except:
         return ""
-
-@login_required
-def save_wunderlist_settings(request):
-    if request.method == 'POST':
-        if 'new_list' in request.POST and request.POST['new_list'] != "":
-            # create new list
-            json = Todo.views.create_new_list(request.POST['new_list'])
-            save_setting('wunderlist', json['id'])
-        else:
-            selected_list = request.POST['existing_list']
-            save_setting('wunderlist', selected_list)
-        save_setting('auto_wunderlist', request.POST['auto_add_to_wunderlist'] == 'on')
-    return redirect(to=settings)
-
 
 def get_setting(key, default_value):
     setting = Setting.objects.filter(key=key)

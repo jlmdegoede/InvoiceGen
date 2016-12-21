@@ -5,6 +5,7 @@ from Settings.models import UserSetting
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
+
 class UserSettingForm(forms.ModelForm):
     site_name = forms.CharField(label="Websitenaam", max_length=200)
     kvk = forms.CharField(label="Websitenaam", required=False)
@@ -15,6 +16,7 @@ class UserSettingForm(forms.ModelForm):
     class Meta:
         model = UserSetting
         fields = '__all__'
+
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(label="Gebruikersnaam", max_length=100)

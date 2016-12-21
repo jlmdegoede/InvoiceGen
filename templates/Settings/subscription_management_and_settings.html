@@ -1,0 +1,39 @@
+<h4>Mijn gegevens</h4>
+<table class="bordered">
+    <tr>
+        <td>Naam</td>
+        <td>{{ subscription.invoice_site.first_name }} {{ subscription.invoice_site.last_name }}</td>
+    </tr>
+    <tr>
+        <td>E-mailadres</td>
+        <td>{{ subscription.invoice_site.email }}</td>
+    </tr>
+    <tr>
+        <td>Uw InvoiceGen-omgeving</td>
+        <td>
+            <a href="https://{{ subscription.invoice_site.subdomain }}.invoicegen.nl/">https://{{ subscription.invoice_site.subdomain }}.invoicegen.nl/</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Account actief</td>
+        <td>{% if subscription.invoice_site.subscription %} Ja {% else %} Nee {% endif %}</td>
+    </tr>
+    <tr>
+        <td>Abonnement geldig tot</td>
+        <td>{{ subscription.invoice_site.valid_until }}
+            <a class="btn waves-effect" href="/instellingen/verlengen/">Nu verlengen</a></td>
+    </tr>
+    <tr>
+        <td>Klantnummer</td>
+        <td>{{ subscription.invoice_site.customer_number }}</td>
+    </tr>
+</table>
+Heb je vragen of opmerkingen? <a href="mailto:support@invoicegen.nl">Stuur ons dan een e-mail!</a>
+<br/>
+<br/>
+<div class="row">
+    <h4>Account beëindigen</h4>
+    Wil je je account beëeindigen? Stuur dan een e-mailbericht met je klantnummer naar <a
+        href="mailto:support@invoicegen.nl">support@invoicegen.nl</a>.<br/>
+    Al je persoonlijke data wordt dan binnen een werkdag verwijderd.
+</div>

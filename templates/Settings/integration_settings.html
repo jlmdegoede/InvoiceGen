@@ -1,0 +1,48 @@
+<h4>Wunderlist-integratie</h4>
+{% if integration.todo != None %}
+    <table>
+        <tr>
+            <td>Auth:</td>
+            <td>{% if integration.todo.auth_token != None %}Geautoriseerd{% else %}Nu inschakelen{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Gemaakt op:</td>
+            <td> {{ integration.todo.created }}</td>
+        </tr>
+        <tr>
+            <td>Voor gebruiker:</td>
+            <td> {{ integration.todo.user_id.username }}</td>
+        </tr>
+        <tr>
+            <td>Lijst:</td>
+            <td>
+                <form method="post" action="/wunderlist-instellingen/">
+                    {% csrf_token %}
+                    <select name="existing_list">
+                        {% for list in lists %}
+                            <option value="{{ integration.list.id }}"
+                                    {% if integration.list.id == integration.current_list %}selected{% endif %}>{{ integration.list.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text"
+                           placeholder="...Of maak een nieuwe lijst aan voor opdrachten van InvoiceGen"
+                           name="new_list"/></a>
+                    <p>
+                        <input type="checkbox" id="auto_add_to_wunderlist" name="auto_add_to_wunderlist"
+                               {% if integration.wunderlist_enabled %}checked{% endif %}/>
+                        <label for="auto_add_to_wunderlist">Automatisch nieuwe opdrachten aan Wunderlist
+                            toevoegen</label>
+                    </p>
+                    <input type="submit" value="Opslaan" class="btn btn-default"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+{% else %}
+    <a href="{{ integration.wunderlist_dict.url }}">Klik hier om Wunderlist te koppelen</a>
+{% endif %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+</script>
