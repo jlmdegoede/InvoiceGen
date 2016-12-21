@@ -34,6 +34,7 @@ def create_invoice_group():
     all_permissions = list(Permission.objects.filter(content_type=content_type))
     content_type = ContentType.objects.get(model='incominginvoice')
     all_permissions += list(Permission.objects.filter(content_type=content_type))
+    all_permissions += [Permission.objects.filter(codename='view_invoice')[0]]
     group.permissions.set(all_permissions)
     group.save()
 

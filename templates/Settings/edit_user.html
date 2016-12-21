@@ -17,7 +17,7 @@
 
 {% block content %}
       <h4>Gebruiker aanpassen</h4>
-      <form id="new-user-form" class="col s12" method="post" action="{% url "create_new_user" %}">
+      <form id="new-user-form" class="col s12" method="post" action="{% url "edit_user" userid %}">
           {% csrf_token %}
 
           <p class="row">

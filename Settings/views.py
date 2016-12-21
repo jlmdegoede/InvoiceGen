@@ -89,6 +89,8 @@ class SubscriptionSettings(View):
 
 
 class PersonalSettings(View):
+    def get(self):
+        pass
 
     def get_personal_settings(self, request):
         user_i = UserSetting.objects.all().first()
@@ -104,6 +106,7 @@ class PersonalSettings(View):
 
         return {'form': form, 'color_up': color_up, 'color_down': color_down}
 
+    @method_decorator(permission_required('Settings.change_setting'))
     def post(self, request):
         try:
             user = UserSetting.objects.get(id=1)
@@ -142,7 +145,23 @@ class EditUserView(View):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         user_form = UserForm(instance=user)
-        return render(request, 'Settings/edit_user.html', {'form': user_form})
+        return render(request, 'Settings/edit_user.html', {'form': user_form, 'userid': user.id})
+
+    @method_decorator(permission_required('Settings.change_setting'))
+    def post(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        user_form = UserForm(request.POST, instance=user)
+        if user_form.is_valid():
+            username = user_form.cleaned_data['username']
+            email = user_form.cleaned_data['email']
+            groups = user_form.cleaned_data['groups']
+            user.username = username
+            user.email = email
+            user.groups.clear() # delete existing groups
+            add_user_to_groups(user, groups) # before adding the new ones
+            return redirect(to=settings)
+        else:
+            return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
 
 
 @login_required
