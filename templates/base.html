@@ -84,16 +84,30 @@
                             <a href="#!email"><span class="email">{{ request.user.email }}</span></a>
                         </div>
                     </li>
+
+                    {% if perms.Orders.view_product %}
                     <li><a href="{% url "index" %}">Opdrachten</a></li>
+                    {% endif %}
+
+                    {% if perms.Invoices.view_invoice %}
                     <li><a href="{% url "get_invoices" %}">Facturen</a></li>
+                    {% endif %}
+
+                    {% if perms.Invoices.view_agreement %}
                     <li><a href="{% url "agreement_index" %}">Overeenkomsten</a></li>
+                    {% endif %}
+
                     <li><a href="{% url "search" %}">Zoeken</a></li>
                     <li>
                         <div class="divider"></div>
                     </li>
                     <li><a class="subheader">Meer</a></li>
                     <li><a class="waves-effect" href="{% url "statistics" %}">Statistieken</a></li>
+
+                    {% if perms.Settings.view_setting %}
                     <li><a class="waves-effect" href="{% url "settings" %}">Instellingen</a></li>
+                    {% endif %}
+
                     <li><a class="waves-effect" href="{% url "list_view_templates" %}">E-mail</a></li>
                     <li><a class="waves-effect" href="{% url "logout" %}">Afmelden</a></li>
                 </ul>

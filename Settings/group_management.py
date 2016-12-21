@@ -43,7 +43,9 @@ def create_order_group():
     group = Group.objects.get_or_create(name='Opdrachten')
     group = group[0]
     content_type = ContentType.objects.get(model='product')
-    all_permissions = Permission.objects.filter(content_type=content_type)
+    all_permissions = list(Permission.objects.filter(content_type=content_type))
+    content_type = ContentType.objects.get(model='hourregistration')
+    all_permissions += list(Permission.objects.filter(content_type=content_type))
     group.permissions.set(all_permissions)
     group.save()
 
