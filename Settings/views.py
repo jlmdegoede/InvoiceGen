@@ -1,7 +1,8 @@
 from django.shortcuts import *
 from Settings.models import *
 from Settings.forms import *
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 from Todo.models import *
 import json
 import Todo.views
@@ -13,7 +14,8 @@ from InvoiceGen.settings import DEFAULT_COLOR
 from django.views import View
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from django.contrib.auth.models import Group
+from .group_management import *
+from .localization_nl import get_localized_text
 # Create your views here.
 
 
@@ -50,6 +52,14 @@ class IntegrationSettings(View):
         return redirect(to=settings)
 
 
+def create_groups():
+    create_agreement_group()
+    create_company_group()
+    create_invoice_group()
+    create_order_group()
+    create_settings_group()
+
+
 class UserSettings(View):
 
     def get_user_settings(self, request):
@@ -61,12 +71,14 @@ class UserSettings(View):
         if user_form.is_valid():
             username = user_form.cleaned_data['username']
             email = user_form.cleaned_data['email']
+            groups = user_form.cleaned_data['groups']
             password = get_random_string(20)
-            User.objects.create_user(username, email, password)
+            new_user = User.objects.create_user(username, email, password)
+            add_user_to_groups(new_user, groups)
             print('Gebruiker {0} met wachtwoord: {1}'.format(username, password))
             return redirect(to=settings)
         else:
-            return render(request, 'Settings/settings.html', {'new_user_form': user_form})
+            return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
 
 
 class SubscriptionSettings(View):
@@ -102,7 +114,7 @@ class PersonalSettings(View):
             save_website_name(form)
             save_colors(form)
             form.save()
-            request.session['toast'] = 'Instellingen opgeslagen'
+            request.session['toast'] = get_localized_text(key='SETTINGS_SAVED')
             return redirect(to=settings)
         else:
             color_up = get_setting('color_up', DEFAULT_COLOR)
@@ -113,40 +125,24 @@ class PersonalSettings(View):
 
 
 @login_required
+@permission_required('Settings.change_setting')
 def settings(request):
-    return_dict = {}
-    return_dict['personal'] = PersonalSettings().get_personal_settings(request)
-    return_dict['users'] = UserSettings().get_user_settings(request)
-    return_dict['integration'] = IntegrationSettings().get_integration_settings(request)
-    return_dict['subscription'] = SubscriptionSettings().get_subscription_settings(request)
+    return_dict = {
+        'personal': PersonalSettings().get_personal_settings(request),
+        'users': UserSettings().get_user_settings(request),
+        'integration': IntegrationSettings().get_integration_settings(request),
+        'subscription': SubscriptionSettings().get_subscription_settings(request),
+    }
+    create_groups()
     return render(request, 'Settings/settings.html', return_dict)
 
 
 class EditUserView(View):
-
+    @method_decorator(permission_required('Settings.change_setting'))
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         user_form = UserForm(instance=user)
         return render(request, 'Settings/edit_user.html', {'form': user_form})
-
-
-def create_user_group():
-    product_group = Group.objects.get_or_create(name='Opdrachten')
-    invoice_group = Group.objects.get_or_create(name='Facturen')
-    agreements_group = Group.objects.get_or_create(name='Overeenkomsten')
-    companies_group = Group.objects.get_or_create(name='Opdrachtgevers')
-    hour_registration_group = Group.objects.get_or_create(name='Urenregistratie')
-    email_group = Group.objects.get_or_create(name='E-mail')
-    statistics_group = Group.objects.get_or_create(name='Statistieken')
-    settings_group = Group.objects.get_or_create(name='Instellingen')
-
-    #permission = Permission.objects.filter(codename='change_invoice')[1]
-    #product_group[0].permissions.add(permission)
-    #product_group[0].save()
-    #user = User.objects.get(username='test1')
-    #user.groups.add(product_group[0])
-    #user.save()
-    #print(user.has_perm('Invoices.view_invoice'))
 
 
 @login_required
@@ -196,6 +192,7 @@ def get_user_fullname():
         return user.name
     except:
         return ""
+
 
 def get_setting(key, default_value):
     setting = Setting.objects.filter(key=key)

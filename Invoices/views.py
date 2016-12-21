@@ -17,6 +17,7 @@ from django.views import View
 import Mail.views
 from django.utils import timezone
 from django.contrib.auth.decorators import permission_required
+from Settings.localization_nl import get_localized_text
 # Create your views here.
 
 
@@ -36,7 +37,7 @@ def get_incoming_invoices(request):
 
 def get_invoices(invoice_objects, request):
     invoices = {}
-    yearList = []
+    year_list = []
     if invoice_objects == 'outgoing':
         years = OutgoingInvoice.objects.values("date_created").distinct()
         objects = OutgoingInvoice.objects.all()
@@ -46,8 +47,8 @@ def get_invoices(invoice_objects, request):
 
     for dict in years:
         year = dict['date_created'].year
-        if year not in yearList:
-            yearList.append(year)
+        if year not in year_list:
+            year_list.append(year)
 
             invoice_year_objs = objects.filter(date_created__contains=year).order_by('-date_created')
             if invoice_objects == 'outgoing':
@@ -61,8 +62,8 @@ def get_invoices(invoice_objects, request):
                 invoices[year] = IncomingInvoiceTable(invoice_year_objs)
             RequestConfig(request).configure(invoices[year])
 
-    currentYear = date.today().year
-    return {'invoices': invoices,  'years': yearList, 'currentYear': currentYear}
+    current_year = date.today().year
+    return {'invoices': invoices,  'years': year_list, 'currentYear': current_year}
 
 
 @login_required
@@ -90,7 +91,7 @@ def add_outgoing_invoice(request):
             invoice.save()
             add_invoice_to_products(invoice, products)
 
-            request.session['toast'] = 'Factuur aangemaakt'
+            request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen')
         else:
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
@@ -188,7 +189,7 @@ def add_incoming_invoice(request):
             if 'invoice_file' in request.FILES:
                 invoice.invoice_file = request.FILES['invoice_file']
             invoice.save()
-            request.session['toast'] = 'Factuur aangemaakt'
+            request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen/inkomend')
         else:
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
@@ -223,7 +224,7 @@ def edit_outgoing_invoice(request, invoiceid=-1):
                           {'form': f, 'products': products, 'edit': True,
                                        'invoiceid': invoiceid})
         except:
-            request.session['toast'] = 'Factuur niet gevonden'
+            request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
             return redirect('/facturen')
     elif request.method == 'POST':
         invoice = OutgoingInvoice.objects.get(id=invoiceid)
@@ -239,12 +240,12 @@ def edit_outgoing_invoice(request, invoiceid=-1):
             new_products = f.cleaned_data['products']
             add_invoice_to_products(invoice, new_products)
 
-            request.session['toast'] = 'Factuur gewijzigd'
+            request.session['toast'] = get_localized_text('CHANGED_INVOICE')
             return redirect('/facturen')
         else:
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': old_products, 'invoiceid': invoice.id, 'edit': True,
-                                       'toast': "Formulier ongeldig!"})
+                                       'toast': get_localized_text('INVALID_FORM')})
 
 
 @login_required
@@ -258,7 +259,7 @@ def edit_incoming_invoice(request, invoiceid=-1):
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoice': invoice, 'edit': True})
         except:
-            request.session['toast'] = 'Factuur niet gevonden'
+            request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
             return redirect('/facturen/inkomend')
     elif request.method == 'POST':
         invoice = IncomingInvoice.objects.get(id=invoiceid)
@@ -268,12 +269,12 @@ def edit_incoming_invoice(request, invoiceid=-1):
             f.save(commit=False)
             if 'invoice_file' in request.FILES:
                 invoice.invoice_file = request.FILES['invoice_file']
-            request.session['toast'] = 'Factuur gewijzigd'
+            request.session['toast'] = get_localized_text('INVOICE_CHANGED')
             return redirect('/facturen/inkomend')
         else:
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoiceid': invoice.id, 'edit': True,
-                                       'toast': "Formulier ongeldig!"})
+                                       'toast': get_localized_text('INVALID_FORM')})
 
 
 @login_required
@@ -287,10 +288,10 @@ def delete_outgoing_invoice(request, invoiceid=-1):
             article.save()
 
         invoice.delete()
-        request.session['toast'] = 'Verwijderen factuur gelukt'
+        request.session['toast'] = get_localized_text('DELETE_INVOICE_SUCCESS')
         return redirect('/facturen')
     except:
-        request.session['toast'] = 'Verwijderen factuur mislukt'
+        request.session['toast'] = get_localized_text('DELETE_INVOICE_FAILED')
         return redirect('/facturen')
 
 
@@ -300,10 +301,10 @@ def delete_incoming_invoice(request, invoiceid=-1):
     try:
         invoice = IncomingInvoice.objects.get(id=invoiceid)
         invoice.delete()
-        request.session['toast'] = 'Verwijderen factuur gelukt'
+        request.session['toast'] = get_localized_text('DELETE_INVOICE_SUCCESS')
         return redirect('/facturen/inkomend')
     except:
-        request.session['toast'] = 'Verwijderen factuur mislukt'
+        request.session['toast'] = get_localized_text('DELETE_INVOICE_FAILED')
         return redirect('/facturen/inkomend')
 
 
