@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from .models import HourRegistration
 from Orders.models import Product
 from django.utils import timezone
@@ -6,9 +5,11 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 import pytz
+from django.contrib.auth.decorators import permission_required
 
 
 @login_required
+@permission_required('HourRegistration.add_hourregistration', 'HourRegistration.change_hourregistration')
 def start_time_tracking(request, product_id):
     product = Product.objects.get(id=product_id)
     existing_time = HourRegistration.objects.filter(end=None)
@@ -21,6 +22,7 @@ def start_time_tracking(request, product_id):
 
 
 @login_required
+@permission_required('HourRegistration.change_hourregistration')
 def end_time_tracking(request, product_id):
     product = Product.objects.get(id=product_id)
     time = HourRegistration.objects.filter(product=product, end=None)
@@ -33,6 +35,7 @@ def end_time_tracking(request, product_id):
 
 
 @login_required
+@permission_required('HourRegistration.change_hourregistration')
 def add_description_to_hourregistration(request):
     if request.method == 'POST':
         return add_description_to_hourregistration_post(request)
@@ -64,6 +67,7 @@ def get_description_to_hourregistration(request):
 
 
 @login_required
+@permission_required('HourRegistration.view_hourregistration')
 def existing_time_tracking(request):
     time = HourRegistration.objects.filter(end=None).first()
     if time is not None:
@@ -73,6 +77,7 @@ def existing_time_tracking(request):
 
 
 @login_required
+@permission_required('HourRegistration.delete_hourregistration')
 def delete_time_tracking(request):
     try:
         time_id = request.POST['time_id']
@@ -84,6 +89,7 @@ def delete_time_tracking(request):
 
 
 @login_required
+@permission_required('HourRegistration.change_hourregistration')
 def set_end_time(request):
     if 'pk' in request.POST and 'endDate' in request.POST and 'endTime' in request.POST:
         enddate = request.POST['endDate']
@@ -98,6 +104,7 @@ def set_end_time(request):
 
 
 @login_required
+@permission_required('HourRegistration.add_hourregistration')
 def create_new_hour_registration(request):
     if 'startDate' in request.POST and 'startTime' in request.POST \
             and 'endDate' in request.POST \

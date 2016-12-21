@@ -5,6 +5,7 @@ from django.test import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
 
 # Create your tests here.
 
@@ -22,6 +23,16 @@ class AgreementTestCase(TestCase):
                                                   agreement_text_copy='TEST TEST TEST TEST',
                                                   created=timezone.now(), url='23556')
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
+
+        agreements_group = Group.objects.create(name='Overeenkomsttekst')
+        content_type = ContentType.objects.get(model='agreementtext')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        agreements_group.permissions.set(all_permissions)
+        agreements_group.save()
+
+        self.user.groups.add(agreements_group)
+
+        self.user.save()
         self.c = Client()
 
     def test_redirect_index_model_agreements(self):

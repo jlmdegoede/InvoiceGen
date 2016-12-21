@@ -29,7 +29,6 @@ OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
 AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 
 
-
 @login_required
 @permission_required('Agreements.view_agreement')
 def agreement_index(request):
@@ -74,7 +73,6 @@ def add_agreement(request):
         return render(request, 'Agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
 
 
-@permission_required('Agreements.view_agreement')
 def view_agreement(request, url):
     agreement = Agreement.objects.get(url=url)
     agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
@@ -127,6 +125,7 @@ def sign_agreement_client(request, url):
 
 def send_push_notification_signed_agreement():
     pass
+
 
 @login_required
 @permission_required('Agreements.delete_agreement')

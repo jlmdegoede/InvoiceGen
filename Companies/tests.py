@@ -1,13 +1,11 @@
-from django.test import TestCase
-from Agreements.models import Agreement, AgreementText
 from Companies.models import Company
-import datetime
 from django.test import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from Orders.models import Product
 from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
 # Create your tests here.
 
 
@@ -19,7 +17,16 @@ class CompaniesTestCase(TestCase):
         self.first_product = Product.objects.create(title='Testopdracht', date_deadline=timezone.now(), date_received=timezone.now(), quantity=500, from_company=self.first_company,
                                      identification_number=0, price_per_quantity=0.25, tax_rate=0)
         self.c = Client()
+
+        group = Group.objects.create(name='Bedrijven')
+        content_type = ContentType.objects.get(model='company')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        group.permissions.set(all_permissions)
+        group.save()
+
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
+        self.user.groups.add(group)
+        self.user.save()
 
     def test_index(self):
         self.c.login(username='testuser', password='secret')

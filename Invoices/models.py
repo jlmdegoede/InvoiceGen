@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from InvoiceGen.site_settings import ALLOWED_HOSTS
 from django.core.urlresolvers import reverse
 
+
 class Invoice(models.Model):
     title = models.CharField(max_length=200)
     date_created = models.DateField()
@@ -11,6 +12,7 @@ class Invoice(models.Model):
 
     def __str__(self):
         return self.title
+
     class Meta:
         abstract = True
         permissions = (

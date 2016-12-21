@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from Companies.models import *
 from django.shortcuts import *
 from Companies.forms import *
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
 from .tables import CompanyTable
 from django_tables2 import RequestConfig
+from django.contrib.auth.decorators import permission_required
+
 
 @login_required
+@permission_required('Companies.view_company')
 def index(request):
     companies = Company.objects.all()
     for company in companies:
@@ -20,6 +21,7 @@ def index(request):
 
 
 @login_required
+@permission_required('Companies.add_company')
 def add_company(request):
     if request.method == 'POST':
         company = Company()
@@ -35,6 +37,7 @@ def add_company(request):
 
 
 @login_required
+@permission_required('Companies.change_company')
 def edit_company(request, company_id):
     if request.method == 'GET':
         try:
@@ -54,6 +57,7 @@ def edit_company(request, company_id):
 
 
 @login_required
+@permission_required('Companies.delete_company')
 def delete_company(request, company_id):
     try:
         company = Company.objects.get(id=company_id)

@@ -1,5 +1,4 @@
 from django.test import TestCase
-from Agreements.models import Agreement, AgreementText
 from Companies.models import Company
 from datetime import timedelta, date
 from django.test import Client
@@ -9,6 +8,7 @@ from .models import OutgoingInvoice
 from Settings.models import UserSetting
 from Orders.models import Product
 from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
 # Create your tests here.
 
 
@@ -29,8 +29,16 @@ class InvoicesTestCase(TestCase):
                                                     from_company=self.company,
                                                     identification_number=0, price_per_quantity=0.25, tax_rate=0)
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
-        self.user_setting = UserSetting.objects.create(name='Testnaam', address='Testadres', city_and_zipcode='Teststad 1234AB', email='test@test.test', iban='NL000BANK')
         self.c = Client()
+        group = Group.objects.create(name='Facturen')
+        content_type = ContentType.objects.get(model='outgoinginvoice')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        group.permissions.set(all_permissions)
+        group.save()
+        self.user.groups.add(group)
+        self.user.save()
+
+        self.user_setting = UserSetting.objects.create(name='Testnaam', address='Testadres', city_and_zipcode='Teststad 1234AB', email='test@test.test', iban='NL000BANK')
 
     def test_get_invoices(self):
         self.c.login(username='testuser', password='secret')
@@ -42,12 +50,12 @@ class InvoicesTestCase(TestCase):
 
     def test_delete_valid_invoice(self):
         self.c.login(username='testuser', password='secret')
-        response = self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': self.invoice_current.id}))
+        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': self.invoice_current.id}))
         self.assertEqual(self.c.session['toast'], 'Verwijderen factuur gelukt')
 
     def test_delete_invalid_invoice(self):
         self.c.login(username='testuser', password='secret')
-        response = self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': 1212}))
+        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': 1212}))
         self.assertEqual(self.c.session['toast'], 'Verwijderen factuur mislukt')
 
     def test_creating_invoice_valid(self):

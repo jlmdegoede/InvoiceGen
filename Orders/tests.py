@@ -6,6 +6,8 @@ from django.core.urlresolvers import reverse
 from Settings.models import UserSetting
 from HourRegistration.models import *
 from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
+
 
 class OrderTestCase(TestCase):
     def setUp(self):
@@ -23,6 +25,13 @@ class OrderTestCase(TestCase):
                                                 price_per_quantity=0.22, tax_rate=0)
         self.c = Client()
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
+        group = Group.objects.create(name='Opdrachten')
+        content_type = ContentType.objects.get(model='product')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        group.permissions.set(all_permissions)
+        group.save()
+        self.user.groups.add(group)
+        self.user.save()
 
     def test_index(self):
         self.c.login(username='testuser', password='secret')

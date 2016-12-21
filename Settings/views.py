@@ -89,7 +89,6 @@ class PersonalSettings(View):
 
         color_up = get_setting('color_up', DEFAULT_COLOR)
         color_down = get_setting('color_down', DEFAULT_COLOR)
-        create_user_group()
 
         return {'form': form, 'color_up': color_up, 'color_down': color_down}
 
@@ -128,7 +127,6 @@ class EditUserView(View):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         user_form = UserForm(instance=user)
-        print(user_form)
         return render(request, 'Settings/edit_user.html', {'form': user_form})
 
 

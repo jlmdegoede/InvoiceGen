@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
-from django.core.urlresolvers import reverse
 import Utils.markdown_generator
 from InvoiceGen.settings import BASE_DIR
 from Invoices.forms import *
@@ -13,8 +12,6 @@ from Utils.docx_generation import *
 from .models import *
 from .tables import *
 from django_tables2 import RequestConfig
-from .tasks import generate_pdf_task
-from Invoices.consumers import *
 from django.utils.crypto import get_random_string
 from django.views import View
 import Mail.views
@@ -27,11 +24,11 @@ from django.contrib.auth.decorators import permission_required
 @permission_required('Invoices.view_invoice')
 def get_outgoing_invoices(request):
     dict = get_invoices('outgoing', request)
-
     return render(request, 'Invoices/outgoing_invoice_table.html', dict)
 
 
 @login_required
+@permission_required('Invoices.view_invoice')
 def get_incoming_invoices(request):
     dict = get_invoices('incoming', request)
     return render(request, 'Invoices/incoming_invoice_table.html', dict)
@@ -69,7 +66,7 @@ def get_invoices(invoice_objects, request):
 
 
 @login_required
-@permission_required('Invoices.add_invoice')
+@permission_required('Invoices.add_outgoinginvoice')
 def add_outgoing_invoice(request):
     if request.method == 'GET':
         invoice = OutgoingInvoice()
@@ -126,6 +123,7 @@ def get_latest_pdf(invoice_id):
     response['Content-Type'] = 'application/pdf'
     return response
 
+
 def get_latest_markdown(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
@@ -141,6 +139,7 @@ def get_latest_markdown(invoice_id):
     response['Content-Disposition'] = 'attachment; filename=invoice{0}.md'.format(str(invoice.date_created))
     return response
 
+
 def get_latest_docx(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
@@ -150,6 +149,7 @@ def get_latest_docx(invoice_id):
     doc.save(response)
     response['Content-Disposition'] = 'attachment; filename={0}.docx'.format(invoice.title)
     return response
+
 
 @login_required
 def share_link_to_outgoing_invoice(request, invoice_id):
@@ -170,7 +170,7 @@ def view_outgoing_invoice_guest(request, invoice_url):
 
 
 @login_required
-@permission_required('Invoices.add_invoice')
+@permission_required('Invoices.add_incominginvoice')
 def add_incoming_invoice(request):
     if request.method == 'GET':
         invoice = IncomingInvoice()
@@ -211,7 +211,7 @@ def detail_outgoing_invoice(request, invoice_id):
 
 
 @login_required
-@permission_required('Invoices.change_invoice')
+@permission_required('Invoices.change_outgoinginvoice')
 def edit_outgoing_invoice(request, invoiceid=-1):
     if request.method == 'GET':
         try:
@@ -248,7 +248,7 @@ def edit_outgoing_invoice(request, invoiceid=-1):
 
 
 @login_required
-@permission_required('Invoices.change_invoice')
+@permission_required('Invoices.change_incominginvoice')
 def edit_incoming_invoice(request, invoiceid=-1):
     if request.method == 'GET':
         try:
@@ -277,7 +277,7 @@ def edit_incoming_invoice(request, invoiceid=-1):
 
 
 @login_required
-@permission_required('Invoices.delete_invoice')
+@permission_required('Invoices.delete_outgoinginvoice')
 def delete_outgoing_invoice(request, invoiceid=-1):
     try:
         invoice = OutgoingInvoice.objects.get(id=invoiceid)
@@ -295,7 +295,7 @@ def delete_outgoing_invoice(request, invoiceid=-1):
 
 
 @login_required
-@permission_required('Invoices.delete_invoice')
+@permission_required('Invoices.delete_incominginvoice')
 def delete_incoming_invoice(request, invoiceid=-1):
     try:
         invoice = IncomingInvoice.objects.get(id=invoiceid)
@@ -333,6 +333,7 @@ def generate_invoice(request):
             product.save()
         return JsonResponse({'return_url': reverse(detail_outgoing_invoice, kwargs={'invoice_id': invoice.id})})
     return JsonResponse({'success': False})
+
 
 class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
