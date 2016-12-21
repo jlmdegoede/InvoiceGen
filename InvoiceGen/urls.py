@@ -53,8 +53,9 @@ urlpatterns = [
     url(r'^email/get-template/$', Mail.views.get_template, name='get_template'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
+    url(r'^instellingen/persoonlijk$', Settings.views.PersonalSettings.as_view(), name='personal_settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
-    url(r'^instellingen/nieuwe-gebruiker$', Settings.views.create_new_user, name='create_new_user'),
+    url(r'^instellingen/nieuwe-gebruiker$', Settings.views.UserSettings.as_view(), name='create_new_user'),
     url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', Settings.views.EditUserView.as_view(), name='edit_user'),
 
     url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),
@@ -112,5 +113,5 @@ urlpatterns = [
 
     url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
     url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
-    url(r'^wunderlist-instellingen/$', Settings.views.save_wunderlist_settings, name='save_wunderlist_settings'),
+    url(r'^instellingen/wunderlist$', Settings.views.IntegrationSettings.as_view(), name='save_wunderlist_settings'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,7 +24,12 @@
 
 {% block content %}
 
-    <div class="row"></div>
+    <div class="row">
+        <div id="data" class="col s12 settings-tab" style="display:none;">{% include "Settings/personal_settings.html" %}</div>
+        <div id="users" class="col s12 settings-tab" style="display:none;">{% include "Settings/user_settings.html" %}</div>
+        <div id="todo" class="col s12 settings-tab" style="display:none;">{% include "Settings/integration_settings.html" %}</div>
+        <div id="subscription" class="col s12 settings-tab" style="display:none;">{% include "Settings/subscription_management_and_settings.html" %}</div>
+    </div>
 
         <script type="text/javascript">
             $(document).ready(function () {
