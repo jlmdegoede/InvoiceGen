@@ -1,9 +1,18 @@
 <h4>Actieve gebruikers</h4>
-<div class="collection">
+<table>
+    <thead>
+    <tr>
+        <td data-field="id">Gebruikersnaam</td>
+        <td></td>
+    </tr>
+    </thead>
     {% for user in users.user_list %}
-        <a href="{% url 'edit_user' user.id %}" class="collection-item">{{ user.username }}</a>
+        <tr>
+            <td><a href="{% url 'edit_user' user.id %}" class="collection-item">{{ user.username }}</a></td>
+            <td><a href="#" data-id="{{ user.id }}" class="user-delete"><i class="material-icons">delete</i></a></td>
+        </tr>
     {% endfor %}
-</div>
+</table>
 
 <h4>Nieuwe gebruiker aanmaken</h4>
 De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te loggen.
@@ -34,3 +43,20 @@ De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te logge
         </button>
     </div>
 </form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.user-delete').click(function() {
+            var confirmed = confirm("Weet je zeker dat je deze gebruiker wilt verwijderen?");
+            if (!confirmed) { return; }
+               var user_id =  $(this).attr('data-id');
+                $.post(
+                    "{% url "delete_user" %}",
+                    { user_id: user_id, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                    function (data) {
+                        location.reload();
+                    }
+                );
+        });
+    });
+</script>

@@ -81,6 +81,17 @@ class UserSettings(View):
             return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
 
 
+@permission_required('Settings.change_setting')
+def delete_user(request):
+    if request.POST and 'user_id' in request.POST:
+        user_id = int(request.POST['user_id'])
+        user = User.objects.get(pk=user_id)
+        user.delete()
+
+        request.session['toast'] = get_localized_text(key='USER_DELETED')
+        return redirect(to=settings)
+
+
 class SubscriptionSettings(View):
 
     def get_subscription_settings(self, request):
