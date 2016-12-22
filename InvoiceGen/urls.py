@@ -55,7 +55,7 @@ urlpatterns = [
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
     url(r'^instellingen/persoonlijk$', Settings.views.PersonalSettings.as_view(), name='personal_settings'),
     url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
-    url(r'^instellingen/nieuwe-gebruiker$', permission_required('Settings.change_setting',Settings.views.UserSettings.as_view()), name='create_new_user'),
+    url(r'^instellingen/nieuwe-gebruiker$', Settings.views.UserSettings.as_view(), name='create_new_user'),
     url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', Settings.views.EditUserView.as_view(), name='edit_user'),
     url(r'^instellingen/gebruiker/verwijderen$', Settings.views.delete_user, name='delete_user'),
 

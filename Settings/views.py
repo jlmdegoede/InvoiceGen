@@ -17,6 +17,8 @@ from django.utils.crypto import get_random_string
 from .group_management import *
 from .localization_nl import get_localized_text
 from django.http import JsonResponse
+from InvoiceGen.site_settings import ALLOWED_HOSTS
+from Mail.views import create_and_send_email_without_form
 # Create your views here.
 
 
@@ -62,11 +64,12 @@ def create_groups():
 
 
 class UserSettings(View):
-
+    @method_decorator(permission_required('Settings.change_setting'))
     def get_user_settings(self, request):
         user_list = User.objects.all()
         return {'user_list': user_list, 'new_user_form': UserForm()}
 
+    @method_decorator(permission_required('Settings.change_setting'))
     def post(self, request):
         user_form = UserForm(request.POST)
         if user_form.is_valid():
@@ -76,10 +79,18 @@ class UserSettings(View):
             password = get_random_string(20)
             new_user = User.objects.create_user(username, email, password)
             add_user_to_groups(new_user, groups)
+            self.prepare_new_user_mail(email, username, password)
             print('Gebruiker {0} met wachtwoord: {1}'.format(username, password))
             return redirect(to=settings)
         else:
             return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
+
+    def prepare_new_user_mail(self, email, username, password):
+        subject = get_localized_text('NEW_USER_MAIL_SUBJECT')
+        host = 'https://{0}'.format(ALLOWED_HOSTS[0])
+        contents = get_localized_text('NEW_USER_MAIL_CONTENTS', {'[USER]': username, '[PASSWORD]': password, '[WEBSITE]': host})
+        print(contents)
+        create_and_send_email_without_form(to=email, subject=subject, contents=contents)
 
 
 @permission_required('Settings.change_setting')
@@ -104,8 +115,6 @@ class SubscriptionSettings(View):
 
 
 class PersonalSettings(View):
-    def get(self):
-        pass
 
     def get_personal_settings(self, request):
         user_i = UserSetting.objects.all().first()

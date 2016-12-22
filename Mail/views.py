@@ -1,7 +1,4 @@
-from django.shortcuts import render
 from django.views import View
-from InvoiceGen.site_settings import DEBUG
-from .models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from .tables import EmailTemplateTable, EmailTable
@@ -10,7 +7,7 @@ from .tasks import send_email
 from django.http import JsonResponse
 from Invoices.tasks import generate_pdf_task
 
-# Create your views here.
+
 def get_email_form(request, to=None, invoice_id=0):
     initial_values = {'to': to}
     email_form = EmailForm(initial=initial_values)
@@ -18,12 +15,14 @@ def get_email_form(request, to=None, invoice_id=0):
     return render(request, 'Mail/email_invoice.html', {'form': email_form, 'emailtemplates': email_templates,
                                                        'invoice_id': invoice_id})
 
+
 @login_required
 def get_template(request):
     if request.POST and 'email_template_id' in request.POST:
         email_template_id = request.POST['email_template_id']
         email_template = EmailTemplate.objects.get(id=email_template_id)
         return JsonResponse({'subject': email_template.subject, 'contents': email_template.contents})
+
 
 @login_required
 def save_and_send_email(request):
@@ -43,10 +42,12 @@ def save_and_send_email(request):
         email_templates = EmailTemplate.objects.all()
         return render(request, 'Mail/email_invoice.html', {'form': email_form, 'email_templates': email_templates, 'invoice_id': invoice_id})
 
+
 @login_required
 def list_view_templates(request):
     template_table = EmailTemplateTable(EmailTemplate.objects.all())
     return render(request, 'Mail/email_template_list.html', {'template_table': template_table})
+
 
 class NewEditEmailTemplate(View):
     def get(self, request, email_template_id=0):
@@ -66,11 +67,13 @@ class NewEditEmailTemplate(View):
         else:
             return render(request, 'Mail/new_edit_email_template.html', {'form': email_template_form})
 
+
 class SentEmailListView(View):
     def get(self, request):
         emails = Email.objects.all()
         email_table = EmailTable(emails)
         return render(request, 'Mail/sent_emails.html', {'table': email_table})
+
 
 @login_required
 def get_email_contents(request):
@@ -79,6 +82,7 @@ def get_email_contents(request):
         email = Email.objects.get(id=email_id)
         return JsonResponse({'contents': email.contents})
 
+
 @login_required
 def delete_email_template(request):
     if request.POST and 'email_template_id' in request.POST:
@@ -86,3 +90,9 @@ def delete_email_template(request):
         email_template = EmailTemplate.objects.get(id=email_template_id)
         email_template.delete()
         return JsonResponse({'success': True})
+
+
+def create_and_send_email_without_form(to, subject, contents):
+    email = Email(to=to, subject=subject, contents=contents)
+    email.save()
+    send_email.delay(email.id)

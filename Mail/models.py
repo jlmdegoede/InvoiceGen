@@ -3,6 +3,7 @@ from django.core.mail import EmailMessage
 
 # Create your models here.
 
+
 class Email(models.Model):
     subject = models.CharField(max_length=100)
     to = models.EmailField()
@@ -23,6 +24,7 @@ class Email(models.Model):
         permissions = (
             ('view_email', 'Kan verzonden e-mailberichten bekijken'),
         )
+
 
 class EmailTemplate(models.Model):
     subject = models.CharField(max_length=100)
