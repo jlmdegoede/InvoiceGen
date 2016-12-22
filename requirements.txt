@@ -10,3 +10,5 @@ django-tables2
 pytz
 channels
 django-bower
+redis
+asgi_redis

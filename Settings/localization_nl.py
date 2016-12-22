@@ -7,6 +7,7 @@ TEXT_STRINGS = {
     'INVOICE_NOT_FOUND': 'Factuur niet gevonden',
     'INVOICE_CREATED': 'Factuur aangemaakt',
     'USER_DELETED': 'Gebruiker succesvol verwijderd',
+    'USER_DELETE_FIRST': 'Je kunt de eerste gebruiker niet verwijderen',
 }
 
 

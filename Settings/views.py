@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .group_management import *
 from .localization_nl import get_localized_text
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -85,11 +86,14 @@ class UserSettings(View):
 def delete_user(request):
     if request.POST and 'user_id' in request.POST:
         user_id = int(request.POST['user_id'])
-        user = User.objects.get(pk=user_id)
-        user.delete()
+        if user_id is not 1:
+            user = User.objects.get(pk=user_id)
+            user.delete()
 
-        request.session['toast'] = get_localized_text(key='USER_DELETED')
-        return redirect(to=settings)
+            request.session['toast'] = get_localized_text(key='USER_DELETED')
+            return redirect(to=settings)
+        else:
+            return JsonResponse({'error': get_localized_text('USER_DELETE_FIRST')})
 
 
 class SubscriptionSettings(View):

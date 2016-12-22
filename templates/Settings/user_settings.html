@@ -9,7 +9,7 @@
     {% for user in users.user_list %}
         <tr>
             <td><a href="{% url 'edit_user' user.id %}" class="collection-item">{{ user.username }}</a></td>
-            <td><a href="#" data-id="{{ user.id }}" class="user-delete"><i class="material-icons">delete</i></a></td>
+            <td><a href="#modal-delete" data-id="{{ user.id }}" class="delete-link modal-trigger"><i class="material-icons">delete</i></a></td>
         </tr>
     {% endfor %}
 </table>
@@ -44,19 +44,40 @@ De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te logge
     </div>
 </form>
 
+<!-- Modal Structure -->
+<div id="modal-delete" class="modal bottom-sheet">
+    <div class="modal-content">
+        <i class="large material-icons right">delete</i>
+        <h4>Gebruiker verwijderen</h4>
+        <p id="confirmText">Weet je zeker dat je deze gebruiker wilt verwijderen?</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="user-delete"
+           class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.user-delete').click(function() {
-            var confirmed = confirm("Weet je zeker dat je deze gebruiker wilt verwijderen?");
-            if (!confirmed) { return; }
+        $('.modal').modal();
+        $('.delete-link').click(function() {
                var user_id =  $(this).attr('data-id');
-                $.post(
-                    "{% url "delete_user" %}",
-                    { user_id: user_id, csrfmiddlewaretoken: '{{ csrf_token }}' },
-                    function (data) {
+               $('#user-delete').attr('data-id', user_id)
+        });
+        $('#user-delete').click(function() {
+           var user_id =  $(this).attr('data-id');
+            $.post(
+                "{% url "delete_user" %}",
+                { user_id: user_id, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                function (data) {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
                         location.reload();
                     }
-                );
+                }
+            );
         });
     });
 </script>

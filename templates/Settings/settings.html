@@ -34,7 +34,10 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 var hash = window.location.hash;
-                var current_location = hash.replace('#', '');
+                if (!hash) {
+                    hash = '#data'
+                }
+                current_location = hash.replace('#', '');
                 $(hash).show();
                 $('#' + current_location + '-link').addClass('active');
 
