@@ -45,7 +45,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
         "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
+           "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379')],  # set redis address
          },
         "ROUTING": "InvoiceGen.routing.channel_routing",
     },
