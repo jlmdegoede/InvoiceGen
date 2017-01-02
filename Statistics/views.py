@@ -60,7 +60,7 @@ def set_end_date(hr_end_date, year):
 def set_start_date(hr_start_date, year):
     start_date = hr_start_date
     if hr_start_date.year <= year - 1:
-        start_date = datetime(year, 01, 01, 00, 00, 00)
+        start_date = datetime(year, 1, 1, 00, 00, 00)
     return start_date
 
 
