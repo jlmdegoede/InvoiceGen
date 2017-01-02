@@ -53,14 +53,14 @@ def set_end_date(hr_end_date, year):
     if hr_end_date is None:
         end_date = timezone.now()
     if end_date.year >= year + 1:
-        end_date = datetime(year, 12, 31, 23, 59, 59)
+        end_date = timezone.datetime(year, 12, 31, 23, 59, 59)
     return end_date
 
 
 def set_start_date(hr_start_date, year):
     start_date = hr_start_date
     if hr_start_date.year <= year - 1:
-        start_date = datetime(year, 1, 1, 00, 00, 00)
+        start_date = timezone.datetime(year, 1, 1, 00, 00, 00)
     return start_date
 
 
