@@ -16,7 +16,7 @@ import asyncio
 from HourRegistration.models import HourRegistration
 from .tables import OrderTable
 from django_tables2 import RequestConfig
-from datetime import datetime
+from datetime import datetime, date
 from Utils.date_helper import get_today_string
 from Statistics.views import get_unique_hours, get_total_hours
 from django.utils import timezone
@@ -78,7 +78,7 @@ def view_product(request, product_id):
     product = add_agreements_to_product(product)
 
     hour_registration = HourRegistration.objects.filter(product=product)
-    total_hours = get_total_hours(2016, hour_registration)
+    total_hours = get_total_hours(datetime.now().year, hour_registration)
 
     today = get_today_string()
 
