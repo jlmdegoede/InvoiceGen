@@ -13,6 +13,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
 from django.contrib.auth.decorators import login_required, permission_required
+import Tenants.views
 
 urlpatterns = [
     url(r'^$', Orders.views.index, name='index'),
@@ -60,6 +61,7 @@ urlpatterns = [
     url(r'^instellingen/gebruiker/verwijderen$', Settings.views.delete_user, name='delete_user'),
 
     url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),
+    url(r'^tenants/$', Tenants.views.create_public_tenant, name='tenants'),
 
     url(r'^statistieken/btw-aangifte$', Statistics.views.view_btw_aangifte, name='btw_aangifte'),
 

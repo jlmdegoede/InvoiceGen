@@ -258,7 +258,6 @@ def save_setting(key, value):
     setting.save()
     return setting
 
-
 def save_website_name(form):
     site_name_f = form.cleaned_data['site_name']
     site_name = Setting.objects.filter(key='site_name')

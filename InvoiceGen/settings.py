@@ -12,19 +12,54 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-from InvoiceGen.site_settings import *
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # Application definition
+SECRET_KEY = 'X&WF+>=ml9-7sfJ_*+!H]`BvZfkI<>:X.Rsh+v87vZ|YUGl/_e'
+ALLOWED_HOSTS = ['*']
+DEBUG = True
+COMMUNICATION_KEY = '28359ruioterhfweuith34tlkjre'
 
-INSTALLED_APPS = (
+SHARED_APPS = (
+    'tenant_schemas',  # mandatory, should always be before any django app
+    'Tenants', # you must list the app where your tenant model resides in
+    'django.contrib.contenttypes',
+
+    # everything below here is optional
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django_tables2',
+    'django.contrib.humanize',
+    'channels',
+)
+
+TENANT_APPS = (
+    'django.contrib.contenttypes',
+    # your tenant-specific apps
+    'Orders',
+    'Agreements',
+    'Invoices',
+    'Companies',
+    'Settings',
+    'Todo',
+    'HourRegistration',
+    'Statistics',
+    'Mail',
+)
+
+INSTALLED_APPS = (
+    'tenant_schemas',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
     'Orders',
     'Agreements',
     'Invoices',
@@ -37,15 +72,17 @@ INSTALLED_APPS = (
     'Mail',
     'django_tables2',
     'django.contrib.humanize',
-    'channels'
+    'channels',
+    'Tenants',
 )
+TENANT_MODEL = "Tenants.Client"
 
 # In settings.py
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
         "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379')],  # set redis address
+           "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],  # set redis address
          },
         "ROUTING": "InvoiceGen.routing.channel_routing",
     },
@@ -62,6 +99,7 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'no-reply@invoicegen.nl'
 
 MIDDLEWARE_CLASSES = (
+    'tenant_schemas.middleware.TenantMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +107,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Orders.middleware.OrderMiddleware',
+    #'Orders.middleware.OrderMiddleware',
 )
 
 ROOT_URLCONF = 'InvoiceGen.urls'
@@ -82,10 +120,14 @@ WSGI_APPLICATION = 'InvoiceGen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'tenant_schemas.postgresql_backend',
+        'NAME': 'invoicegen',
     }
 }
+
+DATABASE_ROUTERS = (
+    'tenant_schemas.routers.TenantSyncRouter',
+)
 
 TEMPLATES = [
     {
@@ -119,21 +161,13 @@ TEMPLATES = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 BREADCRUMBS_TEMPLATE = "breadcrumbs.html"
-
 LANGUAGE_CODE = 'nl'
-
 TIME_ZONE = 'Europe/Amsterdam'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 DECIMAL_SEPARATOR = ','
-
 DEFAULT_COLOR = '#009688'
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
