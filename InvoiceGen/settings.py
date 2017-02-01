@@ -21,7 +21,8 @@ SECRET_KEY = 'X&WF+>=ml9-7sfJ_*+!H]`BvZfkI<>:X.Rsh+v87vZ|YUGl/_e'
 ALLOWED_HOSTS = ['*']
 DEBUG = True
 COMMUNICATION_KEY = '28359ruioterhfweuith34tlkjre'
-
+ROOT_HOSTCONF = 'InvoiceGen.hosts'
+DEFAULT_HOST = 'www'
 SHARED_APPS = (
     'tenant_schemas',  # mandatory, should always be before any django app
     'Tenants', # you must list the app where your tenant model resides in
@@ -77,7 +78,8 @@ INSTALLED_APPS = (
     'channels',
     'Tenants',
     'Blog',
-    'PaymentProcessor'
+    'PaymentProcessor',
+    'django_hosts'
 )
 TENANT_MODEL = "Tenants.Client"
 
@@ -103,6 +105,7 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'no-reply@invoicegen.nl'
 
 MIDDLEWARE_CLASSES = (
+    'django_hosts.middleware.HostsRequestMiddleware',
     'tenant_schemas.middleware.TenantMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,6 +114,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
     #'Orders.middleware.OrderMiddleware',
 )
 

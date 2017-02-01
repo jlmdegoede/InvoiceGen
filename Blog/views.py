@@ -10,13 +10,13 @@ def index(request):
     blogs = Blog.objects.all().order_by('-id')
     for blog in blogs:
         blog.slugify = slugify(blog.title)
-    return render(request, "blog.html", {"blogs": blogs})
+    return render(request, "Tenants/blog.html", {"blogs": blogs})
 
 
 def view_blogpost(request, blog_id, slug):
     try:
         blog = Blog.objects.get(id=blog_id)
         blog.tag_list = blog.tags.split(',')
-        return render(request, "blog_post.html", {"blog": blog})
+        return render(request, "Tenants/blog_post.html", {"blog": blog})
     except:
-        return render(request, "blog_post.html", {"error": "Blog niet gevonden"})
+        return render(request, "Tenants/blog_post.html", {"error": "Blog niet gevonden"})
