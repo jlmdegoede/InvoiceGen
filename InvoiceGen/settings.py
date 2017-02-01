@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from tenant_schemas.utils import get_public_schema_name
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +26,6 @@ SHARED_APPS = (
     'tenant_schemas',  # mandatory, should always be before any django app
     'Tenants', # you must list the app where your tenant model resides in
     'django.contrib.contenttypes',
-
     # everything below here is optional
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,6 +36,8 @@ SHARED_APPS = (
     'django_tables2',
     'django.contrib.humanize',
     'channels',
+    'Blog',
+    'PaymentProcessor',
 )
 
 TENANT_APPS = (
@@ -74,6 +76,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'channels',
     'Tenants',
+    'Blog',
+    'PaymentProcessor'
 )
 TENANT_MODEL = "Tenants.Client"
 
@@ -129,6 +133,22 @@ DATABASE_ROUTERS = (
     'tenant_schemas.routers.TenantSyncRouter',
 )
 
+CONTEXT_PROCESSORS = [
+    'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.i18n',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django.template.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'django.template.context_processors.request']
+if get_public_schema_name() is not 'public':
+    CONTEXT_PROCESSORS.append(
+        'InvoiceGen.context_processor.website_name',
+        'InvoiceGen.context_processor.color_up',
+        'InvoiceGen.context_processor.color_down',
+        'InvoiceGen.context_processor.attach_toast_to_response')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -138,22 +158,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
-            'context_processors': [
-                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
-                # list if you haven't customized them:
-                'django.contrib.auth.context_processors.auth',
-                'django.template.context_processors.debug',
-                'django.template.context_processors.i18n',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'django.template.context_processors.tz',
-                'django.contrib.messages.context_processors.messages',
-                'InvoiceGen.context_processor.website_name',
-                'InvoiceGen.context_processor.color_up',
-                'InvoiceGen.context_processor.color_down',
-                'InvoiceGen.context_processor.attach_toast_to_response',
-                'django.template.context_processors.request',
-            ],
+            'context_processors': CONTEXT_PROCESSORS,
         },
     },
 ]

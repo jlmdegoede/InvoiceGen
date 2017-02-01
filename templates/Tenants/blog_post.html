@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h2>{{ blog.title }}</h2>
+
+            <p>{{ blog.contents|safe }}</p>
+            <br />
+            <br />
+            Gepubliceerd op {{ blog.created }} door {{ blog.author }}
+            <br />
+        Labels:
+            {% for tag in blog.tag_list %}
+                <div class="chip">
+                {{ tag }}
+              </div>
+            {% endfor %}
+            <br /><br />
+    <a href="/blog">Terug naar blog</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
