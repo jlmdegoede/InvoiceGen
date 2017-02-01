@@ -68,7 +68,7 @@ class MyDataView(View):
 
 class CreateNewInvoiceSite(View):
     def get(self, request):
-        return render(request, 'registration.html', {'form': InvoiceSiteForm()})
+        return render(request, 'Tenants/registration.html', {'form': InvoiceSiteForm()})
 
     def post(self, request):
         number_of_users = InvoiceSite.objects.count()
@@ -87,7 +87,7 @@ class CreateNewInvoiceSite(View):
                     return render(request, 'registration.html', {'form': f,
                         "message_error": 'Deze gebruiker of deze bedrijfsnaam bestaat al'})
             else:
-                return render('registration.html', {'form': f, "error": f.errors})
+                return render('Tenants/registration.html', {'form': f, "error": f.errors})
 
 
 def create_new_invoice_site(subdomain, user, form):
