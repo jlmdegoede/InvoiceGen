@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from django.views.generic import View
 # Create your views here.
 
-def create_public_tenant(request):
+def create_new_tenant(subdomain, first_name, last_name, email, password):
     tenant = Client(domain_url='invoicegen.nl', # don't add your port or www here! on a local server you'll want to use localhost here
                     schema_name='public',
                     first_name='Schemas Inc.',
@@ -25,16 +25,7 @@ def create_public_tenant(request):
                     valid_until='2018-12-05',
                     on_trial=False)
     tenant.save() # migrate_schemas automatically called, your tenant is ready to be used!
-    tenant = Client(domain_url='jochemdegoede.invoicegen.nl', # don't add your port or www here! on a local server you'll want to use localhost here
-                    schema_name='tenant',
-                    first_name='Schemas Inc.',
-                    last_name='Test',
-                    email='test@test.test',
-                    active=True,
-                    customer_number=102400,
-                    valid_until='2018-12-05',
-                    on_trial=False)
-    tenant.save()
+
 
 
 def index(request):
@@ -80,8 +71,7 @@ class CreateNewInvoiceSite(View):
                 email = f.cleaned_data['email'].lower()
                 existing_users = InvoiceSite.objects.filter(email=email).count()
                 if check_if_subdomain_available(subdomain) and existing_users == 0:
-                    create_new_invoice_site(subdomain, user, f)
-                    execute_shell_script(subdomain, email, f.cleaned_data['password'], invoice_site.communication_key)
+                    create_new_tenant(subdomain, email, f.cleaned_data['password'], invoice_site.communication_key)
                     return render(request, 'index.html', {'subdomain': subdomain, 'success': 'success'})
                 else:
                     return render(request, 'registration.html', {'form': f,

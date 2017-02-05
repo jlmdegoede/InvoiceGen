@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from tenant_schemas.utils import get_public_schema_name
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
@@ -28,14 +27,6 @@ SHARED_APPS = (
     'Tenants', # you must list the app where your tenant model resides in
     'django.contrib.contenttypes',
     # everything below here is optional
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django_tables2',
-    'django.contrib.humanize',
     'channels',
     'Blog',
     'PaymentProcessor',
@@ -43,6 +34,12 @@ SHARED_APPS = (
 
 TENANT_APPS = (
     'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django_tables2',
+    'django.contrib.humanize',
     # your tenant-specific apps
     'Orders',
     'Agreements',
@@ -145,13 +142,11 @@ CONTEXT_PROCESSORS = [
     'django.template.context_processors.static',
     'django.template.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
-    'django.template.context_processors.request']
-if get_public_schema_name() is not 'public':
-    CONTEXT_PROCESSORS.append(
-        'InvoiceGen.context_processor.website_name',
-        'InvoiceGen.context_processor.color_up',
-        'InvoiceGen.context_processor.color_down',
-        'InvoiceGen.context_processor.attach_toast_to_response')
+    'django.template.context_processors.request',
+    'InvoiceGen.context_processor.website_name',
+    'InvoiceGen.context_processor.color_up',
+    'InvoiceGen.context_processor.color_down',
+    'InvoiceGen.context_processor.attach_toast_to_response']
 
 TEMPLATES = [
     {

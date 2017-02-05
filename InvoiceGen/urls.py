@@ -43,5 +43,5 @@ urlpatterns = [
     url(r'^betaling/start/$', PaymentProcessor.views.start_mollie_payment),
     url(r'^betaling/status/$', PaymentProcessor.views.status_change_mollie_payment),
     url(r'^betaling/succes$', PaymentProcessor.views.complete_change_mollie_payment),
-    url(r'^tenants/$', Tenants.views.create_public_tenant, name='tenants'),
+    url(r'^tenants/$', Tenants.views.create_new_tenant, name='tenants'),
 ]

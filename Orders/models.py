@@ -11,7 +11,7 @@ class Product(models.Model):
     from_company = models.ForeignKey(to=Company, null=True, blank=True)
     identification_number = models.CharField(max_length=100, null=True)
     invoice = models.ForeignKey(OutgoingInvoice, null=True, blank=True)
-    briefing = models.TextField(blank=True)
+    briefing = models.TextField(null=True)
     done = models.BooleanField(default=False)
     price_per_quantity = models.FloatField()
     tax_rate = models.IntegerField(null=True)
