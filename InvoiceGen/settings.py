@@ -80,16 +80,6 @@ INSTALLED_APPS = (
 )
 TENANT_MODEL = "Tenants.Client"
 
-# In settings.py
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
-        "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],  # set redis address
-         },
-        "ROUTING": "InvoiceGen.routing.channel_routing",
-    },
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

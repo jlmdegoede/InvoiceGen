@@ -18,7 +18,8 @@ import Mail.views
 from django.utils import timezone
 from django.contrib.auth.decorators import permission_required
 from Settings.localization_nl import get_localized_text
-# Create your views here.
+from Invoices.tasks import generate_pdf_task
+from InvoiceGen.celery import app
 
 
 @login_required
@@ -125,7 +126,19 @@ def get_latest_pdf(invoice_id):
     return response
 
 
-def get_latest_markdown(invoice_id):
+@login_required
+def generate_pdf(request, invoice_id):
+    task = generate_pdf_task.delay(invoice_id, request.tenant.schema_name)
+    return JsonResponse({'generate': 'started', 'task_id': task.task_id})
+
+
+@login_required
+def check_pdf_task_status(request, task_id):
+    task = app.AsyncResult(task_id)
+    return JsonResponse({'status': task.state})
+
+
+def get_latest_markdown(invoice_id, tenant=None):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     with_tax_rate = products[0].tax_rate != 0
@@ -141,7 +154,7 @@ def get_latest_markdown(invoice_id):
     return response
 
 
-def get_latest_docx(invoice_id):
+def get_latest_docx(invoice_id, tenant=None):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
