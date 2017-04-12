@@ -7,11 +7,12 @@ from Orders.models import Product
 from Utils.pdf_generation import *
 from django.shortcuts import *
 from InvoiceGen.settings import BASE_DIR
+from InvoiceGen.celery import app
 from channels import Channel
 import json
 
 
-@task
+@app.task
 def generate_pdf_task(invoice_id, reply_channel):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
