@@ -11,15 +11,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+from InvoiceGen.site_settings import DEBUG, ALLOWED_HOSTS, SECRET_KEY
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-# Application definition
-SECRET_KEY = 'X&WF+>=ml9-7sfJ_*+!H]`BvZfkI<>:X.Rsh+v87vZ|YUGl/_e'
-ALLOWED_HOSTS = ['*']
-DEBUG = True
-COMMUNICATION_KEY = '28359ruioterhfweuith34tlkjre'
 ROOT_HOSTCONF = 'InvoiceGen.hosts'
 DEFAULT_HOST = 'www'
 SHARED_APPS = (
@@ -80,16 +76,6 @@ INSTALLED_APPS = (
 )
 TENANT_MODEL = "Tenants.Client"
 
-# In settings.py
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
-        "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],  # set redis address
-         },
-        "ROUTING": "InvoiceGen.routing.channel_routing",
-    },
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -177,7 +163,8 @@ DEFAULT_COLOR = '#009688'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR + '/static/files/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = '/var/www/FactuurMaker/static/images'
 MEDIA_URL = '/files/'
 
 CELERY_ACCEPT_CONTENT = ['json']
