@@ -9,7 +9,6 @@ import Todo.views
 import requests
 import pytz
 from datetime import datetime
-from InvoiceGen.site_settings import COMMUNICATION_KEY
 from InvoiceGen.settings import DEFAULT_COLOR
 from django.views import View
 from django.contrib.auth.models import User
@@ -110,8 +109,7 @@ def delete_user(request):
 class SubscriptionSettings(View):
 
     def get_subscription_settings(self, request):
-        invoice_site = get_current_settings_json()
-        return {'invoice_site': invoice_site}
+        return {'invoice_site': ''}
 
 
 class PersonalSettings(View):
@@ -188,29 +186,11 @@ class EditUserView(View):
             return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
 
 
-@login_required
-def renew_subscription(request):
-    print("Redirecting...")
-    return HttpResponseRedirect('https://invoicegen.nl/betaling/start?key=' + COMMUNICATION_KEY)
-
-
 def save_colors(form):
     color_up = form.cleaned_data['color_up']
     save_setting('color_up', color_up)
     color_down = form.cleaned_data['color_down']
     save_setting('color_down', color_down)
-
-
-def get_current_settings_json():
-    try:
-        req = requests.post('https://invoicegen.nl/get-subscription-status/', {'key': COMMUNICATION_KEY}, {})
-        utc = pytz.UTC
-        values = json.loads(req.content.decode('utf-8'))
-        valid_until = utc.localize(datetime.strptime(values['valid_until'], '%d-%m-%Y %H:%M:%S'))
-        save_setting('subscription_date', valid_until)
-        return values
-    except Exception as e:
-        print("Error: could not get subscription status:" + str(e))
 
 
 def convert_to_json_utf8(data):

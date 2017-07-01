@@ -17,39 +17,8 @@ from InvoiceGen.site_settings import DEBUG, ALLOWED_HOSTS, SECRET_KEY
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 ROOT_HOSTCONF = 'InvoiceGen.hosts'
-DEFAULT_HOST = 'www'
-SHARED_APPS = (
-    'tenant_schemas',  # mandatory, should always be before any django app
-    'Tenants', # you must list the app where your tenant model resides in
-    'django.contrib.contenttypes',
-    # everything below here is optional
-    'channels',
-    'Blog',
-    'PaymentProcessor',
-)
-
-TENANT_APPS = (
-    'django.contrib.contenttypes',
-    'django.contrib.auth',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django_tables2',
-    'django.contrib.humanize',
-    # your tenant-specific apps
-    'Orders',
-    'Agreements',
-    'Invoices',
-    'Companies',
-    'Settings',
-    'Todo',
-    'HourRegistration',
-    'Statistics',
-    'Mail',
-)
 
 INSTALLED_APPS = (
-    'tenant_schemas',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -69,13 +38,7 @@ INSTALLED_APPS = (
     'django_tables2',
     'django.contrib.humanize',
     'channels',
-    'Tenants',
-    'Blog',
-    'PaymentProcessor',
-    'django_hosts'
 )
-TENANT_MODEL = "Tenants.Client"
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -88,8 +51,6 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'no-reply@invoicegen.nl'
 
 MIDDLEWARE_CLASSES = (
-    'django_hosts.middleware.HostsRequestMiddleware',
-    'tenant_schemas.middleware.TenantMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -97,7 +58,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_hosts.middleware.HostsResponseMiddleware',
     #'Orders.middleware.OrderMiddleware',
 )
 
@@ -111,14 +71,11 @@ WSGI_APPLICATION = 'InvoiceGen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'tenant_schemas.postgresql_backend',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'invoicegen',
     }
 }
 
-DATABASE_ROUTERS = (
-    'tenant_schemas.routers.TenantSyncRouter',
-)
 
 CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',

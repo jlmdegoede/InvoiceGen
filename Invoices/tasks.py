@@ -12,14 +12,10 @@ from channels import Channel
 import json
 from django.db import connection
 from django.shortcuts import get_object_or_404
-from Tenants.models import Client
 
 
 @app.task
-def generate_pdf_task(invoice_id, tenant):
-    tenant = get_object_or_404(Client, schema_name=tenant)
-    connection.set_tenant(tenant=tenant)
-
+def generate_pdf_task(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
     user = UserSetting.objects.first()
