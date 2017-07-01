@@ -31,7 +31,6 @@ INSTALLED_APPS = (
     'Companies',
     'Settings',
     'django_bootstrap_breadcrumbs',
-    'Todo',
     'HourRegistration',
     'Statistics',
     'Mail',

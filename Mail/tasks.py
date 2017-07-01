@@ -9,6 +9,7 @@ from .models import Email
 from InvoiceGen.settings import BASE_DIR
 from InvoiceGen.site_settings import DEBUG
 
+
 @task
 def send_email(email_id):
     new_email = Email.objects.get(id=email_id)

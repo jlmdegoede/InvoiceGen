@@ -3,12 +3,7 @@ from Settings.models import *
 from Settings.forms import *
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
-from Todo.models import *
 import json
-import Todo.views
-import requests
-import pytz
-from datetime import datetime
 from InvoiceGen.settings import DEFAULT_COLOR
 from django.views import View
 from django.contrib.auth.models import User
@@ -19,39 +14,6 @@ from django.http import JsonResponse
 from InvoiceGen.site_settings import ALLOWED_HOSTS
 from Mail.views import create_and_send_email_without_form
 # Create your views here.
-
-
-class IntegrationSettings(View):
-
-    def get_integration_settings(self, request):
-        wunderlist_enabled = False
-        todo = None
-        wunderlist_dict = None
-        lists = []
-        current_list = None
-
-        try:
-            todo = TodoAuth.objects.get(id=1)
-            lists = get_wunderlist_lists()
-            current_list = get_setting('wunderlist', 0)
-            wunderlist_enabled = get_setting('auto_wunderlist', False)
-        except:
-            print("Geen Wunderlist-integratie geactiveerd")
-            wunderlist_dict = Todo.views.get_wunderlist_url(request)
-
-        return {'todo': todo, 'lists': lists, 'wunderlist_dict': wunderlist_dict,
-                       'current_list': current_list, 'wunderlist_enabled': wunderlist_enabled }
-
-    def post(self, request):
-        if 'new_list' in request.POST and request.POST['new_list'] != "":
-            # create new list
-            json = Todo.views.create_new_list(request.POST['new_list'])
-            save_setting('wunderlist', json['id'])
-        else:
-            selected_list = request.POST['existing_list']
-            save_setting('wunderlist', selected_list)
-        save_setting('auto_wunderlist', request.POST['auto_add_to_wunderlist'] == 'on')
-        return redirect(to=settings)
 
 
 def create_groups():
@@ -88,7 +50,6 @@ class UserSettings(View):
         subject = get_localized_text('NEW_USER_MAIL_SUBJECT')
         host = 'https://{0}'.format(ALLOWED_HOSTS[0])
         contents = get_localized_text('NEW_USER_MAIL_CONTENTS', {'[USER]': username, '[PASSWORD]': password, '[WEBSITE]': host})
-        print(contents)
         create_and_send_email_without_form(to=email, subject=subject, contents=contents)
 
 
@@ -104,12 +65,6 @@ def delete_user(request):
             return redirect(to=settings)
         else:
             return JsonResponse({'error': get_localized_text('USER_DELETE_FIRST')})
-
-
-class SubscriptionSettings(View):
-
-    def get_subscription_settings(self, request):
-        return {'invoice_site': ''}
 
 
 class PersonalSettings(View):
@@ -155,8 +110,6 @@ def settings(request):
     return_dict = {
         'personal': PersonalSettings().get_personal_settings(request),
         'users': UserSettings().get_user_settings(request),
-        'integration': IntegrationSettings().get_integration_settings(request),
-        'subscription': SubscriptionSettings().get_subscription_settings(request),
     }
     create_groups()
     return render(request, 'Settings/settings.html', return_dict)

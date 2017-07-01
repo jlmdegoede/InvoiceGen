@@ -33,7 +33,7 @@ def save_and_send_email(request):
         new_email.save()
         if new_email.document_attached:
             request.session['toast'] = 'PDF wordt gemaakt'
-            generate_pdf_task.apply_async((invoice_id,None), link=send_email.si(new_email.id))
+            generate_pdf_task.apply_async(invoice_id, link=send_email.si(new_email.id))
         else:
             send_email.delay(new_email.id)
         request.session['toast'] = 'E-mail wordt verzonden'

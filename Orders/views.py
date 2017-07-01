@@ -8,7 +8,6 @@ from Agreements.models import Agreement
 from Companies.forms import CompanyForm
 from Orders.forms import *
 from Utils.search_query import get_query
-from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import Settings.views
 from django.core import serializers
@@ -131,7 +130,6 @@ def add_product_post(request):
         if get_setting('auto_wunderlist', False):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            loop.run_until_complete(create_task_from_order(product))
             loop.close()
         return redirect('/')
     else:

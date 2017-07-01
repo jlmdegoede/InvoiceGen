@@ -5,7 +5,6 @@ import Agreements.views
 import Invoices.views
 import Companies.views
 import Settings.views
-import Todo.views
 import HourRegistration.views
 import Statistics.views
 import Mail.views
@@ -117,8 +116,5 @@ urlpatterns = [
       url(r'^wachtwoord-vergeten/opnieuw-ingesteld/$',
        django.contrib.auth.views.password_reset_complete),
 
-    url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
-    url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
-    url(r'^instellingen/wunderlist$', login_required(Settings.views.IntegrationSettings.as_view()), name='save_wunderlist_settings'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
