@@ -104,6 +104,17 @@ TEMPLATES = [
     },
 ]
 
+# In settings.py
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
+        "CONFIG": {
+           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
+         },
+        "ROUTING": "InvoiceGen.routing.channel_routing",
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 BREADCRUMBS_TEMPLATE = "breadcrumbs.html"
