@@ -5,14 +5,19 @@ import Agreements.views
 import Invoices.views
 import Companies.views
 import Settings.views
-import Todo.views
 import HourRegistration.views
 import Statistics.views
+import Mail.views
 from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
+from django.contrib.auth.decorators import login_required, permission_required
+from tenant_schemas.utils import get_public_schema_name
+from django.views.generic import TemplateView
+from django.contrib.sitemaps import views
 
 urlpatterns = [
+
     url(r'^$', Orders.views.index, name='index'),
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
     url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
@@ -36,14 +41,27 @@ urlpatterns = [
     url(r'^facturen/inkomend/verwijderen/(?P<invoiceid>\d+)/$', Invoices.views.delete_incoming_invoice, name='delete_incoming_invoice'),
     url(r'^factuur/inkomend/(?P<invoice_id>\d+)/$', Invoices.views.detail_incoming_invoice, name='detail_incoming_invoice'),
     url(r'^factuur/uitgaand/(?P<invoice_id>\d+)/$', Invoices.views.detail_outgoing_invoice, name='detail_outgoing_invoice'),
-    url(r'^pdf/(?P<invoice_id>\d+)/$', Invoices.views.get_invoice_pdf, name='download_pdf'),
-    url(r'^docx/(?P<invoice_id>\d+)/$', Invoices.views.get_invoice_docx, name='download_docx'),
-    url(r'^md/(?P<invoice_id>\d+)/$', Invoices.views.get_invoice_markdown, name='download_markdown'),
+    url(r'^factuur/bekijken/(?P<invoice_url>\w+)/$', Invoices.views.view_outgoing_invoice_guest, name='view_outgoing_invoice_guest'),
+    url(r'^factuur/delen/(?P<invoice_id>\d+)/$', Invoices.views.share_link_to_outgoing_invoice, name='share_link_to_outgoing_invoice'),
+    url(r'^factuur/email/(?P<invoice_id>\d+)/$', login_required(Invoices.views.SendOutgoingInvoicePerEmail.as_view()), name='email_outgoing_invoice'),
+    url(r'^factuur/downloaden/(?P<file_type>\w+)/(?P<invoice_id>\d+)/$', Invoices.views.download_latest_generated_invoice, name='download_invoice'),
+    url(r'^factuur/status/(?P<task_id>.+)/$', Invoices.views.check_pdf_task_status, name='check_pdf_task_status'),
+    url(r'^factuur/genereren/(?P<invoice_id>\d+)/$', Invoices.views.generate_pdf, name='generate_pdf'),
+
+    url(r'^email/templates/$', Mail.views.list_view_templates, name='list_view_templates'),
+    url(r'^email/templates/nieuw/$', Mail.views.NewEditEmailTemplate.as_view(), name='new_email_template'),
+    url(r'^email/templates/bewerken/(?P<email_template_id>\d+)/$', Mail.views.NewEditEmailTemplate.as_view(), name='edit_email_template'),
+    url(r'^email/templates/verwijderen/$', Mail.views.delete_email_template, name='delete_email_template'),
+    url(r'^email/verzonden/$', login_required(Mail.views.SentEmailListView.as_view()), name='sent_email_list'),
+    url(r'^email/verzenden/$', Mail.views.save_and_send_email, name='save_and_send_email'),
+    url(r'^email/inhoud/$', Mail.views.get_email_contents, name='get_email_contents'),
+    url(r'^email/get-template/$', Mail.views.get_template, name='get_template'),
 
     url(r'^instellingen/$', Settings.views.settings, name='settings'),
-    url(r'^instellingen/kleuren/$', Settings.views.set_colors, name='set_colors'),
-    url(r'^instellingen/reset-kleuren/$', Settings.views.reset_colors, name='reset_colors'),
-    url(r'^instellingen/verlengen/$', Settings.views.renew_subscription, name='renew_subscription'),
+    url(r'^instellingen/persoonlijk$', Settings.views.PersonalSettings.as_view(), name='personal_settings'),
+    url(r'^instellingen/nieuwe-gebruiker$', Settings.views.UserSettings.as_view(), name='create_new_user'),
+    url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', Settings.views.EditUserView.as_view(), name='edit_user'),
+    url(r'^instellingen/gebruiker/verwijderen$', Settings.views.delete_user, name='delete_user'),
 
     url(r'^statistieken/$', Statistics.views.view_statistics, name='statistics'),
 
@@ -98,7 +116,5 @@ urlpatterns = [
       url(r'^wachtwoord-vergeten/opnieuw-ingesteld/$',
        django.contrib.auth.views.password_reset_complete),
 
-    url(r'^wunderlist-auth/$', Todo.views.save_auth_token, name='save_auth_token'),
-    url(r'^wunderlist-nieuwe-taak/$', Todo.views.create_task_from_order, name='create_new_task'),
-    url(r'^wunderlist-instellingen/$', Settings.views.save_wunderlist_settings, name='save_wunderlist_settings'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

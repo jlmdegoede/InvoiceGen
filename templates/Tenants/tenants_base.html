@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>InvoiceGen.nl | Je persoonlijke administratieomgeving</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik-stats.invoicegen.nl/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 1]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//piwik-stats.invoicegen.nl/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/static/favicons/manifest.json">
+    <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/favicons/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="{{ site_name }} IG">
+    <meta name="application-name" content="{{ site_name }} IG">
+    <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+<header>
+<div class="navbar-fixed">
+  <nav class="teal" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="/" class="brand-logo light" style="color: white;">InvoiceGen</a>
+      <ul class="right hide-on-med-and-down">
+          <li><a href="/functies" class="white-text">Functies</a></li>
+          <li><a href="/blog" class="white-text">Blog</a></li>
+          <li><a href="/inloggen" class="white-text">Inloggen bestaande klant</a></li>
+          <li><a href="/registreren" class="white-text btn-large waves-effect waves-light teal lighten-1 dialog-trigger">Aanmelden</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+          <li><a href="/" class="light">Index</a></li>
+          <li><a href="/functies" class="light">Functies</a></li>
+          <li><a href="/registreren" class="light">Aanmelden</a></li>
+          <li><a href="/inloggen" class="light">Inloggen bestaande klant</a></li>
+          <li><a href="/blog" class="light">Blog</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons white-text">menu</i></a>
+    </div>
+  </nav>
+</div>
+  <!--  Scripts-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/static/js/materialize.js"></script>
+  <script src="/static/js/init.js"></script>
+</header>
+<main>
+{% block content %}
+{% endblock %}
+
+</main>
+  <footer class="page-footer teal">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">InvoiceGen.nl</h5>
+          <p class="grey-text text-lighten-4">KvK: 66216958</p>
+
+
+        </div>
+        <div class="col l3 s12">
+
+          <h5 class="white-text">Adres</h5>
+            <span class="white-text">Clara van Sparwoudestraat 40, 2612SP Delft</span>
+        </div>
+      </div>
+
+        <div class="col l3 s12">
+
+          <h5 class="white-text">Contact</h5>
+            <span class="white-text"><a class="white-text" href="mailto:support@invoicegen.nl">Mail ons</a> of tweet naar <a class="white-text" href="https://twitter.com/InvoiceGen">@InvoiceGen</a></span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">Copyright © 2017
+      </div>
+    </div>
+  </footer>
+
+  </body>
+</html>

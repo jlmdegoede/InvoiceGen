@@ -1,0 +1,177 @@
+{% extends 'Orders/order_base.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block orders_active %}active{% endblock %}
+{% block title %}
+    Opdrachten
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block index_active %}active{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Opdrachten" "index" %}
+{% endblock %}
+
+{% block content %}
+    {% if first_time %}
+        <div class="card-panel teal white-text">
+            <b>Welkom bij InvoiceGen!</b> Voordat u begint met het maken van facturen, overeenkomsten en opdrachten,
+            zorg ervoor dat u eerst even een bezoek brengt aan <a href="/instellingen"
+                                                                  class="blue-grey-text text-darken-2">Instellingen</a>
+            om uw persoonlijke gegevens in te vullen.
+            Pas als u dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en facturen te genereren.
+            Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
+        </div>
+    {% endif %}
+    <h4>Opdrachten beheren</h4>
+
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs tabs-fixed-width">
+                <li class="tab col s3 active"><a href="#openstaand" class="yeartable">Openstaand</a></li>
+                {% for year in years %}
+                    <li class="tab col s3"><a href="#{{ year }}" class="yeartable">{{ year }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="openstaand" class="col s12">
+            {% csrf_token %}
+            {% render_table active_products_table "../templates/table_materialize.html" %}
+            <p>
+                <a href="#" class="waves-effect waves-light btn done-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Vink opdrachten aan in de tabel en klik hier om deze als Afgerond te markeren">Opdrachten afgerond</a></p>
+        </div>
+
+        {% for y, table in products.items %}
+            <div id="{{ y }}" class="col s12">
+                {% render_table table "../templates/table_materialize.html" %}
+                <a href="#" class="modal-trigger waves-effect waves-light btn tooltipped"  data-position="bottom" data-delay="50" data-tooltip="Vink opdrachten aan in de tabel en klik hier om er een factuur voor te genereren">Factureren</a>
+            </div>
+
+        {% endfor %}
+    </div>
+
+    <script type="text/babel" src="/static/js/hourregistration.js"></script>
+
+    <div id="urenregistratie"></div>
+
+    <div id="modal-invoice" class="modal bottom-sheet">
+        <div class="modal-content">
+          <i class="large material-icons right">credit_card</i>
+            <h4>Factuur aanmaken</h4>
+            <p id="confirmText">Geef het volgnummer van de factuur op
+                <input type="text" id="volgnummer" placeholder="Volgnummer">
+            </p>
+
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+            <a href="#" class=" modal-action waves-effect waves-green btn" id="factureren">Aanmaken</a>
+        </div>
+    </div>
+
+    <div id="dialog" title="Artikel"></div>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal bottom-sheet">
+        <div class="modal-content">
+            <i class="large material-icons right">delete</i>
+            <h4>Opdracht verwijderen</h4>
+            <p id="confirmText">Weet je zeker dat je deze opdracht wilt verwijderen?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="deleteLink"
+               class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "add_product" %}">
+            <i class="large material-icons">add</i>
+        </a>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.modal').modal();
+            saveTableTab('order_page');
+
+            // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            $('.done-button').click(function (e) {
+                var clickedDoneList = [];
+                $('input[type="checkbox"]:checked').each(function () {
+                    clickedDoneList[clickedDoneList.length] = $(this).val();
+                });
+                if (clickedDoneList.length != 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: '{% url "mark_products_as_done" %}',
+                        data: {
+                            products: clickedDoneList,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: location.reload(),
+                    });
+                } else {
+                    Materialize.toast('Vink eerst een of meer afgeronde opdrachten aan', 4000)
+                }
+            });
+            $('.modal-trigger').click(function (event) {
+                if ($(this).hasClass("delete")) {
+                    id = $(this).attr('value');
+                    title = $(this).attr('name');
+                    $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
+                    $('#confirmText').text("Weet je zeker dat je de opdracht " + title + " wilt verwijderen?");
+                     $('#modal1').modal('open');
+                } else {
+                    // factuurknop gedrukt
+                    if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {
+                        var clickedList = []
+                        $('input[type="checkbox"]:checked').each(function () {
+                            clickedList[clickedList.length] = $(this).val();
+                        });
+
+                        // bind callback to a href link
+                        $('#factureren').click(function () {
+                            if ($('#volgnummer').val() != undefined && $('#volgnummer').val() != "") {
+                                follower_number = $('#volgnummer').val();
+                                $('#modal-invoice').modal('close');
+                                $.ajax({
+                                    type: "POST",
+                                    url: '{% url "generate_invoice" %}',
+                                    data: {
+                                        products: clickedList,
+                                        volgnummer: follower_number,
+                                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                                    },
+                                    success: function (data) {
+                                        if (data.return_url) {
+                                            var url = data.return_url;
+                                            window.location.replace(url);
+                                        }
+                                    },
+                                });
+                            } else {
+                                $('#volgnummer').attr("placeholder", "Vul een volgnummer in!");
+                            }
+                        });
+
+                        $('#modal-invoice').modal('open');
+                    } else {
+                        $('#modal-error').modal('open');
+                    }
+                }
+            });
+        });
+
+        function getId(id) {
+            return $('.modal-trigger').attr("value")
+        }
+    </script>
+{% endblock %}

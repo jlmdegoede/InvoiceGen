@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from Settings.models import UserSetting
 from HourRegistration.models import *
+from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
 
 
 class OrderTestCase(TestCase):
     def setUp(self):
-        now = datetime.datetime.now()
+        now = timezone.now()
         next_week = now + datetime.timedelta(7)
         self.company = Company.objects.create(company_name='Testbedrijf', company_address='Testadres',
                                               company_city_and_zipcode='Testplaats 1234AB')
@@ -23,6 +25,13 @@ class OrderTestCase(TestCase):
                                                 price_per_quantity=0.22, tax_rate=0)
         self.c = Client()
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
+        group = Group.objects.create(name='Opdrachten')
+        content_type = ContentType.objects.get(model='product')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        group.permissions.set(all_permissions)
+        group.save()
+        self.user.groups.add(group)
+        self.user.save()
 
     def test_index(self):
         self.c.login(username='testuser', password='secret')
@@ -52,8 +61,8 @@ class OrderTestCase(TestCase):
 
     def test_view_product_with_hour_registration(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now()
-        next_hour = datetime.datetime.now() + datetime.timedelta(0, 60 * 60)
+        now = timezone.now()
+        next_hour = now + datetime.timedelta(0, 60 * 60)
         hour_registration = HourRegistration.objects.create(start=now, end=next_hour, product=self.order_one)
         response = self.c.get(reverse('view_product', args=(self.order_one.id, self.order_one.title)))
         self.assertEqual(response.context['total_hours'], 1)
@@ -61,7 +70,7 @@ class OrderTestCase(TestCase):
 
     def test_view_product_with_hour_registration_no_end(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now()
+        now = timezone.now()
         hour_registration = HourRegistration.objects.create(start=now, product=self.order_one)
         response = self.c.get(reverse('view_product', args=(self.order_one.id, self.order_one.title)))
         self.assertEqual(response.context['total_hours'], 0)
@@ -99,7 +108,8 @@ class OrderTestCase(TestCase):
     def test_add_company_inline_post(self):
         self.c.login(username='testuser', password='secret')
         data = {'company_name': 'Testcase', 'company_address': 'TESTCASE1',
-                'company_city_and_zipcode': 'Test Test Test'}
+                'company_city_and_zipcode': 'Test Test Test',
+                'company_email': 'test@test.test'}
         response = self.c.post(reverse('add_company_inline'), data)
         new_company = Company.objects.get(pk=2)
         self.assertIsNotNone(new_company)
@@ -127,7 +137,7 @@ class OrderTestCase(TestCase):
 
     def test_add_product_post(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now().strftime('%d-%m-%Y')
+        now = timezone.now().strftime('%d-%m-%Y')
         data = {'title': 'O1', 'date_received': now, 'date_deadline': now,
                 'quantity': 500, 'briefing': '', 'price_per_quantity': 0.25, 'tax_rate': 21,
                 'from_company': self.company.id, 'identification_number': 42}
@@ -137,7 +147,7 @@ class OrderTestCase(TestCase):
 
     def test_add_product_post_error(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now().strftime('%d-%m-%Y')
+        now = timezone.now().strftime('%d-%m-%Y')
         data = {'title': 'O1', 'date_received': now, 'date_deadline': now,
                 'quantity': 500, 'briefing': '',  'tax_rate': 21,
                 'from_company': self.company.id, 'identification_number': 42}
@@ -167,7 +177,7 @@ class OrderTestCase(TestCase):
 
     def test_edit_product_post(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now().strftime('%d-%m-%Y')
+        now = timezone.now().strftime('%d-%m-%Y')
         data = {'title': 'O2', 'date_received': now, 'date_deadline': now,
                 'quantity': 500, 'briefing': '', 'price_per_quantity': 0.25, 'tax_rate': 21,
                 'from_company': self.company.id, 'identification_number': 42}
@@ -176,7 +186,7 @@ class OrderTestCase(TestCase):
 
     def test_edit_product_post_invalid(self):
         self.c.login(username='testuser', password='secret')
-        now = datetime.datetime.now().strftime('%d-%m-%Y')
+        now = timezone.now().strftime('%d-%m-%Y')
         data = {'date_received': now, 'date_deadline': now,
                 'quantity': 500, 'briefing': '', 'price_per_quantity': 0.25, 'tax_rate': 21,
                 'from_company': self.company.id, 'identification_number': 42}

@@ -1,0 +1,89 @@
+{% extends 'Mail/email_base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
+{% block more_active %}active{% endblock %}
+{% block email_templates_active %}active{% endblock %}
+
+{% block title %}
+    E-mailtemplates inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "E-mailtemplates" "" %}
+{% endblock %}
+
+{% block content %}
+    <h4>E-mailtemplates</h4>
+    <div class="row">
+        {% render_table template_table "../templates/table_materialize.html" %}
+    </div>
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large red" href="{% url "new_email_template" %}">
+            <i class="large material-icons">add</i>
+        </a>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal-email-template" class="modal bottom-sheet">
+        <div class="modal-content">
+          <i class="large material-icons right">delete</i>
+            <h4>E-mailtemplate verwijderen</h4>
+            <p id="confirmText">Weet je zeker dat je deze e-mailtemplate wilt verwijderen?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="deleteLink"
+               class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
+    </div>
+
+    <div id="modal-article" class="modal" style="height:600px">
+        <div class="modal-content" style="height:500px">
+            <iframe class="article-iframe" style="border: 0px;" src="" width="100%" height="500px"></iframe>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.modal').modal();
+            // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            $('.modal-trigger').click(function (event) {
+                if ($(this).hasClass("delete")) {
+                    id = $(this).attr('value');
+                    title = $(this).attr('name');
+                    $('#deleteLink').attr('value', id)
+                    $('#modal-email-template').modal('open');
+                }
+            });
+
+            $('#deleteLink').click(function() {
+              email_template_id = $(this).attr('value');
+              $.ajax({
+                  type: "POST",
+                  url: '{% url "delete_email_template" %}',
+                  data: {
+                      email_template_id: email_template_id,
+                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                  },
+                  success: function (data) {
+                      location.reload();
+                  },
+              });
+            })
+        });
+
+        function getId(id) {
+            return $('.modal-trigger').attr("value")
+        }
+    </script>
+{% endblock %}

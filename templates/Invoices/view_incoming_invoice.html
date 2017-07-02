@@ -1,0 +1,90 @@
+{% extends 'Invoices/incoming_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+<h4>{{ invoice.title }}</h4>
+    <table class="responsive-table bordered">
+        <tr>
+            <td>
+                Datum aangemaakt
+            </td>
+            <td>
+                <b>{{ invoice.date_created }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Datum ontvangen
+            </td>
+            <td>
+                <b>{{ invoice.received_date }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Betaald
+            </td>
+            <td>
+                <b>{% if invoice.paid %} Betaald {% else %} Niet betaald {% endif %}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Subtotaal
+            </td>
+            <td>
+                <b>{{ invoice.subtotal }}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                BTW-bedrag
+            </td>
+            <td>
+                <b>{{ invoice.btw_amount }}</b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Bestand
+            </td>
+            <td>
+            <b>
+                {% if invoice.invoice_file %}
+                    <a href="{{ invoice.pdf_url }}">Bijgevoegde factuur downloaden</a>
+                {% else %}
+                    Ontbreekt
+                {% endif %}
+            </b>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+
+
+<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+    <a class="btn-floating btn-large red" href="{% url "edit_incoming_invoice" invoice.id %}">
+      <i class="large material-icons">mode_edit</i>
+    </a>
+</div>
+
+
+{% endblock %}

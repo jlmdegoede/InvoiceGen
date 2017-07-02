@@ -1,0 +1,54 @@
+{% extends 'Settings/settings.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% load staticfiles %}
+{% block orders_active %}active{% endblock %}
+
+{% block title %}
+    Gebruiker aanpassen
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Gebruiker aanpassen" "" %}
+{% endblock %}
+
+{% block content %}
+      <h4>Gebruiker aanpassen</h4>
+      <form id="new-user-form" class="col s12" method="post" action="{% url "edit_user" userid %}">
+          {% csrf_token %}
+
+          <p class="row">
+              <div class="input-field col s4">
+                  {{ form.username }}
+                  <label for="{{ form.username.id_for_label }}">Gebruikersnaam</label>
+                  {{ form.errors.title }}
+              </div>
+              <div class="input-field col s4">
+                  {{ form.email }}
+                  <label for="{{ form.email.id_for_label }}">E-mailadres</label>
+                  {{ form.errors.email }}
+              </div>
+
+              <div class="input-field col s12">
+                  {{ form.groups }}
+                  <label for="{{ form.groups.id_for_label }}">Groepen</label>
+                  {{ form.errors.groups }}
+              </div>
+
+          <div class="col s12">
+            <button class="btn waves-effect waves-light" type="submit" name="submit">Gebruiker aanpassen
+                <i class="material-icons left">send</i>
+            </button>
+          </div>
+      </form>
+
+
+      <script type="text/javascript">
+          $(document).ready(function () {
+              $('select').material_select();
+          });
+      </script>
+{% endblock %}

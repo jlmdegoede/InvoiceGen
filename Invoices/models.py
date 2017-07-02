@@ -1,5 +1,7 @@
 from Companies.models import *
 from django.core.exceptions import ValidationError
+from InvoiceGen.site_settings import ALLOWED_HOSTS
+from django.core.urlresolvers import reverse
 
 
 class Invoice(models.Model):
@@ -10,13 +12,18 @@ class Invoice(models.Model):
 
     def __str__(self):
         return self.title
+
     class Meta:
         abstract = True
+        permissions = (
+            ('view_invoice', 'Kan factuur bekijken'),
+        )
 
 
 class OutgoingInvoice(Invoice):
     to_company = models.ForeignKey(to=Company)
     expiration_date = models.DateField()
+    url = models.CharField(max_length=32, null=True)
 
     def get_total_amount(self):
         from Orders.models import Product
@@ -26,6 +33,9 @@ class OutgoingInvoice(Invoice):
             totaalbedrag += product.get_price()
         return totaalbedrag
 
+    def get_total_amount_including_btw(self):
+        return self.get_total_amount() + self.get_btw()
+
     def get_btw(self):
         from Orders.models import Product
         btw = 0
@@ -33,6 +43,10 @@ class OutgoingInvoice(Invoice):
         for product in products:
             btw += product.get_price() * (float(product.tax_rate / 100))
         return btw
+
+    def get_complete_url(self):
+        if self.url is not None:
+            return 'https://{0}{1}'.format(ALLOWED_HOSTS[0], reverse('view_outgoing_invoice_guest', args=[self.url]))
 
 
 class IncomingInvoice(Invoice):

@@ -1,10 +1,11 @@
+.idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
+InvoiceTemplates/MaterialDesign/temp/entry.tex
 # C extensions
 *.so
-
+bower_components/
 # Distribution / packaging
 .Python
 env/
@@ -84,3 +85,7 @@ static/images
 /web.debug.config
 /readme.mht
 /.vs/InvoiceGen/v14
+
+*.rdb
+
+supervisord.pid

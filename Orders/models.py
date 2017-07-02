@@ -11,10 +11,10 @@ class Product(models.Model):
     from_company = models.ForeignKey(to=Company, null=True, blank=True)
     identification_number = models.CharField(max_length=100, null=True)
     invoice = models.ForeignKey(OutgoingInvoice, null=True, blank=True)
-    briefing = models.TextField(blank=True)
+    briefing = models.TextField(null=True)
     done = models.BooleanField(default=False)
     price_per_quantity = models.FloatField()
-    tax_rate = models.IntegerField()
+    tax_rate = models.IntegerField(null=True)
 
     def __str__(self):
         return self.title
@@ -26,3 +26,8 @@ class Product(models.Model):
         return {"title": self.title, "date": str(self.date_received), "deadline": str(self.date_deadline),
                 "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
                 "wordcount": self.word_count, "briefing": self.briefing, "server_id": self.id}
+
+    class Meta:
+        permissions = (
+            ('view_product', "Kan opdrachten inzien"),
+        )

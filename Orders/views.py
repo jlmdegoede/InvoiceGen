@@ -8,7 +8,6 @@ from Agreements.models import Agreement
 from Companies.forms import CompanyForm
 from Orders.forms import *
 from Utils.search_query import get_query
-from Todo.views import create_task_from_order
 from Settings.views import get_setting
 import Settings.views
 from django.core import serializers
@@ -16,27 +15,26 @@ import asyncio
 from HourRegistration.models import HourRegistration
 from .tables import OrderTable
 from django_tables2 import RequestConfig
-from Utils.session_helper import get_toast_and_cleanup_session
-from datetime import datetime
-from django.template import Context
+from datetime import datetime, date
 from Utils.date_helper import get_today_string
-
+from Statistics.views import get_unique_hours, get_total_hours
+from django.utils import timezone
+from django.contrib.auth.decorators import permission_required
 # Create your views here.
 
 
 @login_required
+@permission_required('Orders.view_product')
 def index(request):
     products, year_list = fill_product_table_per_year(request)
-
-    toast = get_toast_and_cleanup_session(request)
 
     active_products_table = OrderTable(Product.objects.filter(done=False), prefix='openstaand-', order_by='date_deadline')
     no_settings_notification = Settings.views.no_settings_created_yet()
 
     RequestConfig(request).configure(active_products_table)
 
-    return render(request, 'index.html',
-                  {'products': products, 'active_products_table': active_products_table, 'toast': toast,
+    return render(request, 'Orders/index.html',
+                  {'products': products, 'active_products_table': active_products_table,
                    'years': year_list, 'first_time': no_settings_notification})
 
 
@@ -44,7 +42,7 @@ def fill_product_table_per_year(request):
     year_list = []
     products = {}
 
-    now = datetime.now()
+    now = timezone.now()
 
     for year in range(now.year - 5, now.year + 1):
         products_year = Product.objects.filter(date_deadline__contains=year, done=True)
@@ -73,26 +71,22 @@ def add_agreements_to_product(product):
 
 
 @login_required
+@permission_required('Orders.view_product')
 def view_product(request, product_id):
-    try:
-        product = Product.objects.get(id=product_id)
-        product = add_agreements_to_product(product)
+    product = Product.objects.get(id=product_id)
+    product = add_agreements_to_product(product)
 
-        hour_registration = HourRegistration.objects.filter(product=product)
-        total_hours = sum(((x.end - x.start).total_seconds()).real for x in hour_registration if x.end is not None)
-        total_hours = round((total_hours / 60) / 60, 2)
+    hour_registration = HourRegistration.objects.filter(product=product)
+    total_hours = get_total_hours(datetime.now().year, hour_registration)
 
-        today = get_today_string()
+    today = get_today_string()
 
-        return render(request, 'view_product.html',
-                      {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
-    except Exception as err:
-        print(err)
-        request.session['toast'] = 'Product niet gevonden'
-        return redirect('/')
+    return render(request, 'Orders/view_product.html',
+                  {'product': product, 'hourregistrations': hour_registration, 'total_hours': total_hours, 'today': today})
 
 
 @login_required
+@permission_required('Orders.change_product')
 def mark_products_as_done(request):
     if request.method == 'POST':
         for productId in request.POST.getlist('products[]'):
@@ -104,6 +98,7 @@ def mark_products_as_done(request):
 
 
 @login_required
+@permission_required('Orders.add_product')
 def add_company_inline(request):
     if request.method == 'POST':
         company = Company()
@@ -114,10 +109,11 @@ def add_company_inline(request):
             return JsonResponse({'company_id': company.id, 'company_name': company.company_name})
     if request.method == 'GET':
         form = CompanyForm()
-        return render(request, 'new_company_inline.html', {'form': form})
+        return render(request, 'Orders/new_company_inline.html', {'form': form})
 
 
 @login_required
+@permission_required('Orders.view_product')
 def add_product(request):
     if request.method == 'POST':
         return add_product_post(request)
@@ -134,20 +130,21 @@ def add_product_post(request):
         if get_setting('auto_wunderlist', False):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            loop.run_until_complete(create_task_from_order(product))
             loop.close()
         return redirect('/')
     else:
-        return render(request, 'new_edit_product.html',
-                                  {'toast': 'Formulier onjuist ingevuld', 'form': f, 'error': f.errors})
+        request.session['toast'] = 'Formulier onjuist ingevuld'
+        return render(request, 'Orders/new_edit_product.html',
+                      {'form': f, 'error': f.errors})
 
 
 def add_product_get(request):
     form = ProductForm()
-    return render(request, 'new_edit_product.html', {'form': form})
+    return render(request, 'Orders/new_edit_product.html', {'form': form})
 
 
 @login_required
+@permission_required('Orders.change_product')
 def edit_product(request, product_id=-1):
     if request.method == 'GET':
         return edit_product_get(request, product_id)
@@ -158,8 +155,8 @@ def edit_product_get(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
         f = ProductForm(instance=product)
-        return render(request, 'new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id})
+        return render(request, 'Orders/new_edit_product.html',
+                      {'form': f, 'edit': True, 'productid': product_id})
     except:
         request.session['toast'] = 'Opdracht niet gevonden'
         return redirect('/')
@@ -174,11 +171,13 @@ def edit_product_post(request, product_id):
         request.session['toast'] = 'Opdracht gewijzigd'
         return redirect('/')
     else:
-        return render(request, 'new_edit_product.html',
-                                  {'form': f, 'edit': True, 'productid': product_id, 'toast': 'Ongeldig formulier'})
+        request.session['toast'] = 'Ongeldig formulier'
+        return render(request, 'Orders/new_edit_product.html',
+                      {'form': f, 'edit': True, 'productid': product_id})
 
 
 @login_required
+@permission_required('Orders.delete_product')
 def delete_product(request, product_id=-1):
     try:
         product_to_delete = Product.objects.get(id=product_id)
@@ -198,7 +197,7 @@ def user_logout(request):
 
 def user_login_placeholder_email(request):
     form = UserForm()
-    return render(request, 'login.html', {'form': form, 'email': request.GET['email']})
+    return render(request, 'Orders/login.html', {'form': form, 'email': request.GET['email']})
 
 
 def user_login(request):
@@ -214,9 +213,9 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
         else:
-            return render(request, 'login.html', {'error': "Ongeldige inloggegevens", 'form': form})
+            return render(request, 'Orders/login.html', {'error': "Ongeldige inloggegevens", 'form': form})
     else:
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'Orders/login.html', {'form': form})
 
 
 @login_required
@@ -249,6 +248,6 @@ def search(request):
         found_companies = Company.objects.filter(companies_query)
 
     return render(request, 'search_results.html',
-                              {'query_string': query_string, 'found_products': found_products,
+                  {'query_string': query_string, 'found_products': found_products,
                                'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
                                'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies})

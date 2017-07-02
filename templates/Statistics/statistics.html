@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block more_active %}active{% endblock %}
+
+{% block title %}
+    Statistieken {{ year }}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block side_menu %}
+    <a href="{% url "btw_aangifte" %}" class="collection-item">BTW-aangifte</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Statistieken" "statistics" %}
+{% endblock %}
+
+{% block content %}
+<h4>Statistieken {{ year }}</h4>
+    <table class="striped">
+        <tr>
+            <td width="350px">Totaalaantal opdrachten</td>
+            <td>{{ nr_of_articles|last }}</td>
+        </tr>
+        <tr>
+            <td>Totale inkomsten</td>
+            <td>&#8364;{{ totale_inkomsten|last }}</td>
+        </tr>
+        <tr>
+            <td>Totaalaantal kwantiteit
+            <td>{{ nr_of_words|last }}</td>
+        </tr>
+        <tr>
+            <td>Openstaande opdrachten
+            <td>€{{ not_yet_invoiced|last }}</td>
+        </tr>
+        <tr>
+            <td>Totaanaantal vastgelegde uren
+            <td>{{ total_hours }}</td>
+        </tr>
+    </table>
+    <h4>Afgelopen 5 jaar</h4>
+    <div class="row">
+        <div class="col s12 m12 l6">
+            <h5>Totaalaantal opdrachten</h5>
+            <canvas id="yoy_nr_of_articles" width="400" height="400"></canvas>
+        </div>
+
+        <div class="col s12 m12 l6">
+            <h5>Totaalaantal kwantiteit</h5>
+            <canvas id="yoy_nr_of_words" width="400" height="400"></canvas>
+        </div>
+
+        <div class="col s12 m12 l6">
+            <h5>Totaalaantal inkomsten</h5>
+            <canvas id="totale_inkomsten" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    var data_yoy_articles = {
+                labels: {{ year_list }},
+                datasets: [
+                    {
+                        label: "Totaalaantal artikelen",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: {{ nr_of_articles }}
+                    }
+                ]
+            };
+    // Get the context of the canvas element we want to select
+    var ctx = document.getElementById("yoy_nr_of_articles").getContext("2d");
+    var yoy_nr_of_articles = new Chart(ctx).Line(data_yoy_articles);
+
+    var data_yoy_nr_of_words = {
+                labels: {{ year_list }},
+                datasets: [
+                    {
+                        label: "Totaalaantal woorden",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: {{ nr_of_words }}
+                    }
+                ]
+            };
+    // Get the context of the canvas element we want to select
+    var ctx = document.getElementById("yoy_nr_of_words").getContext("2d");
+    var yoy_nr_of_words = new Chart(ctx).Line(data_yoy_nr_of_words);
+
+    var data_totale_inkomsten = {
+                labels: {{ year_list }},
+                datasets: [
+                    {
+                        label: "Totale inkomsten",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: {{ totale_inkomsten }}
+                    }
+                ]
+            };
+    // Get the context of the canvas element we want to select
+    var ctx = document.getElementById("totale_inkomsten").getContext("2d");
+    var totale_inkomsten = new Chart(ctx).Line(data_totale_inkomsten);
+
+    </script>
+{% endblock %}

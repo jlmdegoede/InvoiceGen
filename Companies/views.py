@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from Companies.models import *
 from django.shortcuts import *
 from Companies.forms import *
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
 from .tables import CompanyTable
 from django_tables2 import RequestConfig
+from django.contrib.auth.decorators import permission_required
+
 
 @login_required
+@permission_required('Companies.view_company')
 def index(request):
     companies = Company.objects.all()
     for company in companies:
@@ -15,17 +16,12 @@ def index(request):
         if products.count() is not 0:
             company.recent_products = products[:3]
     company_table = CompanyTable(companies)
-
-    toast = None
-    if request.session.get('toast'):
-        toast = request.session.get('toast')
-        del request.session['toast']
-
     RequestConfig(request).configure(company_table)
-    return render(request, 'index_companies.html', {'companies': companies, 'company_table': company_table, 'toast': toast})
+    return render(request, 'Companies/index_companies.html', {'companies': companies, 'company_table': company_table})
 
 
 @login_required
+@permission_required('Companies.add_company')
 def add_company(request):
     if request.method == 'POST':
         company = Company()
@@ -34,19 +30,20 @@ def add_company(request):
             company.save()
             return redirect(to=index)
         else:
-            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'error': form.errors})
     else:
         company_form = CompanyForm()
-        return render(request, 'new_edit_company.html', {'form': company_form})
+        return render(request, 'Companies/new_edit_company.html', {'form': company_form})
 
 
 @login_required
+@permission_required('Companies.change_company')
 def edit_company(request, company_id):
     if request.method == 'GET':
         try:
             company = Company.objects.get(id=company_id)
             form = CompanyForm(instance=company)
-            return render(request, 'new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'edit': True, 'company_id': company.id})
         except:
             return redirect(to=index)
     elif request.method == 'POST':
@@ -56,10 +53,11 @@ def edit_company(request, company_id):
             company.save()
             return redirect(to=index)
         else:
-            return render(request, 'new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id})
+            return render(request, 'Companies/new_edit_company.html', {'form': form, 'error': form.errors, 'company_id': company.id})
 
 
 @login_required
+@permission_required('Companies.delete_company')
 def delete_company(request, company_id):
     try:
         company = Company.objects.get(id=company_id)

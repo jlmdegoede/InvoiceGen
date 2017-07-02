@@ -1,0 +1,83 @@
+<h4>Actieve gebruikers</h4>
+<table>
+    <thead>
+    <tr>
+        <td data-field="id">Gebruikersnaam</td>
+        <td></td>
+    </tr>
+    </thead>
+    {% for user in users.user_list %}
+        <tr>
+            <td><a href="{% url 'edit_user' user.id %}" class="collection-item">{{ user.username }}</a></td>
+            <td><a href="#modal-delete" data-id="{{ user.id }}" class="delete-link modal-trigger"><i class="material-icons">delete</i></a></td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h4>Nieuwe gebruiker aanmaken</h4>
+De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te loggen.
+<form id="new-user-form" class="col s12" method="post" action="{% url "create_new_user" %}">
+    {% csrf_token %}
+
+    <p class="row">
+    <div class="input-field col s4">
+        {{ users.new_user_form.username }}
+        <label for="{{ users.new_user_form.username.id_for_label }}">Gebruikersnaam</label>
+        {{ users.new_user_form.errors.title }}
+    </div>
+    <div class="input-field col s4">
+        {{ users.new_user_form.email }}
+        <label for="{{ users.new_user_form.email.id_for_label }}">E-mailadres</label>
+        {{ users.new_user_form.errors.email }}
+    </div>
+
+    <div class="input-field col s12">
+        {{ users.new_user_form.groups }}
+        <label for="{{ users.new_user_form.groups.id_for_label }}">Groepen</label>
+        {{ users.new_user_form.errors.groups }}
+    </div>
+
+    <div class="col s12">
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Nieuwe gebruiker aanmaken
+            <i class="material-icons left">send</i>
+        </button>
+    </div>
+</form>
+
+<!-- Modal Structure -->
+<div id="modal-delete" class="modal bottom-sheet">
+    <div class="modal-content">
+        <i class="large material-icons right">delete</i>
+        <h4>Gebruiker verwijderen</h4>
+        <p id="confirmText">Weet je zeker dat je deze gebruiker wilt verwijderen?</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#users" id="user-delete"
+           class=" modal-action modal-close waves-effect waves-green btn-flat">Verwijderen</a>
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.modal').modal();
+        $('.delete-link').click(function() {
+               var user_id =  $(this).attr('data-id');
+               $('#user-delete').attr('data-id', user_id)
+        });
+        $('#user-delete').click(function() {
+           var user_id =  $(this).attr('data-id');
+            $.post(
+                "{% url "delete_user" %}",
+                { user_id: user_id, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                function (data) {
+                    if (data != undefined && data.error) {
+                        alert(data.error);
+                    } else {
+                        location.reload();
+                    }
+                }
+            );
+        });
+    });
+</script>

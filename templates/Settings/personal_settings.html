@@ -1,0 +1,70 @@
+<h4>Persoonlijke gegevens</h4>
+<form id="login_form" method="post" action="{% url "personal_settings" %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="input-field col s12">
+            {{ personal.form.name }}
+            <label for="{{ personal.form.name.id_for_label }}">Naam</label>
+            {{ personal.error.title }}
+        </div>
+
+
+        <div class="input-field col s12">
+            {{ personal.form.email }}
+            <label for="{{ personal.form.email.id_for_label }}">E-mailadres</label>
+            {{ personal.error.title }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ personal.form.address }}
+            <label for="{{ personal.form.address.id_for_label }}">Adres</label>
+            {{ personal.error.title }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ personal.form.city_and_zipcode }}
+            <label for="{{ personal.form.city_and_zipcode.id_for_label }}">Plaats en postcode</label>
+            {{ personal.error.title }}
+        </div>
+
+        <div class="input-field col s12">
+            {{ personal.form.iban }}
+            <label for="{{ personal.form.iban.id_for_label }}">IBAN</label>
+            {{ personal.error.title }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ personal.form.kvk }}
+            <label for="{{ personal.form.kvk.id_for_label }}">KvK-nummer (optioneel)</label>
+            {{ personal.error.kvk }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ personal.form.btw_number }}
+            <label for="{{ personal.form.btw_number.id_for_label }}">BTW-nummer (optioneel)</label>
+            {{ personal.error.btw_number }}
+        </div>
+
+        <div class="input-field col s12">
+            {{ personal.form.site_name }}
+            <label for="{{ personal.form.site_name.id_for_label }}">Websitenaam</label>
+            {{ personal.error.site_name }}
+        </div>
+
+        <legend>Bedrijfskleuren</legend>
+        <div class="input-field col s12">
+          <label for="background-color-up">Selecteer een kleur voor boven:</label><br><br>
+          <input id="background-color-up" name="color_up" type="color" value="{{ personal.color_up }}" />
+        </div>
+
+        <div class="input-field col s12">
+          <label for="background-color-down">Selecteer een kleur voor onder:</label><br><br>
+          <input id="background-color-down" name="color_down" type="color" value="{{ personal.color_down }}" />
+
+          <br><br><br>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
+            <i class="material-icons left">send</i>
+        </button>
+    </div>
+</form>

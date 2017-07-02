@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% block more_active %}active{% endblock %}
+
+{% block title %}
+    Instellingen
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Instellingen" "settings" %}
+{% endblock %}
+
+{% block side_menu %}
+    <a href="#data" class="collection-item" id="data-link">Persoonlijke gegevens</a>
+    <a href="#users" class="collection-item" id="users-link">Gebruikers</a>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div id="data" class="col s12 settings-tab" style="display:none;">{% include "Settings/personal_settings.html" %}</div>
+        <div id="users" class="col s12 settings-tab" style="display:none;">{% include "Settings/user_settings.html" %}</div>
+    </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var hash = window.location.hash;
+                if (!hash) {
+                    hash = '#data'
+                }
+                current_location = hash.replace('#', '');
+                $(hash).show();
+                $('#' + current_location + '-link').addClass('active');
+
+                $('.collection-item').click(function (e) {
+                    $('.settings-tab').hide();
+                    var divClicked = $(this).attr('href');
+                    $('.collection-item').removeClass('active');
+                    $(this).addClass('active');
+                    $(divClicked).show();
+                });
+            });
+        </script>
+
+{% endblock %}

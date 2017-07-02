@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from datetime import date, datetime, timedelta
-from Orders.models import Product
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from Invoices.models import OutgoingInvoice, IncomingInvoice
+from Invoices.models import IncomingInvoice
 from Utils.date_helper import get_formatted_string
-
+from HourRegistration.models import *
+from django.db.models import Q
+import itertools
+import pytz
 # Create your views here.
 
 
@@ -16,7 +19,8 @@ def view_statistics(request):
     not_yet_invoiced = []
     nr_of_words = []
     totale_inkomsten = []
-    totale_urenbesteding = 0
+
+    total_hours = get_total_hours(year)
 
     for i in range(int(year) - 5, int(year) + 1):
         tuple = get_yearly_stats(i)
@@ -24,9 +28,97 @@ def view_statistics(request):
         nr_of_words.append(tuple[1])
         totale_inkomsten.append(tuple[2])
         not_yet_invoiced.append(tuple[3])
-    return render(request, 'statistics.html',
+    return render(request, 'Statistics/statistics.html',
                   {'nr_of_articles': nr_of_articles, 'not_yet_invoiced': not_yet_invoiced, 'nr_of_words': nr_of_words,
-                   'totale_inkomsten': totale_inkomsten, 'year': year, 'year_list': year_list})
+                   'totale_inkomsten': totale_inkomsten, 'year': year, 'year_list': year_list, 'total_hours': total_hours})
+
+
+def get_total_hours(year, hour_registrations=None):
+    if hour_registrations is None:
+        hour_registrations = HourRegistration.objects.filter(Q(start__year=year) | Q(end__year=year))
+
+    hour_registrations = get_unique_hours(hour_registrations, year)[1]
+    total_hours = 0
+    for hr in hour_registrations:
+        end_date = set_end_date(hr.end, year)
+        start_date = set_start_date(hr.start, year)
+
+        hours_worked = end_date - start_date
+        if hours_worked.total_seconds() >= 0:
+            total_hours += hours_worked.total_seconds() / 3600
+    return round(total_hours, 2)
+
+
+def set_end_date(hr_end_date, year):
+    end_date = hr_end_date
+    if hr_end_date is None:
+        end_date = timezone.now()
+    if end_date.year >= year + 1:
+        end_date = timezone.make_aware(timezone.datetime(year, 12, 31, 23, 59, 59))
+    return end_date
+
+
+def set_start_date(hr_start_date, year):
+    start_date = hr_start_date
+    if hr_start_date.year <= year - 1:
+        start_date = timezone.make_aware(timezone.datetime(year, 1, 1, 00, 00, 00))
+    return start_date
+
+
+def split_list(a_list):
+    half = int(len(a_list)/2)
+    return a_list[:half], a_list[half:]
+
+
+def get_unique_hours(hour_registrations, year):
+    hour_registrations = list(hour_registrations)
+
+    if len(hour_registrations) > 2:
+        splitted_list = split_list(hour_registrations)
+        check_tuple_one = get_unique_hours(splitted_list[0], year)
+        check_tuple_two = get_unique_hours(splitted_list[1], year)
+
+        if check_tuple_one[0] or check_tuple_two[0]:
+            new_list = check_tuple_one[1] + check_tuple_two[1]
+            return get_unique_hours(new_list, year)
+        else:
+            new_list = check_tuple_one[1] + check_tuple_two[1]
+            return False, new_list
+    elif len(hour_registrations) == 2:
+        return get_overlapping_hours(hour_registrations[0], hour_registrations[1], year)
+    else:
+        return False, hour_registrations
+
+
+def get_overlapping_hours(hr_one, hr_two, year):
+    end_date1 = set_end_date(hr_one.end, year)
+    start_date1 = set_start_date(hr_one.start, year)
+    end_date2 = set_end_date(hr_two.end, year)
+    start_date2 = set_start_date(hr_two.start, year)
+
+    earliest_start = min(start_date1, start_date2)
+    latest_end = max(end_date1, end_date2)
+
+    if start_date1 <= end_date2 and start_date2 <= end_date1:
+        return True, [HourRegistration(start=earliest_start, end=latest_end, product=hr_one.product)]
+    return False, [hr_one, hr_two]
+
+
+def get_longest_hr(hr_one, hr_two, year):
+    if hr_one is None:
+        return [hr_two]
+    if hr_two is None:
+        return [hr_one]
+
+    end_date1 = set_end_date(hr_one.end, year)
+    start_date1 = set_start_date(hr_one.start, year)
+    end_date2 = set_end_date(hr_two.end, year)
+    start_date2 = set_start_date(hr_two.start, year)
+
+    timedelta_one = end_date1 - start_date1
+    timedelta_two = end_date2 - start_date2
+
+    return hr_one if timedelta_one > timedelta_two else hr_two
 
 
 def get_yearly_stats(year):
@@ -55,7 +147,7 @@ def get_start_end_dates(request):
         start_date = datetime.strptime(request.POST['start_date'], '%d-%m-%Y')
         end_date = datetime.strptime(request.POST['end_date'], '%d-%m-%Y')
     if not start_date or not end_date or end_date < start_date:
-        now = datetime.now()
+        now = timezone.now()
         quarter = (now.month - 1) // 3
         start_date = get_previous_quarter_start_date(now, quarter)
         end_date = get_previous_quarter_end_date(now, quarter)
@@ -75,7 +167,7 @@ def view_btw_aangifte(request):
     outgoing_invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
     outgoing_invoices = [x for x in outgoing_invoices if x.get_btw() is not 0]
 
-    return render(request, 'btw_aangifte.html',
+    return render(request, 'Statistics/btw_aangifte.html',
                   {'incoming_btw': incoming_btw, 'outgoing_btw': outgoing_btw, 'difference_btw': str(difference_btw),
                    'incoming_invoices': incoming_invoices, 'outgoing_invoices': outgoing_invoices,
                    'start_date': get_formatted_string(start_date), 'end_date': get_formatted_string(end_date)})
@@ -90,7 +182,7 @@ def get_btw_outgoing(start_date, end_date):
 
 
 def get_btw_incoming(start_date, end_date):
-    invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
+    invoices = IncomingInvoice.objects.filter(received_date__gte=start_date, received_date__lte=end_date).exclude(btw_amount=0)
     btw_incoming = 0
     for invoice in invoices:
         btw_incoming += invoice.btw_amount

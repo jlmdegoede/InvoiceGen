@@ -13,3 +13,8 @@ class HourRegistration(models.Model):
         if self.end is not None:
             return str(self.end - self.start).split(".")[0]
         return "geen eindtijd"
+
+    class Meta:
+        permissions = (
+            ('view_hourregistration', 'Kan urenregistraties bekijken'),
+        )

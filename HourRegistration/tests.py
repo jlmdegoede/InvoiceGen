@@ -3,16 +3,16 @@ from django.test import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 import datetime
-from Orders.models import *
 from .models import *
 from django.utils import timezone
+from django.contrib.auth.models import Group, ContentType, Permission
 
 # Create your tests here.
 
 
 class HourRegistrationTestClass(TestCase):
     def setUp(self):
-        now = datetime.datetime.now()
+        now = timezone.now()
         next_week = now + datetime.timedelta(7)
         self.company = Company.objects.create(company_name='Testbedrijf', company_address='Testadres',
                                               company_city_and_zipcode='Testplaats 1234AB')
@@ -25,7 +25,15 @@ class HourRegistrationTestClass(TestCase):
                                                 from_company=self.company, identification_number=1, briefing='Test',
                                                 price_per_quantity=0.22, tax_rate=0)
         self.c = Client()
+        group = Group.objects.create(name='Urenregistratie')
+        content_type = ContentType.objects.get(model='hourregistration')
+        all_permissions = Permission.objects.filter(content_type=content_type)
+        group.permissions.set(all_permissions)
+        group.save()
+
         self.user = User.objects.create_user(username='testuser', email='test@test.nl', password='secret')
+        self.user.groups.add(group)
+        self.user.save()
 
     def test_start_time_tracking_login(self):
         response = self.c.get(reverse('start_time_tracking', kwargs={'product_id': self.order_one.id}))

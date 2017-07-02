@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load django_bootstrap_breadcrumbs %}
+{% block breadcrumbs %}
+    {% breadcrumb "E-mail" "" %}
+{% endblock %}
+
+{% block side_menu %}
+    <a href="{% url 'list_view_templates' %}" class="collection-item {% block email_templates_active %}{% endblock %}">E-mailtemplates</a>
+    <a href="{% url 'sent_email_list' %}" class="collection-item  {% block sent_email_active %}{% endblock %}">Verzonden e-mails</a>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
