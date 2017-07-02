@@ -182,7 +182,7 @@ def get_btw_outgoing(start_date, end_date):
 
 
 def get_btw_incoming(start_date, end_date):
-    invoices = IncomingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date).exclude(btw_amount=0)
+    invoices = IncomingInvoice.objects.filter(received_date__gte=start_date, received_date__lte=end_date).exclude(btw_amount=0)
     btw_incoming = 0
     for invoice in invoices:
         btw_incoming += invoice.btw_amount

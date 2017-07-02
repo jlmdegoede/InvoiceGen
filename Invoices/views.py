@@ -279,7 +279,7 @@ def edit_incoming_invoice(request, invoiceid=-1):
         f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
 
         if f.is_valid():
-            f.save(commit=False)
+            f.save()
             if 'invoice_file' in request.FILES:
                 invoice.invoice_file = request.FILES['invoice_file']
             request.session['toast'] = get_localized_text('INVOICE_CHANGED')
