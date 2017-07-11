@@ -12,7 +12,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 import django.contrib.auth.views
 from django.contrib.auth.decorators import login_required, permission_required
-from tenant_schemas.utils import get_public_schema_name
 from django.views.generic import TemplateView
 from django.contrib.sitemaps import views
 
