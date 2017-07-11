@@ -1,4 +1,4 @@
-# InvoiceGen: opdrachten, facturen en overeenkomsten voor zzp'ers
+# InvoiceGen: opdrachten, facturen en overeenkomsten
 
 InvoiceGen is een gratis en open source factuurapplicatie, ideal voor zzp'ers. Je voegt eenvoudig opdrachten toe, beheert opdrachtgevers en maakt makkelijk facturen. Facturen kun je direct per e-mail als bijlage versturen en je hebt een duidelijk overzicht van inkomende en uitgaande facturen. 
 
