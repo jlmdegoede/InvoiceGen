@@ -1,9 +1,7 @@
 # InvoiceGen: opdrachten, facturen en overeenkomsten
 
 [![Build Status](https://travis-ci.org/jlmdegoede/InvoiceGen.svg?branch=master)](https://travis-ci.org/jlmdegoede/InvoiceGen)
-
 [![Coverage Status](https://coveralls.io/repos/github/jlmdegoede/InvoiceGen/badge.svg?branch=master)](https://coveralls.io/github/jlmdegoede/InvoiceGen?branch=master)
-
 [![Requirements Status](https://requires.io/github/jlmdegoede/InvoiceGen/requirements.svg?branch=master)](https://requires.io/github/jlmdegoede/InvoiceGen/requirements/?branch=master)
 
 InvoiceGen is een gratis en open source factuurapplicatie, ideal voor zzp'ers. Je voegt eenvoudig opdrachten toe, beheert opdrachtgevers en maakt makkelijk facturen. Facturen kun je direct per e-mail als bijlage versturen en je hebt een duidelijk overzicht van inkomende en uitgaande facturen. 
