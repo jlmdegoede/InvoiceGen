@@ -6,6 +6,7 @@ import datetime
 from .models import *
 from django.utils import timezone
 from django.contrib.auth.models import Group, ContentType, Permission
+from django.db.models import Max
 
 # Create your tests here.
 
@@ -140,15 +141,17 @@ class HourRegistrationTestClass(TestCase):
         self.c.login(username='testuser', password='secret')
         self.c.get(reverse('start_time_tracking', kwargs={'product_id': self.order_one.id}))
         response = self.c.post(reverse('delete_time_tracking'), data={'time_id': 1})
-        self.assertContains(response, 'success')
-        self.assertContains(response, 'true')
+        response_str = response.content.decode('utf-8')
+        self.assertTrue('success' in response_str)
+        self.assertTrue('true' in response.content.decode('utf-8'))
         h_registration = HourRegistration.objects.filter(id=1)
         self.assertEqual(h_registration.count(), 0)
 
     def test_delete_hourregistration_non_existing(self):
         self.c.login(username='testuser', password='secret')
         response = self.c.post(reverse('delete_time_tracking'), data={'time_id': 1})
-        self.assertContains(response, 'error')
+        response_str = response.content.decode('utf-8')
+        self.assertTrue('error' in response_str)
 
     def test_delete_hourregistration_login(self):
         response = self.c.post(reverse('delete_time_tracking'), data={'time_id': 1})
