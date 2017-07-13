@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-from InvoiceGen.site_settings import DEBUG, ALLOWED_HOSTS, SECRET_KEY
+from InvoiceGen.site_settings import *
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -42,13 +42,6 @@ INSTALLED_APPS = (
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# Host for sending e-mail.
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = 'no-reply@invoicegen.nl'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

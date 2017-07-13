@@ -33,9 +33,9 @@ def save_and_send_email(request):
         new_email.save()
         if new_email.document_attached:
             request.session['toast'] = 'PDF wordt gemaakt'
-            generate_pdf_task.apply_async(invoice_id, link=send_email.si(new_email.id))
+            generate_pdf_task.apply_async([invoice_id], link=send_email.s(new_email.id))
         else:
-            send_email.delay(new_email.id)
+            send_email.delay(True, new_email.id)
         request.session['toast'] = 'E-mail wordt verzonden'
         return redirect(reverse('detail_outgoing_invoice', args=[invoice_id]))
     else:
@@ -95,4 +95,4 @@ def delete_email_template(request):
 def create_and_send_email_without_form(to, subject, contents):
     email = Email(to=to, subject=subject, contents=contents)
     email.save()
-    send_email.delay(email.id)
+    send_email.delay(True, email.id)

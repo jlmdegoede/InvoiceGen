@@ -128,7 +128,7 @@ def get_latest_pdf(invoice_id):
 
 @login_required
 def generate_pdf(request, invoice_id):
-    task = generate_pdf_task.delay(invoice_id, request.tenant.schema_name)
+    task = generate_pdf_task.delay(invoice_id)
     return JsonResponse({'generate': 'started', 'task_id': task.task_id})
 
 

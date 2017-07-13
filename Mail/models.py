@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.mail import EmailMessage
+from InvoiceGen.site_settings import DEFAULT_FROM_EMAIL
 
 # Create your models here.
 
@@ -17,7 +18,7 @@ class Email(models.Model):
 
     def convert_to_django_email(self):
         return EmailMessage(self.subject, self.contents,
-                            'no-reply@invoicegen.nl', [self.to], [self.bcc],
+                            DEFAULT_FROM_EMAIL, [self.to], [self.bcc],
                             cc=[self.cc])
 
     class Meta:
