@@ -71,6 +71,7 @@ urlpatterns = [
     url(r'^opdrachtgevers/wijzigen/(?P<company_id>\d+)/$', Companies.views.edit_company, name='company_edit'),
     url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Companies.views.delete_company, name='company_delete'),
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
+    url(r'^client/default-price/(?P<company_id>\d+)$', Companies.views.default_price_for_company, name='company_price'),
 
     url(r'^zoeken/$', Orders.views.search, name='search'),
 

@@ -1,4 +1,5 @@
 from django.shortcuts import *
+from django.http import JsonResponse
 from Companies.forms import *
 from Orders.models import Product
 from django.contrib.auth.decorators import login_required
@@ -72,3 +73,9 @@ def delete_company(request, company_id):
     except:
             request.session['toast'] = 'Opdrachtgever niet verwijderd'
             return redirect('/opdrachtgevers')
+
+
+@login_required
+def default_price_for_company(request, company_id):
+    company = Company.objects.get(id=company_id)
+    return JsonResponse({'default_price': company.company_default_price_per_quantity})

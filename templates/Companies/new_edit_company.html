@@ -52,6 +52,11 @@
                     <label for="{{ form.company_email.id_for_label }}">E-mailadres opdrachtgever (optioneel)</label>
                     {{ error.company_email }}
                 </div>
+                <div class="input-field col s12">
+                    {{ form.company_default_price_per_quantity }}
+                    <label for="{{ form.company_default_price_per_quantity.id_for_label }}">Standaardtarief per eenheid (optioneel)</label>
+                    {{ error.company_default_price_per_quantity }}
+                </div>
             </div>
 
         <button class="btn waves-effect waves-light" type="submit" name="submit">

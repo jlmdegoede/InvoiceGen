@@ -90,3 +90,4 @@ static/images
 *.rdb
 
 supervisord.pid
+Templates/MaterialDesign/temp/main.pdf

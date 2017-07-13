@@ -131,6 +131,23 @@
                 $('.client-iframe').attr('src', page);
                 $('#modal-client').modal('open');
             });
+
+            $('#id_from_company').change(function() {
+               company = $(this).val();
+               if (company != '') {
+                   $.get({
+                       url: '/client/default-price/' + company,
+                       success: function (data) {
+                           $('#id_price_per_quantity').val(data.default_price);
+                           Materialize.updateTextFields();
+                       }
+                   })
+               } else {
+                   $('#id_price_per_quantity').val('');
+                   Materialize.updateTextFields();
+               }
+            });
+
         });
         window.closeModal = function (company_name, company_id) {
             $('#modal-client').modal('close');
@@ -144,7 +161,6 @@
 
 
         };
-
         var dateTypeVar = $('#datepicker').datepicker('getDate');
         $.datepicker.formatDate('dd-mm-yy', dateTypeVar);
     </script>
