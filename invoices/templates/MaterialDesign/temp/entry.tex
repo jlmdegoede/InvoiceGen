@@ -1,0 +1,53 @@
+\color{textGray} 
+\pagenumbering{gobble} 
+\vspace*{25pt}
+\Huge
+\BgThispage
+\textcolor{black}{\textbf {Factuur 13-07-2017}}
+\BgThispage
+\vspace*{20pt}
+
+%% Gegevens Factuur
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens factuur}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Volgnummer}{1}{20}   
+\InvullenTwee{Datum}{17-07-2017}{20}
+\end{tabular} \\ 
+
+%% Gegevens Leverancier
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens leverancier}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Naam}{Jochem}{0}   
+\InvullenTwee{Adres}{Testadres 1, 1234AB}{0}   
+\InvullenTwee{E-mail}{jochem@degoede.email}{0}   
+\InvullenTwee{IBAN}{NL00ABCD1234567890}{0}   
+\InvullenTwee{KvK}{1234567890}{0}   
+\InvullenTwee{BTW-nummer}{}{0}   
+\end{tabular} \\ 
+
+%% Gegevens Afnemer
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens afnemer}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Bedrijfsnaam}{Testopdrachtgever}{0}   
+\InvullenTwee{Adres}{Mijnadres}{0}   
+\InvullenTwee{Plaats en postcode}{1234AB}{0}   
+\end{tabular} \\ 
+
+%% Geleverd
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Geleverd}}}}
+\begin{tabular}{l l l l l}
+\InvullenVijfBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs per eenheid}{Prijs}
+\InvullenVijf{Testopdracht}{1}{2000x}{0.22}{440.00}
+\cline{4-5} 
+\multicolumn{4}{r}{\large \textbf{Subtotaal}} & {\large \euro 440.00} \\ 
+\multicolumn{4}{r}{\large BTW} & {\large \euro92.40} \\ \cline{4-5}
+\multicolumn{4}{r}{\large \textbf{Totaal}} & {\large \textbf{\euro532.40 }} \\ 
+\end{tabular} \\\\ 

@@ -26,15 +26,15 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'Orders',
-    'Agreements',
-    'Invoices',
-    'Companies',
-    'Settings',
+    'orders',
+    'agreements',
+    'invoices',
+    'companies',
+    'settings',
     'django_bootstrap_breadcrumbs',
-    'HourRegistration',
-    'Statistics',
-    'Mail',
+    'hour_registration',
+    'statistics',
+    'mail',
     'django_tables2',
     'django.contrib.humanize',
     'channels',
@@ -124,8 +124,10 @@ DEFAULT_COLOR = '#009688'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = '/var/www/FactuurMaker/static/images'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
 MEDIA_URL = '/files/'
 
 CELERY_ACCEPT_CONTENT = ['json']

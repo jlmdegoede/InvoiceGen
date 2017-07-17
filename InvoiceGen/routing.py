@@ -1,5 +1,5 @@
 from channels.routing import route
-from Invoices import consumers
+from invoices import consumers
 
 channel_routing = [
     route("websocket.connect", consumers.ws_connect),

@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -10,21 +11,21 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('orders', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Company',
+            name='HourRegistration',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('company_name', models.CharField(max_length=200)),
-                ('company_address', models.CharField(max_length=200)),
-                ('company_city_and_zipcode', models.CharField(max_length=200)),
-                ('company_email', models.CharField(max_length=200, null=True)),
-                ('company_default_price_per_quantity', models.FloatField(null=True)),
+                ('start', models.DateTimeField()),
+                ('end', models.DateTimeField(null=True)),
+                ('description', models.TextField(null=True)),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.Product')),
             ],
             options={
-                'permissions': (('view_company', 'Kan opdrachtgever bekijken'),),
+                'permissions': (('view_hourregistration', 'Kan urenregistraties bekijken'),),
             },
         ),
     ]
