@@ -67,7 +67,7 @@ var ArticleListComponent = React.createClass({
         )
        }.bind(this));
        return (
-           <select onChange={this.handleChange}>
+           <select onChange={this.handleChange} id="hourselect">
                {listNodes}
            </select>
        );
@@ -170,7 +170,7 @@ var ButtonComponent = React.createClass({
         })
     },
     buttonClick: function() {
-        var list = $('select option:selected');
+        var list = $('#hourselect option:selected');
         var selectedValue = this.state.selected;
 
         if (this.state.selected == 0) {
