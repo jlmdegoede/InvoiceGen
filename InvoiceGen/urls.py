@@ -1,18 +1,25 @@
-from django.conf.urls import include, url
-from django.contrib import admin
-import orders.views
-import agreements.views
-import invoices.views
-import companies.views
-import settings.views
-import hour_registration.views
-import statistics.views
-import mail.views
-from django.conf.urls.static import static
+
 import django.contrib.auth.views
-from django.contrib.auth.decorators import login_required, permission_required
-from django.views.generic import TemplateView
-from django.contrib.sitemaps import views
+from django.conf.urls import include, url
+from django.contrib.auth.decorators import login_required
+from rest_framework import routers
+
+import agreements.views
+import companies.views
+import hour_registration.views
+import invoices.views
+import mail.views
+import orders.views
+import settings.views
+import statistics.views
+from orders.views import ProductViewSet
+from companies.views import CompanyViewSet
+from invoices.views import OutgoingInvoiceViewSet
+
+router = routers.DefaultRouter()
+router.register(r'products', ProductViewSet)
+router.register(r'companies', CompanyViewSet)
+router.register(r'outgoing-invoices', OutgoingInvoiceViewSet)
 
 urlpatterns = [
 
@@ -108,5 +115,8 @@ urlpatterns = [
           name="password_reset_confirm"),
       url(r'^wachtwoord-vergeten/opnieuw-ingesteld/$',
        django.contrib.auth.views.password_reset_complete),
+
+      url(r'^api/', include(router.urls)),
+      url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
 ]

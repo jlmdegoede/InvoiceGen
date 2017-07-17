@@ -1,25 +1,28 @@
-from datetime import date
-from datetime import timedelta
+from datetime import date, timedelta
+
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import *
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.views import View
+from django_tables2 import RequestConfig
+from rest_framework import viewsets
+
+import mail.views
 import utils.markdown_generator
+from InvoiceGen.celery import app
 from InvoiceGen.settings import BASE_DIR
 from invoices.forms import *
+from invoices.tasks import generate_pdf_task
+from settings.localization_nl import get_localized_text
 from settings.models import UserSetting
 from utils.date_helper import *
 from utils.docx_generation import *
+
 from .models import *
+from .serializer import OutgoingInvoiceSerializer
 from .tables import *
-from django_tables2 import RequestConfig
-from django.utils.crypto import get_random_string
-from django.views import View
-import mail.views
-from django.utils import timezone
-from django.contrib.auth.decorators import permission_required
-from settings.localization_nl import get_localized_text
-from invoices.tasks import generate_pdf_task
-from InvoiceGen.celery import app
 
 
 @login_required
@@ -353,3 +356,8 @@ class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
         return mail.views.get_email_form(request, to=invoice.to_company.company_email, invoice_id=invoice_id)
+
+
+class OutgoingInvoiceViewSet(viewsets.ModelViewSet):
+    queryset = OutgoingInvoice.objects.all()
+    serializer_class = OutgoingInvoiceSerializer

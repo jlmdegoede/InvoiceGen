@@ -1,11 +1,14 @@
-from django.shortcuts import *
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
+from django.shortcuts import *
+from django_tables2 import RequestConfig
+from rest_framework import viewsets
+
 from companies.forms import *
 from orders.models import Product
-from django.contrib.auth.decorators import login_required
+
+from .serializer import CompanySerializer
 from .tables import CompanyTable
-from django_tables2 import RequestConfig
-from django.contrib.auth.decorators import permission_required
 
 
 @login_required
@@ -79,3 +82,8 @@ def delete_company(request, company_id):
 def default_price_for_company(request, company_id):
     company = Company.objects.get(id=company_id)
     return JsonResponse({'default_price': company.company_default_price_per_quantity})
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer

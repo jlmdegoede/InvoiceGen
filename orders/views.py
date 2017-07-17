@@ -1,5 +1,5 @@
 import asyncio
-from datetime import date, datetime
+from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
@@ -9,6 +9,7 @@ from django.shortcuts import *
 from django.utils import timezone
 from django.views import View
 from django_tables2 import RequestConfig
+from rest_framework import serializers, viewsets
 
 import settings.views
 from agreements.models import Agreement
@@ -24,6 +25,7 @@ from .forms import *
 from .helper import (add_agreements_to_product, fill_product_table_per_year,
                      get_previous_years)
 from .tables import OrderTable
+from .serializer import ProductSerializer
 
 # Create your views here.
 
@@ -227,3 +229,8 @@ def search(request):
                   {'query_string': query_string, 'found_products': found_products,
                                'found_agreements': found_agreements, 'found_incoming_invoices': found_incoming_invoices,
                                'found_outgoing_invoices': found_outgoing_invoices, 'found_companies': found_companies})
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
