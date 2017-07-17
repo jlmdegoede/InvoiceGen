@@ -127,7 +127,6 @@ def add_product_get(request):
     return render(request, 'Orders/new_edit_product.html', {'form': form})
 
 
-@permission_required('Orders.change_product')
 class EditProductView(View):
     def get(self, request, product_id):
         try:
