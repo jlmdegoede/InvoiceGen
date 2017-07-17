@@ -13,7 +13,7 @@ def get_previous_years(last_year):
     """Gets remaining years for orders not present in the index table tabs"""
     new_date = datetime(year=last_year, month=1, day=1)
     products = Product.objects.filter(date_deadline__lt=new_date)
-    return [x.date_deadline.year for x in products]
+    return set([x.date_deadline.year for x in products])
 
 
 def fill_product_table_per_year(request, last_year):
