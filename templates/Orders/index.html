@@ -17,18 +17,29 @@
     {% breadcrumb "Opdrachten" "index" %}
 {% endblock %}
 
+{% block side_menu_outside_collections %}
+    <div class="row"><br/>
+        <div class="col m6">
+            <select class="year_select">
+                <option value="" disabled selected>Eerdere jaren</option>
+                {% for year in years_not_in_table %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
     {% if first_time %}
         <div class="card-panel teal white-text">
-            <b>Welkom bij InvoiceGen!</b> Voordat u begint met het maken van facturen, overeenkomsten en opdrachten,
-            zorg ervoor dat u eerst even een bezoek brengt aan <a href="/instellingen"
-                                                                  class="blue-grey-text text-darken-2">Instellingen</a>
-            om uw persoonlijke gegevens in te vullen.
-            Pas als u dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en facturen te genereren.
-            Opdrachten toevoegen is wel gewoon mogelijk. Bedankt, het team van InvoiceGen.
+            <b>Welkom bij InvoiceGen!</b> Voordat je start met het maken van facturen, overeenkomsten en opdrachten,
+            zorg ervoor dat je eerst een bezoek brengt aan <a href="/instellingen"
+                                                              class="blue-grey-text text-darken-2">Instellingen</a>
+            om de persoonlijke gegevens in te vullen.
+            Pas als je dat gedaan hebt, is het mogelijk om een overeenkomst toe te voegen en facturen te genereren.
         </div>
     {% endif %}
-    <h4>Opdrachten beheren</h4>
 
     <div class="row">
         <div class="col s12">
@@ -44,13 +55,31 @@
             {% csrf_token %}
             {% render_table active_products_table "../templates/table_materialize.html" %}
             <p>
-                <a href="#" class="waves-effect waves-light btn done-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Vink opdrachten aan in de tabel en klik hier om deze als Afgerond te markeren">Opdrachten afgerond</a></p>
+            <div class="row">
+                <div class="col m3">
+                    <a href="#" class="waves-effect waves-light btn done-button tooltipped" data-position="bottom"
+                       data-delay="50" style="background-color: {{ color_down }} !important;"
+                       data-tooltip="Vink opdrachten aan in de tabel en klik hier om deze als Afgerond te markeren">Opdrachten
+                        afgerond</a>
+                </div>
+
+            </div>
+            </p>
         </div>
 
         {% for y, table in products.items %}
             <div id="{{ y }}" class="col s12">
                 {% render_table table "../templates/table_materialize.html" %}
-                <a href="#" class="modal-trigger waves-effect waves-light btn tooltipped"  data-position="bottom" data-delay="50" data-tooltip="Vink opdrachten aan in de tabel en klik hier om er een factuur voor te genereren">Factureren</a>
+
+            <div class="row">
+                <div class="col m3">
+                <a href="#" class="modal-trigger waves-effect waves-light btn tooltipped" data-position="bottom"
+                   data-delay="50" style="background-color: {{ color_down }} !important;"
+                   data-tooltip="Vink opdrachten aan in de tabel en klik hier om er een factuur voor te genereren">Factureren</a>
+                </div>
+            </div>
+
+
             </div>
 
         {% endfor %}
@@ -62,7 +91,7 @@
 
     <div id="modal-invoice" class="modal bottom-sheet">
         <div class="modal-content">
-          <i class="large material-icons right">credit_card</i>
+            <i class="large material-icons right">credit_card</i>
             <h4>Factuur aanmaken</h4>
             <p id="confirmText">Geef het volgnummer van de factuur op
                 <input type="text" id="volgnummer" placeholder="Volgnummer">
@@ -99,6 +128,11 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $('select').material_select();
+
+            $('.year_select').on('change', function () {
+                window.location.href = '/opdracht/jaar/' + $(this).val();
+            });
             $('.modal').modal();
             saveTableTab('order_page');
 
@@ -128,7 +162,7 @@
                     title = $(this).attr('name');
                     $('#deleteLink').attr('href', "opdracht/verwijderen/" + id);
                     $('#confirmText').text("Weet je zeker dat je de opdracht " + title + " wilt verwijderen?");
-                     $('#modal1').modal('open');
+                    $('#modal1').modal('open');
                 } else {
                     // factuurknop gedrukt
                     if (document.querySelectorAll('input[type="checkbox"]:checked').length != 0) {

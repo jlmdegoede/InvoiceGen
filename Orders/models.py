@@ -1,6 +1,7 @@
 from django.db import models
-from Invoices.models import OutgoingInvoice
+
 from Companies.models import Company
+from Invoices.models import OutgoingInvoice
 
 
 class Product(models.Model):
@@ -24,8 +25,7 @@ class Product(models.Model):
 
     def serialize(self):
         return {"title": self.title, "date": str(self.date_received), "deadline": str(self.date_deadline),
-                "done": str(self.done), "magazine": self.magazine, "magazine_nr": self.magazine_number,
-                "wordcount": self.word_count, "briefing": self.briefing, "server_id": self.id}
+                "done": str(self.done), "briefing": self.briefing, "server_id": self.id}
 
     class Meta:
         permissions = (

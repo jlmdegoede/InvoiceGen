@@ -65,6 +65,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'invoicegen',
+        'HOST': POSTGRES_HOST
     }
 }
 
@@ -102,7 +103,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
         "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
+           "hosts": [os.environ.get('REDIS_URL', 'redis://' + REDIS_HOST + ':6379')],  # set redis address
          },
         "ROUTING": "InvoiceGen.routing.channel_routing",
     },

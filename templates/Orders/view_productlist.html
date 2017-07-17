@@ -1,0 +1,36 @@
+{% extends 'Orders/index.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block orders_active %}active{% endblock %}
+{% block title %}
+    Opdrachten van jaar {{ year }}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block index_active %}active{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Eerdere opdrachten" "index" %}
+{% endblock %}
+
+{% block content %}
+
+<h4>Opdrachten van {{ year }}</h4>
+{% render_table products "../templates/table_materialize.html" %}
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('select').material_select();
+        $('.year_select').on('change', function () {
+            window.location.href = '/opdracht/jaar/' + $(this).val();
+            this.preventDefault();
+        });
+    })
+    </script>
+
+{% endblock %}

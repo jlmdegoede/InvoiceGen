@@ -21,13 +21,9 @@ urlpatterns = [
     url(r'^accounts/login/$', Orders.views.user_login, name='user_login'),
     url(r'^inloggen/via-website/$', Orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', Orders.views.user_logout, name='logout'),
+    url(r'^zoeken/$', Orders.views.search, name='search'),
 
-    url(r'^opdracht/(?P<product_id>\d+)/(.*)$', Orders.views.view_product, name='view_product'),
-    url(r'^opdracht/toevoegen/$', Orders.views.add_product, name='add_product'),
-    url(r'^opdracht/wijzigen/(?P<product_id>\d+)/$', Orders.views.edit_product, name='edit_product'),
-    url(r'^opdracht/verwijderen/(?P<product_id>\d+)/$', Orders.views.delete_product, name='delete_product'),
-    url(r'^opdracht/afronden/$', Orders.views.mark_products_as_done, name='mark_products_as_done'),
-    url(r'^opdracht/list-hourregistration/$', Orders.views.get_list_of_orders_hourregistration, name='get_list_of_orders_hourregistration'),
+    url(r'^opdracht/', include('Orders.urls')),
 
     url(r'^generate/invoice/$', Invoices.views.generate_invoice, name='generate_invoice'),
     url(r'^facturen/$', Invoices.views.get_outgoing_invoices, name='get_invoices'),
@@ -72,8 +68,6 @@ urlpatterns = [
     url(r'^opdrachtgevers/verwijderen/(?P<company_id>\d+)/$', Companies.views.delete_company, name='company_delete'),
     url(r'^client/add/inline/$', Orders.views.add_company_inline, name='add_company_inline'),
     url(r'^client/default-price/(?P<company_id>\d+)$', Companies.views.default_price_for_company, name='company_price'),
-
-    url(r'^zoeken/$', Orders.views.search, name='search'),
 
     url(r'^urenregistratie/start/(?P<product_id>\d+)/$', HourRegistration.views.start_time_tracking, name='start_time_tracking'),
     url(r'^urenregistratie/stop/(?P<product_id>\d+)/$', HourRegistration.views.end_time_tracking, name='end_time_tracking'),
