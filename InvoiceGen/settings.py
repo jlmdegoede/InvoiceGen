@@ -125,8 +125,10 @@ DEFAULT_COLOR = '#009688'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "staticfiles"),
+    os.path.join(BASE_DIR, "bower_components"),
 ]
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
 MEDIA_URL = '/files/'

@@ -2,6 +2,8 @@
 import django.contrib.auth.views
 from django.conf.urls import include, url
 from django.contrib.auth.decorators import login_required
+from django import conf
+from django.conf.urls.static import static
 from rest_framework import routers
 
 import agreements.views
@@ -119,4 +121,4 @@ urlpatterns = [
       url(r'^api/', include(router.urls)),
       url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
-]
+] + static(conf.settings.STATIC_URL, document_root=conf.settings.STATIC_ROOT)
