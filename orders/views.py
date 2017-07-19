@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core import serializers
+import django.core.serializers
 from django.http import JsonResponse
 from django.shortcuts import *
 from django.utils import timezone
@@ -199,7 +199,7 @@ def user_login(request):
 @login_required
 def get_list_of_orders_hourregistration(request):
     orders = Product.objects.filter(done=False)
-    return HttpResponse(serializers.serialize('json', orders), content_type='json')
+    return HttpResponse(django.core.serializers.serialize('json', orders), content_type='json')
 
 
 @login_required
