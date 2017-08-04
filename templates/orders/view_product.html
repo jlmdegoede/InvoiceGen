@@ -52,6 +52,14 @@
         </tr>
     </table>
 
+
+    <h5>Bijlages</h5>
+    {% for attachment in product.attachments.all %}
+        <a href="/files/{{ attachment.attachment }}" class="chip">{{ attachment.attachment }}</a>
+    {% endfor %}
+
+
+
     <h5>Urenregistraties</h5>
     Totale tijd aan opdracht gewerkt: {{ total_hours }} uur
     <div class="row">

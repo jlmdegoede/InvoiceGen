@@ -26,8 +26,9 @@ class ProductForm(forms.ModelForm):
     briefing = forms.CharField(widget=forms.Textarea(attrs={'class':'materialize-textarea'}), required=False)
     done = forms.BooleanField(label="Klaar", required=False)
     tax_rate = forms.IntegerField(label="BTW-tarief", required=False)
+    attachments = forms.FileField()
 
     class Meta:
         model = Product
-        fields = ('title', 'date_received', 'date_deadline', 'quantity', 'from_company', 'identification_number', 'tax_rate', 'price_per_quantity', 'briefing', 'done')
+        fields = ('title', 'date_received', 'date_deadline', 'quantity', 'from_company', 'identification_number', 'tax_rate', 'price_per_quantity', 'briefing', 'done', 'attachments')
 

@@ -4,6 +4,11 @@ from companies.models import Company
 from invoices.models import OutgoingInvoice
 
 
+class ProductAttachment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    attachment = models.FileField(upload_to='attachments/')
+
+
 class Product(models.Model):
     title = models.CharField(max_length=200)
     date_received = models.DateField()
@@ -16,6 +21,7 @@ class Product(models.Model):
     done = models.BooleanField(default=False)
     price_per_quantity = models.FloatField()
     tax_rate = models.IntegerField(null=True)
+    attachments = models.ManyToManyField(to=ProductAttachment)
 
     def __str__(self):
         return self.title

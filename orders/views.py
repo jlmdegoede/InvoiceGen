@@ -46,7 +46,6 @@ def index(request):
                    'years_not_in_table': years_not_in_table})
 
 
-
 @login_required
 @permission_required('orders.view_product')
 def view_product(request, product_id):
@@ -108,15 +107,16 @@ def add_product(request):
 
 def add_product_post(request):
     product = Product()
-    f = ProductForm(request.POST, instance=product)
+    f = ProductForm(request.POST, request.FILES, instance=product)
     product.invoice = None
     if f.is_valid():
         product.save()
+        for file in request.FILES.getlist('attachments'):
+            p = ProductAttachment(attachment=file)
+            p.save()
+            product.attachments.add(p)
+        product.save()
         request.session['toast'] = 'Opdracht toegevoegd'
-        if get_setting('auto_wunderlist', False):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.close()
         return redirect('/')
     else:
         request.session['toast'] = 'Formulier onjuist ingevuld'
