@@ -11,12 +11,11 @@ from django.views import View
 from django_tables2 import RequestConfig
 from rest_framework import serializers, viewsets
 
-import settings.views
+import settings.helper
 from agreements.models import Agreement
 from companies.forms import CompanyForm
 from hour_registration.models import HourRegistration
 from invoices.models import *
-from settings.views import get_setting
 from statistics.views import get_total_hours, get_unique_hours
 from utils.date_helper import get_today_string
 from utils.search_query import get_query
@@ -37,7 +36,7 @@ def index(request):
     years_back = now.year - 5
     products, year_list = fill_product_table_per_year(request, years_back)
     active_products_table = OrderTable(Product.objects.filter(done=False), prefix='openstaand-', order_by='date_deadline')
-    no_settings_notification = settings.views.no_settings_created_yet()
+    no_settings_notification = settings.helper.no_settings_created_yet()
     RequestConfig(request).configure(active_products_table)
     years_not_in_table = get_previous_years(years_back)
     return render(request, 'orders/index.html',

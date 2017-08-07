@@ -5,11 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django import conf
 from django.conf.urls.static import static
 from rest_framework import routers
+from django.contrib import admin
 
 import agreements.views
 import companies.views
 import hour_registration.views
-import invoices.views
 import mail.views
 import orders.views
 import settings.views
@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^accounts/login/$', orders.views.user_login, name='user_login'),
     url(r'^logout/$', orders.views.user_logout, name='logout'),
     url(r'^zoeken/$', orders.views.search, name='search'),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^opdracht/', include('orders.urls')),
     url(r'^facturen/', include('invoices.urls')),
@@ -47,6 +48,7 @@ urlpatterns = [
     url(r'^instellingen/nieuwe-gebruiker$', settings.views.UserSettings.as_view(), name='create_new_user'),
     url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', settings.views.EditUserView.as_view(), name='edit_user'),
     url(r'^instellingen/gebruiker/verwijderen$', settings.views.delete_user, name='delete_user'),
+    url(r'^instellingen/factuursjabloon/standaard$', settings.views.save_default_invoice_template, name='default_invoice'),
 
     url(r'^statistieken/$', statistics.views.view_statistics, name='statistics'),
 

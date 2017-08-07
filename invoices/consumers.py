@@ -3,7 +3,7 @@ import json
 from channels import Channel
 from channels.sessions import channel_session
 
-from .tasks import generate_pdf_task
+from .tasks import task_generate_pdf
 
 
 @channel_session
@@ -23,8 +23,9 @@ def ws_receive(message):
     if data['action'] == "start_pdf":
         start_pdf(data['invoice_id'], reply_channel)
 
+
 def start_pdf(invoice_id, reply_channel):
-    generate_pdf_task.delay(invoice_id, reply_channel)
+    task_generate_pdf.delay(invoice_id, reply_channel)
 
     Channel(reply_channel).send({
         "text": json.dumps({

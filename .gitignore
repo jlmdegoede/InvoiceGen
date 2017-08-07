@@ -4,7 +4,6 @@ static/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-InvoiceTemplates/MaterialDesign/temp/entry.tex
 # C extensions
 *.so
 bower_components/
@@ -25,6 +24,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+temp/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -62,13 +62,11 @@ target/
 InvoiceGen/site_settings.py
 db.sqlite3
 
-InvoiceGen/site_settings.py
 static/images
 *.pdf
 #latex
 *.out
 *.aux
-*.docx
 
 .idea/workspace.xml
 
@@ -91,4 +89,3 @@ static/images
 *.rdb
 
 supervisord.pid
-Templates/MaterialDesign/temp/main.pdf

@@ -1,11 +1,12 @@
-from django.views import View
-from .forms import *
 from django.contrib.auth.decorators import login_required
-from .tables import EmailTemplateTable, EmailTable
-from django.shortcuts import *
-from .tasks import send_email
 from django.http import JsonResponse
-from invoices.tasks import generate_pdf_task
+from django.shortcuts import *
+from django.views import View
+from invoices.tasks import task_generate_pdf
+
+from .forms import *
+from .tables import EmailTable, EmailTemplateTable
+from .tasks import send_email
 
 
 def get_email_form(request, to=None, invoice_id=0):
@@ -33,7 +34,7 @@ def save_and_send_email(request):
         new_email.save()
         if new_email.document_attached:
             request.session['toast'] = 'PDF wordt gemaakt'
-            generate_pdf_task.apply_async([invoice_id], link=send_email.s(new_email.id))
+            task_generate_pdf.apply_async([invoice_id], link=send_email.s(new_email.id))
         else:
             send_email.delay(True, new_email.id)
         request.session['toast'] = 'E-mail wordt verzonden'

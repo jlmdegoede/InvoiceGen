@@ -71,3 +71,24 @@ class IncomingInvoice(Invoice):
     btw_amount = models.DecimalField(decimal_places=2, max_digits=100)
     invoice_file = models.FileField(upload_to='invoice-pdfs/%Y/%m/%d', null=True, validators=[validate_file_extension])
     received_date = models.DateField()
+
+
+class InvoiceTemplate(models.Model):
+    MARKDOWN = 'md'
+    LATEX = 'latex'
+    DOCX = 'docx'
+
+    TEMPLATE_TYPE_CHOICES = (
+        (DOCX, 'DOCX'),
+        (LATEX, 'LaTeX'),
+        (MARKDOWN, 'Markdown'))
+
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    main_file = models.CharField(max_length=100)
+    order_template = models.TextField(blank=True)
+    template_type = models.CharField(max_length=10, choices=TEMPLATE_TYPE_CHOICES)
+    preview_image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return self.name

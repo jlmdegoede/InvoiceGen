@@ -6,25 +6,20 @@ from django.shortcuts import *
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views import View
-from django_tables2 import RequestConfig
 from rest_framework import viewsets
 
 import mail.views
-import utils.markdown_generator
 from InvoiceGen.celery import app
-from InvoiceGen.settings import BASE_DIR
 from invoices.forms import *
-from invoices.tasks import generate_pdf_task
+from invoices.tasks import task_generate_pdf
 from settings.localization_nl import get_localized_text
-from settings.models import UserSetting
 from utils.date_helper import *
-from utils.docx_generation import *
 
 from .models import *
 from .serializer import OutgoingInvoiceSerializer
 from .tables import *
-from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_products, get_latest_docx, \
-    get_latest_markdown, get_latest_pdf
+from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_products, get_docx_invoice, \
+    get_markdown_invoice, get_pdf_invoice
 
 
 @login_required
@@ -47,7 +42,7 @@ class AddOutgoingInvoice(View):
         f = OutgoingInvoiceForm(instance=invoice)
 
         return render(request, 'Invoices/new_edit_outgoing_invoice.html',
-                      {'form': f, 'invoceid': invoice.id, 'edit': False})
+                      {'form': f, 'invoiceid': invoice.id, 'edit': False})
 
     def post(self, request):
         invoice = OutgoingInvoice()
@@ -69,19 +64,19 @@ class AddOutgoingInvoice(View):
             return redirect('/facturen')
         else:
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
-                          {'form': f, 'invoceid': invoice.id, 'edit': False,
+                          {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
 
 @login_required
 def download_latest_generated_invoice(request, file_type, invoice_id):
-    switcher = {"pdf": get_latest_pdf, "docx": get_latest_docx, "markdown": get_latest_markdown}
+    switcher = {"pdf": get_pdf_invoice, "docx": get_docx_invoice, "markdown": get_markdown_invoice}
     return switcher[file_type](invoice_id)
 
 
 @login_required
 def generate_pdf(request, invoice_id):
-    task = generate_pdf_task.delay(invoice_id)
+    task = task_generate_pdf.delay(invoice_id)
     return JsonResponse({'generate': 'started', 'task_id': task.task_id})
 
 
@@ -117,7 +112,7 @@ def add_incoming_invoice(request):
         f = IncomingInvoiceForm(instance=invoice)
 
         return render(request, 'Invoices/new_edit_incoming_invoice.html',
-                      {'form': f, 'invoceid': invoice.id, 'edit': False})
+                      {'form': f, 'invoiceid': invoice.id, 'edit': False})
     elif request.method == 'POST':
         invoice = IncomingInvoice()
         f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
@@ -132,7 +127,7 @@ def add_incoming_invoice(request):
             return redirect('/facturen/inkomend')
         else:
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
-                          {'form': f, 'invoceid': invoice.id, 'edit': False,
+                          {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
 
@@ -259,7 +254,6 @@ def generate_invoice(request):
         today = get_today_string()
         volgnummer = request.POST.get('volgnummer')
         invoice.invoice_number = volgnummer
-        # create invoice and save it
         invoice.date_created = datetime.date.today()
         invoice.title = "Factuur {0}".format(str(today))
         invoice.to_company = products[0].from_company

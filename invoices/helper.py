@@ -1,17 +1,16 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.shortcuts import HttpResponse
 from django_tables2 import RequestConfig
 
-import utils.markdown_generator
 from InvoiceGen.settings import BASE_DIR
 from orders.models import Product
-from settings.models import UserSetting
-from utils.date_helper import *
-from utils.docx_generation import *
+from settings.const import DEFAULT_DOCX
+from settings.helper import get_setting
 
-from .models import IncomingInvoice, OutgoingInvoice
+from .models import IncomingInvoice, OutgoingInvoice, InvoiceTemplate
 from .tables import IncomingInvoiceTable, OutgoingInvoiceTable
+from .export.export import WordExport, MarkdownExport
 
 
 def add_invoice_to_products(invoice, products):
@@ -26,37 +25,36 @@ def remove_invoice_from_products(products):
         product.save()
 
 
-def get_latest_pdf(invoice_id):
+def get_pdf_invoice(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    response = HttpResponse(open(BASE_DIR + "/templates/MaterialDesign/temp/main.pdf", 'rb').read())
+    invoice_file_path = BASE_DIR + "/temp/" + invoice.title + ".pdf"
+    response = HttpResponse(open(invoice_file_path, 'rb').read())
     response['Content-Disposition'] = 'attachment; filename={0}.pdf'.format(invoice.title)
     response['Content-Type'] = 'application/pdf'
     return response
 
 
-def get_latest_markdown(invoice_id, tenant=None):
+def get_markdown_invoice(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
-    with_tax_rate = products[0].tax_rate != 0
-    contents = utils.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
-                                                             products[0].from_company,
-                                                             get_today_string(),
-                                                             products,
-                                                             with_tax_rate)
-
-
-    response = HttpResponse(contents, content_type='text/plain')
+    invoice_template = InvoiceTemplate.objects.filter(template_type=InvoiceTemplate.MARKDOWN).first()
+    markdown = MarkdownExport(invoice, products, invoice_template)
+    markdown.generate()
+    response = HttpResponse(open(markdown.output_filepath(), 'rb').read())
+    response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename=invoice{0}.md'.format(str(invoice.date_created))
     return response
 
 
-def get_latest_docx(invoice_id, tenant=None):
+def get_docx_invoice(invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     products = Product.objects.filter(invoice=invoice)
-    user = UserSetting.objects.first()
-    doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    doc.save(response)
+    default_docx_template = get_setting(DEFAULT_DOCX, 2)
+    invoice_template = InvoiceTemplate.objects.get(id=default_docx_template)
+    doc = WordExport(invoice, products, invoice_template)
+    doc.generate()
+    response = HttpResponse(open(doc.output_filepath(), 'rb').read())
+    response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     response['Content-Disposition'] = 'attachment; filename={0}.docx'.format(invoice.title)
     return response
 

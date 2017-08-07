@@ -1,19 +1,20 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import *
+from base64 import b64decode
+
+import InvoiceGen.site_settings
+import settings.helper
+from agreements.forms import AgreementForm, AgreementTextForm, SignatureForm
 from agreements.models import *
-from agreements.forms import AgreementTextForm, AgreementForm, SignatureForm
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
+from django.shortcuts import *
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django_tables2 import RequestConfig
 from orders.models import Company
 from settings.models import UserSetting
-from django.utils.crypto import get_random_string
-from django.http import JsonResponse
-from base64 import b64decode
-from django.core.files.base import ContentFile
-import InvoiceGen.site_settings
-import settings.views
+
 from .tables import AgreementTable, AgreementTextTable
-from django_tables2 import RequestConfig
-from django.utils import timezone
-from django.contrib.auth.decorators import permission_required
 
 CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
 CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
@@ -77,7 +78,7 @@ def view_agreement(request, url):
     agreement = Agreement.objects.get(url=url)
     agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
         0] + '/overeenkomsten/ondertekenen/' + agreement.url
-    agreement.full_name = settings.views.get_user_fullname()
+    agreement.full_name = settings.helper.get_user_fullname()
     if request.method == 'GET':
         return render(request, 'Agreements/view_sign_agreement.html', {'agreement': agreement})
 
