@@ -121,4 +121,4 @@ urlpatterns = [
       url(r'^api/', include(router.urls)),
       url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
-] + static(conf.settings.STATIC_URL, document_root=conf.settings.STATIC_ROOT)
+] + static(conf.settings.STATIC_URL, document_root=conf.settings.STATIC_ROOT) + static(conf.settings.MEDIA_URL, document_root=conf.settings.MEDIA_ROOT)

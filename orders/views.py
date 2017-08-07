@@ -46,7 +46,6 @@ def index(request):
                    'years_not_in_table': years_not_in_table})
 
 
-
 @login_required
 @permission_required('orders.view_product')
 def view_product(request, product_id):
@@ -112,11 +111,12 @@ def add_product_post(request):
     product.invoice = None
     if f.is_valid():
         product.save()
+        for file in request.FILES.getlist('attachments'):
+            p = ProductAttachment(attachment=file)
+            p.save()
+            product.attachments.add(p)
+        product.save()
         request.session['toast'] = 'Opdracht toegevoegd'
-        if get_setting('auto_wunderlist', False):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.close()
         return redirect('/')
     else:
         request.session['toast'] = 'Formulier onjuist ingevuld'
@@ -134,6 +134,7 @@ class EditProductView(View):
         try:
             product = Product.objects.get(id=product_id)
             f = ProductForm(instance=product)
+
             return render(request, 'orders/new_edit_product.html',
                           {'form': f, 'edit': True, 'productid': product_id})
         except:
@@ -145,7 +146,12 @@ class EditProductView(View):
         f = ProductForm(request.POST, instance=product)
 
         if f.is_valid():
-            f.save()
+            product.save()
+            for file in request.FILES.getlist('attachments'):
+                p = ProductAttachment(attachment=file)
+                p.save()
+                product.attachments.add(p)
+            product.save()
             request.session['toast'] = 'Opdracht gewijzigd'
             return redirect('/')
         else:
@@ -165,6 +171,21 @@ def delete_product(request, product_id=-1):
     except:
         request.session['toast'] = 'Verwijderen mislukt'
         return redirect('/')
+
+
+@login_required
+@permission_required('orders.delete_product')
+def attachment_delete(request):
+    if request.POST:
+        product_id = request.POST['product_id']
+        product_attachment_id = request.POST['product_attachment_id']
+        product_attachment = ProductAttachment.objects.get(id=product_attachment_id)
+        product = Product.objects.get(id=product_id)
+        product.attachments.remove(product_attachment)
+        product.save()
+        product_attachment.attachment.delete()
+        product_attachment.delete()
+        return JsonResponse({'deleted': True})
 
 
 @login_required
