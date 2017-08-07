@@ -97,36 +97,28 @@ def add_company_inline(request):
         return render(request, 'orders/new_company_inline.html', {'form': form})
 
 
-@login_required
-@permission_required('orders.view_product')
-def add_product(request):
-    if request.method == 'POST':
-        return add_product_post(request)
-    return add_product_get(request)
+class AddProductView(View):
+    def get(self, request):
+        form = ProductForm()
+        return render(request, 'orders/new_edit_product.html', {'form': form})
 
-
-def add_product_post(request):
-    product = Product()
-    f = ProductForm(request.POST, instance=product)
-    product.invoice = None
-    if f.is_valid():
-        product.save()
-        for file in request.FILES.getlist('attachments'):
-            p = ProductAttachment(attachment=file)
-            p.save()
-            product.attachments.add(p)
-        product.save()
-        request.session['toast'] = 'Opdracht toegevoegd'
-        return redirect('/')
-    else:
-        request.session['toast'] = 'Formulier onjuist ingevuld'
-        return render(request, 'orders/new_edit_product.html',
-                      {'form': f, 'error': f.errors})
-
-
-def add_product_get(request):
-    form = ProductForm()
-    return render(request, 'orders/new_edit_product.html', {'form': form})
+    def post(self, request):
+        product = Product()
+        f = ProductForm(request.POST, instance=product)
+        product.invoice = None
+        if f.is_valid():
+            product.save()
+            for file in request.FILES.getlist('attachments'):
+                p = ProductAttachment(attachment=file)
+                p.save()
+                product.attachments.add(p)
+            product.save()
+            request.session['toast'] = 'Opdracht toegevoegd'
+            return redirect('/')
+        else:
+            request.session['toast'] = 'Formulier onjuist ingevuld'
+            return render(request, 'orders/new_edit_product.html',
+                          {'form': f, 'error': f.errors})
 
 
 class EditProductView(View):
@@ -175,7 +167,7 @@ def delete_product(request, product_id=-1):
 
 @login_required
 @permission_required('orders.delete_product')
-def attachment_delete(request):
+def delete_attachment(request):
     if request.POST:
         product_id = request.POST['product_id']
         product_attachment_id = request.POST['product_attachment_id']
