@@ -217,3 +217,36 @@ class OrderTestCase(TestCase):
         response = self.c.get(reverse('delete_product', kwargs={'product_id': 999}))
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/accounts/login/?next=/' in response.url)
+
+    def test_search_get(self):
+        self.c.login(username='testuser', password='secret')
+        response = self.c.get(reverse('search'), {'q': 'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.order_one in response.context['found_products'])
+
+    def test_search_get_no_query(self):
+        self.c.login(username='testuser', password='secret')
+        response = self.c.get(reverse('search'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_get(self):
+        response = self.c.get(reverse('user_login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_post_valid(self):
+        response = self.c.post(reverse('user_login'), data={'username': 'testuser', 'password': 'secret'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.wsgi_request.user.username, 'testuser')
+
+    def test_login_post_invalid(self):
+        response = self.c.post(reverse('user_login'), data={'username': 'testuser', 'password': '12345'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.wsgi_request.user.username, 'testuser')
+
+    def test_logout(self):
+        response = self.c.get(reverse('logout'))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotEqual(response.wsgi_request.user.username, 'testuser')
+
+
+

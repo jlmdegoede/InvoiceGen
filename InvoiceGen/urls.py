@@ -27,7 +27,6 @@ urlpatterns = [
 
     url(r'^$', orders.views.index, name='index'),
     url(r'^accounts/login/$', orders.views.user_login, name='user_login'),
-    url(r'^inloggen/via-website/$', orders.views.user_login_placeholder_email, name='user_login_placeholder_email'),
     url(r'^logout/$', orders.views.user_logout, name='logout'),
     url(r'^zoeken/$', orders.views.search, name='search'),
 

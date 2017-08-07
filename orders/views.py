@@ -186,11 +186,6 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 
-def user_login_placeholder_email(request):
-    form = UserForm()
-    return render(request, 'orders/login.html', {'form': form, 'email': request.GET['email']})
-
-
 def user_login(request):
     form = UserForm()
 
