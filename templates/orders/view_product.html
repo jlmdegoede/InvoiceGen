@@ -52,11 +52,22 @@
         </tr>
     </table>
 
-
-    <h5>Bijlages</h5>
-    {% for attachment in product.attachments.all %}
-        <a href="/files/{{ attachment.attachment }}" class="chip">{{ attachment.attachment }}</a>
-    {% endfor %}
+    {% if product.attachments.all %}
+        <h5>Bijlages</h5>
+        <ul class="collection">
+        {% for attachment in product.attachments.all %}
+            <li class="collection-item avatar" id="product-attachment-{{ attachment.id }}">
+                <i class="material-icons circle">attach_file</i>
+                <span class="title">{{ attachment.attachment }}</span>
+                <p>Geüpload op {{ attachment.created }}
+                </p>
+                <a href="#" class="secondary-content delete-attachment"
+                    product-id="{{ product.id }}"
+                    product-attachment-id="{{ attachment.id }}"><i class="material-icons">delete</i></a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 
 
 
@@ -111,7 +122,7 @@
                         <div class="row">
                             <div class="input-field col s6">
                                 <input id="start-date" type="date" class="datepicker validate" required
-                                               value="{{ today }}">
+                                       value="{{ today }}">
                                 <label for="start-date">Startdatum</label>
                             </div>
                             <div class="input-field col s6">
@@ -120,7 +131,7 @@
                             </div>
                             <div class="input-field col s6">
                                 <input id="end-date" type="date" class="datepicker validate" required
-                                               value="{{ today }}">
+                                       value="{{ today }}">
                                 <label for="end-date">Einddatum</label>
                             </div>
                             <div class="input-field col s6">
@@ -220,7 +231,7 @@
                 if (!startDate || !startTime || !endDate || !endTime) {
                     $('#error-new').text("Niet alle velden zijn ingevuld");
                 } else if ((endTime <= startTime && startDate == endDate) ||
-                        (endDate < startDate)) {
+                    (endDate < startDate)) {
                     $('#error-new').text("Ongeldige invoer: einde moet groter zijn dan start");
                 } else {
                     $.ajax({
@@ -259,6 +270,27 @@
                     })
                 });
             });
+
+            $('.delete-attachment').click(function (e) {
+                var confirmDelete = confirm("Weet je zeker dat je deze bijlage wilt verwijderen?");
+                if (confirmDelete) {
+                    var productId = $(this).attr('product-id');
+                    var productAttachmentId = $(this).attr('product-attachment-id');
+                    $.ajax({
+                        url: '{% url 'delete_product_attachment' %}',
+                        dataType: 'json',
+                        method: 'POST',
+                        data: {
+                            product_id: productId,
+                            product_attachment_id: productAttachmentId,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (data) {
+                            $('#product-attachment-' + productAttachmentId).remove()
+                        }
+                    });
+                }
+            })
         });
     </script>
 {% endblock %}
