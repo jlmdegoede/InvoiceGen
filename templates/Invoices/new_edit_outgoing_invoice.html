@@ -22,7 +22,7 @@
         <h4>Uitgaande factuur toevoegen</h4>
     {% endif %}
         {%  if edit %}
-            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_outgoing_invoice" invoiceid %}" enctype="multipart/form-data">
+            <form id="invoice_form" class="col s12" method="post" action="{% url "edit_outgoing_invoice" invoice_id %}" enctype="multipart/form-data">
         {% else %}
             <form id="invoice_form" class="col s12" method="post" action="{% url "add_outgoing_invoice" %}">
         {% endif %}

@@ -50,12 +50,12 @@ class InvoicesTestCase(TestCase):
 
     def test_delete_valid_invoice(self):
         self.c.login(username='testuser', password='secret')
-        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': self.invoice_current.id}))
+        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoice_id': self.invoice_current.id}))
         self.assertEqual(self.c.session['toast'], 'Verwijderen factuur gelukt')
 
     def test_delete_invalid_invoice(self):
         self.c.login(username='testuser', password='secret')
-        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': 1212}))
+        self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoice_id': 1212}))
         self.assertEqual(self.c.session['toast'], 'Verwijderen factuur mislukt')
 
     def test_creating_invoice_valid(self):
@@ -86,11 +86,11 @@ class InvoicesTestCase(TestCase):
         self.assertTrue('/accounts/login/?next=/' in response.url)
 
     def test_edit_invoice_not_logged_in(self):
-        response = self.c.get(reverse('edit_outgoing_invoice', kwargs={'invoiceid': 1}))
+        response = self.c.get(reverse('edit_outgoing_invoice', kwargs={'invoice_id': 1}))
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/accounts/login/?next=/' in response.url)
 
     def test_delete_invoice_not_logged_in(self):
-        response = self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoiceid': 1}))
+        response = self.c.get(reverse('delete_outgoing_invoice', kwargs={'invoice_id': 1}))
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/accounts/login/?next=/' in response.url)

@@ -23,6 +23,8 @@ from utils.docx_generation import *
 from .models import *
 from .serializer import OutgoingInvoiceSerializer
 from .tables import *
+from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_products, get_latest_docx, \
+    get_latest_markdown, get_latest_pdf
 
 
 @login_required
@@ -37,37 +39,6 @@ def get_outgoing_invoices(request):
 def get_incoming_invoices(request):
     dict = get_invoices('incoming', request)
     return render(request, 'Invoices/incoming_invoice_table.html', dict)
-
-
-def get_invoices(invoice_objects, request):
-    invoices = {}
-    year_list = []
-    if invoice_objects == 'outgoing':
-        years = OutgoingInvoice.objects.values("date_created").distinct()
-        objects = OutgoingInvoice.objects.all()
-    else:
-        years = IncomingInvoice.objects.values("date_created").distinct()
-        objects = IncomingInvoice.objects.all()
-
-    for dict in years:
-        year = dict['date_created'].year
-        if year not in year_list:
-            year_list.append(year)
-
-            invoice_year_objs = objects.filter(date_created__contains=year).order_by('-date_created')
-            if invoice_objects == 'outgoing':
-                for invoice_obj in invoice_year_objs:
-                    products = Product.objects.filter(invoice=invoice_obj)
-                    invoice_obj.products = products
-
-            if invoice_objects == 'outgoing':
-                invoices[year] = OutgoingInvoiceTable(invoice_year_objs)
-            else:
-                invoices[year] = IncomingInvoiceTable(invoice_year_objs)
-            RequestConfig(request).configure(invoices[year])
-
-    current_year = date.today().year
-    return {'invoices': invoices,  'years': year_list, 'currentYear': current_year}
 
 
 class AddOutgoingInvoice(View):
@@ -102,30 +73,10 @@ class AddOutgoingInvoice(View):
                            'toast': "Formulier ongeldig!"})
 
 
-def add_invoice_to_products(invoice, products):
-    for product in products:
-        product.invoice = invoice
-        product.save()
-
-
-def remove_invoice_from_products(products):
-    for product in products:
-        product.invoice = None
-        product.save()
-
-
 @login_required
 def download_latest_generated_invoice(request, file_type, invoice_id):
     switcher = {"pdf": get_latest_pdf, "docx": get_latest_docx, "markdown": get_latest_markdown}
     return switcher[file_type](invoice_id)
-
-
-def get_latest_pdf(invoice_id):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    response = HttpResponse(open(BASE_DIR + "/templates/MaterialDesign/temp/main.pdf", 'rb').read())
-    response['Content-Disposition'] = 'attachment; filename={0}.pdf'.format(invoice.title)
-    response['Content-Type'] = 'application/pdf'
-    return response
 
 
 @login_required
@@ -138,33 +89,6 @@ def generate_pdf(request, invoice_id):
 def check_pdf_task_status(request, task_id):
     task = app.AsyncResult(task_id)
     return JsonResponse({'status': task.state})
-
-
-def get_latest_markdown(invoice_id, tenant=None):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    products = Product.objects.filter(invoice=invoice)
-    with_tax_rate = products[0].tax_rate != 0
-    contents = utils.markdown_generator.create_markdown_file(invoice, UserSetting.objects.first(),
-                                                             products[0].from_company,
-                                                             get_today_string(),
-                                                             products,
-                                                             with_tax_rate)
-
-
-    response = HttpResponse(contents, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=invoice{0}.md'.format(str(invoice.date_created))
-    return response
-
-
-def get_latest_docx(invoice_id, tenant=None):
-    invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    products = Product.objects.filter(invoice=invoice)
-    user = UserSetting.objects.first()
-    doc = generate_docx_invoice(invoice, user, products, products[0].tax_rate != 0)
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    doc.save(response)
-    response['Content-Disposition'] = 'attachment; filename={0}.docx'.format(invoice.title)
-    return response
 
 
 @login_required
@@ -209,7 +133,7 @@ def add_incoming_invoice(request):
         else:
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoceid': invoice.id, 'edit': False,
-                                       'toast': "Formulier ongeldig!"})
+                           'toast': "Formulier ongeldig!"})
 
 
 @login_required
@@ -226,23 +150,22 @@ def detail_outgoing_invoice(request, invoice_id):
     return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
 
 
-@login_required
-@permission_required('invoices.change_outgoinginvoice')
-def edit_outgoing_invoice(request, invoiceid=-1):
-    if request.method == 'GET':
+class EditOutgoingInvoice(View):
+    def get(self, request, invoice_id=-1):
         try:
-            invoice = OutgoingInvoice.objects.get(id=invoiceid)
+            invoice = OutgoingInvoice.objects.get(id=invoice_id)
             f = OutgoingInvoiceForm(instance=invoice)
             products = Product.objects.filter(invoice=invoice)
 
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': products, 'edit': True,
-                                       'invoiceid': invoiceid})
+                           'invoice_id': invoice_id})
         except:
             request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
             return redirect('/facturen')
-    elif request.method == 'POST':
-        invoice = OutgoingInvoice.objects.get(id=invoiceid)
+
+    def post(self, request, invoice_id=-1):
+        invoice = OutgoingInvoice.objects.get(id=invoice_id)
         f = OutgoingInvoiceForm(request.POST, instance=invoice)
         old_products = Product.objects.filter(invoice=invoice)
 
@@ -259,16 +182,14 @@ def edit_outgoing_invoice(request, invoiceid=-1):
             return redirect('/facturen')
         else:
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
-                          {'form': f, 'products': old_products, 'invoiceid': invoice.id, 'edit': True,
-                                       'toast': get_localized_text('INVALID_FORM')})
+                          {'form': f, 'products': old_products, 'invoice_id': invoice.id, 'edit': True,
+                           'toast': get_localized_text('INVALID_FORM')})
 
 
-@login_required
-@permission_required('invoices.change_incominginvoice')
-def edit_incoming_invoice(request, invoiceid=-1):
-    if request.method == 'GET':
+class EditIncomingInvoice(View):
+    def get(self, request, invoice_id=-1):
         try:
-            invoice = IncomingInvoice.objects.get(id=invoiceid)
+            invoice = IncomingInvoice.objects.get(id=invoice_id)
             f = IncomingInvoiceForm(instance=invoice)
 
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
@@ -276,8 +197,9 @@ def edit_incoming_invoice(request, invoiceid=-1):
         except:
             request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
             return redirect('/facturen/inkomend')
-    elif request.method == 'POST':
-        invoice = IncomingInvoice.objects.get(id=invoiceid)
+
+    def post(self, request, invoice_id=-1):
+        invoice = IncomingInvoice.objects.get(id=invoice_id)
         f = IncomingInvoiceForm(request.POST, request.FILES, instance=invoice)
 
         if f.is_valid():
@@ -288,15 +210,15 @@ def edit_incoming_invoice(request, invoiceid=-1):
             return redirect('/facturen/inkomend')
         else:
             return render(request, 'Invoices/new_edit_incoming_invoice.html',
-                          {'form': f, 'invoiceid': invoice.id, 'edit': True,
-                                       'toast': get_localized_text('INVALID_FORM')})
+                          {'form': f, 'invoice_id': invoice.id, 'edit': True,
+                           'toast': get_localized_text('INVALID_FORM')})
 
 
 @login_required
 @permission_required('invoices.delete_outgoinginvoice')
-def delete_outgoing_invoice(request, invoiceid=-1):
+def delete_outgoing_invoice(request, invoice_id=-1):
     try:
-        invoice = OutgoingInvoice.objects.get(id=invoiceid)
+        invoice = OutgoingInvoice.objects.get(id=invoice_id)
         articles = Product.objects.filter(invoice=invoice)
         for article in articles:
             article.invoice = None
@@ -312,9 +234,9 @@ def delete_outgoing_invoice(request, invoiceid=-1):
 
 @login_required
 @permission_required('invoices.delete_incominginvoice')
-def delete_incoming_invoice(request, invoiceid=-1):
+def delete_incoming_invoice(request, invoice_id=-1):
     try:
-        invoice = IncomingInvoice.objects.get(id=invoiceid)
+        invoice = IncomingInvoice.objects.get(id=invoice_id)
         invoice.delete()
         request.session['toast'] = get_localized_text('DELETE_INVOICE_SUCCESS')
         return redirect('/facturen/inkomend')
