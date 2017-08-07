@@ -1,6 +1,7 @@
 import django_tables2 as tables
-from .models import Invoice, IncomingInvoice, OutgoingInvoice
 from django_tables2 import A
+
+from .models import IncomingInvoice, Invoice, OutgoingInvoice
 
 class InvoiceTable(tables.Table):
     date_created = tables.Column(verbose_name='Aangemaakt op')

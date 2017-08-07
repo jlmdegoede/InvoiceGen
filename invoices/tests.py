@@ -1,15 +1,15 @@
-from django.test import TestCase
-from companies.models import Company
-from datetime import timedelta, date
-from django.test import Client
-from django.contrib.auth.models import User
+from datetime import date, timedelta
+
+from django.contrib.auth.models import ContentType, Group, Permission, User
 from django.core.urlresolvers import reverse
-from .models import OutgoingInvoice
-from settings.models import UserSetting
-from orders.models import Product
+from django.test import Client, TestCase
 from django.utils import timezone
-from django.contrib.auth.models import Group, ContentType, Permission
-# Create your tests here.
+
+from companies.models import Company
+from orders.models import Product
+from settings.models import UserSetting
+
+from .models import OutgoingInvoice
 
 
 class InvoicesTestCase(TestCase):

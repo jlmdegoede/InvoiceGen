@@ -70,16 +70,15 @@ def get_invoices(invoice_objects, request):
     return {'invoices': invoices,  'years': year_list, 'currentYear': current_year}
 
 
-@login_required
-@permission_required('invoices.add_outgoinginvoice')
-def add_outgoing_invoice(request):
-    if request.method == 'GET':
+class AddOutgoingInvoice(View):
+    def get(self, request):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(instance=invoice)
 
         return render(request, 'Invoices/new_edit_outgoing_invoice.html',
                       {'form': f, 'invoceid': invoice.id, 'edit': False})
-    elif request.method == 'POST':
+
+    def post(self, request):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(request.POST, instance=invoice)
 
@@ -100,7 +99,7 @@ def add_outgoing_invoice(request):
         else:
             return render(request, 'Invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'invoceid': invoice.id, 'edit': False,
-                                       'toast': "Formulier ongeldig!"})
+                           'toast': "Formulier ongeldig!"})
 
 
 def add_invoice_to_products(invoice, products):

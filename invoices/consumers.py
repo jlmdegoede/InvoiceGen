@@ -1,7 +1,10 @@
+import json
+
 from channels import Channel
 from channels.sessions import channel_session
-import json
+
 from .tasks import generate_pdf_task
+
 
 @channel_session
 def ws_connect(message):

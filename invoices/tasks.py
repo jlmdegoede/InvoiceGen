@@ -1,10 +1,12 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
-from .models import OutgoingInvoice
-from settings.models import UserSetting
-from orders.models import Product
-from utils.pdf_generation import *
+
 from InvoiceGen.celery import app
+from orders.models import Product
+from settings.models import UserSetting
+from utils.pdf_generation import *
+
+from .models import OutgoingInvoice
 
 
 @app.task
