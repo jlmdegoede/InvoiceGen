@@ -79,7 +79,7 @@
             };
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("yoy_nr_of_articles").getContext("2d");
-    var yoy_nr_of_articles = new Chart(ctx).Line(data_yoy_articles);
+    var yoy_nr_of_articles = new Chart(ctx, {datasets: data_yoy_articles});
 
     var data_yoy_nr_of_words = {
                 labels: {{ year_list }},
@@ -98,7 +98,7 @@
             };
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("yoy_nr_of_words").getContext("2d");
-    var yoy_nr_of_words = new Chart(ctx).Line(data_yoy_nr_of_words);
+    var yoy_nr_of_words = new Chart(ctx, {datasets: data_yoy_nr_of_words});
 
     var data_totale_inkomsten = {
                 labels: {{ year_list }},
@@ -117,7 +117,7 @@
             };
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("totale_inkomsten").getContext("2d");
-    var totale_inkomsten = new Chart(ctx).Line(data_totale_inkomsten);
+    var totale_inkomsten = new Chart(ctx, {datasets: data_totale_inkomsten});
 
     </script>
 {% endblock %}
