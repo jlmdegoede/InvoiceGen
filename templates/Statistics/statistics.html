@@ -20,8 +20,9 @@
 {% endblock %}
 
 {% block content %}
-<h4>Statistieken {{ year }}</h4>
-    <table class="striped">
+    <div class="row">
+    <h4>Statistieken {{ year }}</h4>
+    <table class="bordered">
         <tr>
             <td width="350px">Totaalaantal opdrachten</td>
             <td>{{ nr_of_articles|last }}</td>
@@ -43,7 +44,10 @@
             <td>{{ total_hours }}</td>
         </tr>
     </table>
-    <h4>Afgelopen 5 jaar</h4>
+    </div>
+
+    <div class="row" style="margin-top: 50px;">
+    <h4>Afgelopen vijf jaar</h4>
     <div class="row">
         <div class="col s12 m12 l6">
             <h5>Totaalaantal opdrachten</h5>
@@ -60,64 +64,125 @@
             <canvas id="totale_inkomsten" width="400" height="400"></canvas>
         </div>
     </div>
+    </div>
 
     <script type="text/javascript">
-    var data_yoy_articles = {
+        var ctx = document.getElementById("yoy_nr_of_words").getContext('2d');
+
+        var nrOfWords = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ year_list }},
+                datasets: [{
+                    label: 'aantal woorden',
+                    data: {{ nr_of_words }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("yoy_nr_of_articles").getContext("2d");
+        var yoy_nr_of_articles = new Chart(ctx, {
+            type: 'bar',
+            data: {
                 labels: {{ year_list }},
                 datasets: [
                     {
+                        data: {{ nr_of_articles }},
                         label: "Totaalaantal artikelen",
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: {{ nr_of_articles }}
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
                     }
                 ]
-            };
-    // Get the context of the canvas element we want to select
-    var ctx = document.getElementById("yoy_nr_of_articles").getContext("2d");
-    var yoy_nr_of_articles = new Chart(ctx, {datasets: data_yoy_articles});
+            },
+        });
 
-    var data_yoy_nr_of_words = {
+        var data_totale_inkomsten = {
+            labels: {{ year_list }},
+            datasets: [
+                {
+                    label: "Totale inkomsten",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: {{ totale_inkomsten }}
+                }
+            ]
+        };
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("totale_inkomsten").getContext("2d");
+        var totale_inkomsten = new Chart(ctx, {
+            type: 'bar',
+            data: {
                 labels: {{ year_list }},
                 datasets: [
                     {
-                        label: "Totaalaantal woorden",
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: {{ nr_of_words }}
-                    }
-                ]
-            };
-    // Get the context of the canvas element we want to select
-    var ctx = document.getElementById("yoy_nr_of_words").getContext("2d");
-    var yoy_nr_of_words = new Chart(ctx, {datasets: data_yoy_nr_of_words});
-
-    var data_totale_inkomsten = {
-                labels: {{ year_list }},
-                datasets: [
-                    {
+                        data: {{ totale_inkomsten }},
                         label: "Totale inkomsten",
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: {{ totale_inkomsten }}
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
                     }
                 ]
-            };
-    // Get the context of the canvas element we want to select
-    var ctx = document.getElementById("totale_inkomsten").getContext("2d");
-    var totale_inkomsten = new Chart(ctx, {datasets: data_totale_inkomsten});
+            },
+        });
 
     </script>
 {% endblock %}
