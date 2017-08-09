@@ -7,12 +7,13 @@ services:
     ports:
       - '8000:8000'
     env_file: '.env'
-    command: 'daphne -b 0.0.0.0 -p 8000 InvoiceGen.asgi:channel_layer'
     depends_on:
       - redis
       - postgres
     volumes:
       - ./:/invoicegen
+    entrypoint:
+      - /invoicegen/docker-entrypoint.sh
 
   daphne_worker:
     image: 'websource'
@@ -26,7 +27,7 @@ services:
   celery_worker:
     image: 'websource'
     env_file: '.env'
-    command: 'celery -A InvoiceGen worker -l debug'
+    command: 'su -m workeruser -c "celery -A InvoiceGen worker -l info"'
     volumes_from:
       - web
     depends_on:

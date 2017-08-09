@@ -65,8 +65,9 @@ WSGI_APPLICATION = 'InvoiceGen.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'invoicegen',
-        'HOST': POSTGRES_HOST
+        'NAME': 'postgres',
+        'HOST': POSTGRES_HOST,
+        'USER': 'postgres',
     }
 }
 
