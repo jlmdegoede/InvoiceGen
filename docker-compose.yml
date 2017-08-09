@@ -10,6 +10,7 @@ services:
     depends_on:
       - redis
       - postgres
+      - smtp
     volumes:
       - ./:/invoicegen
     entrypoint:
@@ -46,6 +47,12 @@ services:
     image: 'redis:3.2.0'
     ports:
       - '127.0.0.1:6379:6379'
+
+  smtp:
+    container_name: 'smtp'
+    image: 'namshi/smtp'
+    ports:
+      - '127.0.0.1:25:25'
 
 volumes:
   pgdata:

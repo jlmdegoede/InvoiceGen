@@ -9,5 +9,3 @@ EMAIL_HOST_USER = 'emailadres'
 EMAIL_HOST_PASSWORD = 'wachtwoord'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'emailadres'
-REDIS_HOST = 'redis' # if not using Docker, change this to localhost
-POSTGRES_HOST = 'postgres' # if not using Docker, change this to localhost

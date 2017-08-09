@@ -67,7 +67,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
-        'HOST': POSTGRES_HOST,
+        'HOST': 'postgres',
         'USER': 'postgres',
     }
 }
@@ -106,7 +106,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
         "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://' + REDIS_HOST + ':6379')],  # set redis address
+           "hosts": [os.environ.get('REDIS_URL', 'redis://redis:6379')],  # set redis address
          },
         "ROUTING": "InvoiceGen.routing.channel_routing",
     },
@@ -122,6 +122,7 @@ USE_L10N = True
 USE_TZ = True
 DECIMAL_SEPARATOR = ','
 DEFAULT_COLOR = '#009688'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/

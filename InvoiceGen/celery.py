@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvoiceGen.settings')
 
 app = Celery('InvoiceGen', backend='redis')
 app.config_from_object('django.conf:settings')
-app.conf.broker_url = 'redis://' + site_settings.REDIS_HOST + ':6379/0'
+app.conf.broker_url = 'redis://redis:6379/0'
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 

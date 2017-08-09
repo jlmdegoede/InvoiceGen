@@ -21,8 +21,6 @@
     "react": "^15.6.1",
     "chart.js": "chartjs#^2.6.0",
     "reconnectingWebsocket": "^1.0.0",
-    "materialize": "^0.100.1",
-    "babel": "^5.8.38",
-    "material-design-icons": "^3.0.1"
+    "babel": "^5.8.38"
   }
 }
