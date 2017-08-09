@@ -1,0 +1,5 @@
+DEFAULT_PDF = 'pdf_default_template'
+DEFAULT_DOCX = 'docx_default_template'
+COLOR_UP = 'color_up'
+COLOR_DOWN = 'color_down'
+SITE_NAME = 'site_name'

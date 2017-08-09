@@ -232,13 +232,13 @@
 
          function monitor_pdf_status() {
            $.get({
-             url: "/factuur/status/" + taskId,
+             url: "/facturen/status/" + taskId,
              success: function(data) {
                if (data.status == 'SUCCESS') {
                  clearInterval(intervalId);
                  $("#result-div").html("Document gemaakt: ");
                   var downloadLink = $("<a />", {
-                   href: "/factuur/downloaden/pdf/{{ invoice.id }}/",
+                   href: "/facturen/downloaden/pdf/{{ invoice.id }}/",
                    text: "nu downloaden",
                    class: "btn waves-effect waves-light btn-flat"
                  }).appendTo("#result-div");

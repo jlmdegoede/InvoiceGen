@@ -1,4 +1,4 @@
-from Settings.models import Setting
+from settings.models import Setting
 
 
 def website_name(request):

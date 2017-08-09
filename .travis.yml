@@ -4,4 +4,5 @@ python:
 install:
   - pip install -r requirements.txt
   - sh travis/setup.sh
-script: coverage run --source=Agreements,Blog,Companies,HourRegistration,Invoices,Mail,Orders,Settings,Statistics,Utils manage.py test
+script: coverage run --source=agreements,companies,hour_registration,invoices,mail,orders,settings,statistics,utils manage.py test
+after_success: coveralls

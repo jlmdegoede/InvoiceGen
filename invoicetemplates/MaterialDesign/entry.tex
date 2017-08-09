@@ -1,0 +1,53 @@
+\color{textGray} 
+\pagenumbering{gobble} 
+\vspace*{25pt}
+\Huge
+\BgThispage
+\textcolor{black}{\textbf {{{ TITLE }}}}
+\BgThispage
+\vspace*{20pt}
+
+%% Gegevens Factuur
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens factuur}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Volgnummer}{{{ INVOICE_NUMBER }}}{20}
+\InvullenTwee{Datum}{{{ DATE }}}{20}
+\end{tabular} \\ 
+
+%% Gegevens Leverancier
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens leverancier}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Naam}{{{ SUPPLIER_NAME }}}{0}
+\InvullenTwee{Adres}{{{ SUPPLIER_ADDRESS }}, {{ SUPPLIER_CITY_AND_ZIPCODE }}}{0}
+\InvullenTwee{E-mail}{{{ SUPPLIER_EMAIL }}}{0}
+\InvullenTwee{IBAN}{{{ SUPPLIER_IBAN }}}{0}
+\InvullenTwee{KvK}{{{ SUPPLIER_KVK }}}{0}
+\InvullenTwee{BTW-nummer}{{{ SUPPLIER_BTW }}}{0}
+\end{tabular} \\ 
+
+%% Gegevens Afnemer
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Gegevens afnemer}}}}
+\begin{tabular}{l l}
+\InvullenTwee{Bedrijfsnaam}{{{ COMPANY_NAME }}}{0}
+\InvullenTwee{Adres}{{{ COMPANY_ADDRESS }}}{0}
+\InvullenTwee{Plaats en postcode}{{{ COMPANY_CITY_AND_ZIPCODE }}}{0}
+\end{tabular} \\ 
+
+%% Geleverd
+\LARGE 
+\noindent\colorbox{materialGreen}
+{\parbox[c][25pt][c]{\textwidth}{\hspace{15pt}\textcolor{white}{\textbf{Geleverd}}}}
+\begin{tabular}{l l l l l}
+\InvullenVijfBold{Opdracht}{Volgnummer}{Kwantiteit}{Prijs per eenheid}{Prijs}
+{{ ORDER_INSERT }}
+\cline{4-5} 
+\multicolumn{4}{r}{\large \textbf{Subtotaal}} & {\large \euro {{ SUBTOTAL }}} \\
+\multicolumn{4}{r}{\large BTW} & {\large \euro{{ BTW }}} \\ \cline{4-5}
+\multicolumn{4}{r}{\large \textbf{Totaal}} & {\large \textbf{\euro{{ TOTAL }} }} \\
+\end{tabular} \\\\ 

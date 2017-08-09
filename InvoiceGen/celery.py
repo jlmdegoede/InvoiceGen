@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 import os
-from InvoiceGen import settings
+from InvoiceGen import settings, site_settings
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvoiceGen.settings')
 
 app = Celery('InvoiceGen', backend='redis')
 app.config_from_object('django.conf:settings')
-app.conf.broker_url = 'redis://localhost:6379/0'
+app.conf.broker_url = 'redis://' + site_settings.REDIS_HOST + ':6379/0'
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 

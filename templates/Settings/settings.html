@@ -17,6 +17,7 @@
 
 {% block side_menu %}
     <a href="#data" class="collection-item" id="data-link">Persoonlijke gegevens</a>
+    <a href="#invoices" class="collection-item" id="invoices-link">Factuursjablonen</a>
     <a href="#users" class="collection-item" id="users-link">Gebruikers</a>
 {% endblock %}
 
@@ -24,6 +25,7 @@
 
     <div class="row">
         <div id="data" class="col s12 settings-tab" style="display:none;">{% include "Settings/personal_settings.html" %}</div>
+        <div id="invoices" class="col s12 settings-tab" style="display:none;">{% include "Settings/invoice_settings.html" %}</div>
         <div id="users" class="col s12 settings-tab" style="display:none;">{% include "Settings/user_settings.html" %}</div>
     </div>
 

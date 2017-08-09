@@ -26,18 +26,19 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'Orders',
-    'Agreements',
-    'Invoices',
-    'Companies',
-    'Settings',
+    'orders',
+    'agreements',
+    'invoices',
+    'companies',
+    'settings',
     'django_bootstrap_breadcrumbs',
-    'HourRegistration',
-    'Statistics',
-    'Mail',
+    'hour_registration',
+    'statistics',
+    'mail',
     'django_tables2',
     'django.contrib.humanize',
     'channels',
+    'rest_framework',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -65,6 +66,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'invoicegen',
+        'HOST': POSTGRES_HOST
     }
 }
 
@@ -102,7 +104,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",  # use redis backend
         "CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
+           "hosts": [os.environ.get('REDIS_URL', 'redis://' + REDIS_HOST + ':6379')],  # set redis address
          },
         "ROUTING": "InvoiceGen.routing.channel_routing",
     },
@@ -123,8 +125,12 @@ DEFAULT_COLOR = '#009688'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = '/var/www/FactuurMaker/static/images'
+STATIC_ROOT = 'static'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "staticfiles"),
+    os.path.join(BASE_DIR, "bower_components"),
+]
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
 MEDIA_URL = '/files/'
 
 CELERY_ACCEPT_CONTENT = ['json']
@@ -136,3 +142,11 @@ if 'test' in sys.argv:
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'invoicegen'
     }
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissions'
+    ]
+}

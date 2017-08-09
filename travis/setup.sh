@@ -7,5 +7,7 @@ EMAIL_HOST_USER = "email"
 EMAIL_HOST_PASSWORD = "ww"
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "invoicegen@@test"
+REDIS_HOST = "localhost"
+POSTGRES_HOST = "localhost"
 '> InvoiceGen/site_settings.py
 

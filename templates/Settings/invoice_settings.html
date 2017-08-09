@@ -1,0 +1,62 @@
+<h4>Factuursjablonen</h4>
+<h5>pdf</h5>
+<div class="row">
+    {% for template in invoices.templates.pdf %}
+        <div class="col s12 m7">
+            <div class="card">
+                <div class="card-image">
+                    <img src="/files/{{ template.preview_image }}">
+                    <span class="card-title">{{ template }}</span>
+                </div>
+                <div class="card-action">
+                    {% if template.id == invoices.default_pdf %}
+                        Standaardtemplate
+                    {% else %}
+                        <a href="#" data-id="{{ template.id }}" data-type="pdf">Als standaard instellen</a>{% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<h5>docx</h5>
+<div class="row">
+    {% for template in invoices.templates.docx %}
+        <div class="col s12 m7">
+            <div class="card">
+                <div class="card-image">
+                    <img src="/files/{{ template.preview_image }}">
+                    <span class="card-title">{{ template }}</span>
+                </div>
+                <div class="card-action">
+                    {% if template.id == invoices.default_docx %}
+                        Standaardtemplate
+                    {% else %}
+                        <a href="#" data-id="{{ template.id }}" data-type="docx">Als standaard instellen</a>{% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.template').click(function (e) {
+            e.preventDefault();
+            invoiceId = $(this).attr('data-id');
+            invoiceType = $(this).attr('data-type');
+
+            $.ajax({
+                type: "POST",
+                url: '{% url "default_invoice" %}',
+                data: {
+                    type: invoiceType,
+                    template_id: invoiceId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: window.location.reload(true),
+
+            })
+        });
+    });
+</script>

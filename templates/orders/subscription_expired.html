@@ -1,0 +1,25 @@
+{% extends 'orders/base.html' %}
+{% load django_bootstrap_breadcrumbs %}
+{% load staticfiles %}
+{% block title %}
+    Abonnement verlopen
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Instellingen" "Abonnement" %}
+{% endblock %}
+
+{% block content %}
+    <h4>Sorry, maar je abonnement op InvoiceGen is verlopen</h4>
+    <p class="flow-text">Je abonnement is geldig tot en met {{ valid_until }} en daarom nu dus verlopen.</p>
+    <p class="flow-text">Het is mogelijk om te verlengen voor maar 5 euro per maand, elke maand opzegbaar, waarna je zo weer alle geweldige functies van InvoiceGen kunt gebruiken.</p>
+    <a class="btn waves-effect" href="/instellingen/verlengen/">Nu verlengen</a>
+    <a class="btn waves-effect" href="#!">Mijn account opzeggen</a>
+
+    <p class="flow-text">Heb je net verlengd? <a href="#" onClick="window.location.reload();return false;">Vernieuw</a> even de pagina om weer in te kunnen loggen.</p>
+{% endblock %}
