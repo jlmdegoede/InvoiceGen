@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'channels',
     'rest_framework',
+    'autoadmin'
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
