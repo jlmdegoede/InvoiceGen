@@ -12,12 +12,21 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-from InvoiceGen.site_settings import *
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 ROOT_HOSTCONF = 'InvoiceGen.hosts'
+
+ALLOWED_HOSTS = ['*']
+DEBUG = False
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# Host for sending e-mail.
+EMAIL_HOST = 'smtp'
+EMAIL_PORT = 25
+DEFAULT_FROM_EMAIL = 'email@invoicegen'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -133,7 +142,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
     os.path.join(BASE_DIR, "bower_components"),
 ]
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/media')
 MEDIA_URL = '/files/'
 
 CELERY_ACCEPT_CONTENT = ['json']

@@ -13,6 +13,8 @@ services:
       - smtp
     volumes:
       - ./:/invoicegen
+    env_file:
+      - .env
     entrypoint:
       - /invoicegen/docker-entrypoint.sh
 
