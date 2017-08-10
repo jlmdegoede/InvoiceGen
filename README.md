@@ -27,15 +27,14 @@ Invoicegen is op dit moment nog in het betastadium, dus verwacht nog niet zo vee
 ## Aan de slag
 Om aan de slag te gaan met Invoicegen, maak je gebruik van Docker. Als eerste hal je een redis en postgres-container binnen:
 
-- `docker pull redis && docker pull postgres && docker pull jlmdegoede/invoicegen`
+- `docker pull postgres && docker pull jlmdegoede/invoicegen`
 
 Start de containers dan als volgt:
 
-- ` docker run --name igredis -d redis`
 - `docker run --name igpostgres -d postgres`.
 
 Vervolgens start je Invoicegen met 
-- `docker run -e SECRET_KEY=<je-geheime-sleutel> --link igredis:redis --link igpostgres:postgres -p 80:80 jlmdegoede/invoicegen`
+- `docker run -e SECRET_KEY=<je-geheime-sleutel> --link igpostgres:postgres -p 80:80 jlmdegoede/invoicegen`
 
 Zorg dat je een goede geheime sleutel invult. Je kunt er bijvoorbeeld [hier](http://www.miniwebtool.com/django-secret-key-generator/) een genereren.
 Ga in de browser naar http://127.0.0.1 om in te loggen.

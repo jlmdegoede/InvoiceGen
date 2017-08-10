@@ -44,12 +44,6 @@ services:
     volumes:
       - 'pgdata:/var/lib/postgresql/data/'
 
-  redis:
-    container_name: 'redis'
-    image: 'redis:3.2.0'
-    ports:
-      - '6379:6379'
-
   smtp:
     container_name: 'smtp'
     image: 'namshi/smtp'
