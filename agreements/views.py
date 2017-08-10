@@ -1,6 +1,6 @@
 from base64 import b64decode
 
-import InvoiceGen.site_settings
+import InvoiceGen.settings
 import settings.helper
 from agreements.forms import AgreementForm, AgreementTextForm, SignatureForm
 from agreements.models import *
@@ -76,7 +76,7 @@ def add_agreement(request):
 
 def view_agreement(request, url):
     agreement = Agreement.objects.get(url=url)
-    agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
+    agreement.complete_url = 'https://' + InvoiceGen.settings.ALLOWED_HOSTS[
         0] + '/overeenkomsten/ondertekenen/' + agreement.url
     agreement.full_name = settings.helper.get_user_fullname()
     if request.method == 'GET':
@@ -98,7 +98,7 @@ def sign_agreement_contractor(request, url):
             agreement.signed_by_contractor_at = now
             agreement.signed_by_contractor = True
             agreement.save()
-            agreement.complete_url = 'https://' + InvoiceGen.site_settings.ALLOWED_HOSTS[
+            agreement.complete_url = 'https://' + InvoiceGen.settings.ALLOWED_HOSTS[
                 0] + '/overeenkomsten/ondertekenen/' + agreement.url
             return JsonResponse({'success': True})
         else:

@@ -7,7 +7,7 @@ from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
 from InvoiceGen.settings import DEFAULT_COLOR
-from InvoiceGen.site_settings import ALLOWED_HOSTS
+from InvoiceGen.settings import ALLOWED_HOSTS
 from invoices.models import InvoiceTemplate
 from mail.views import create_and_send_email_without_form
 from settings.forms import *

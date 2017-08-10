@@ -89,3 +89,4 @@ static/images
 *.rdb
 
 supervisord.pid
+.env

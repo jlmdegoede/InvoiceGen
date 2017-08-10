@@ -1,0 +1,71 @@
+version: '2'
+
+services:
+  web:
+    build: '.'
+    image: 'websource'
+    ports:
+      - '8001:8001'
+    env_file: '.env'
+    depends_on:
+      - redis
+      - postgres
+      - smtp
+    volumes:
+      - ./:/invoicegen
+    env_file:
+      - .env
+    entrypoint:
+      - /invoicegen/docker-entrypoint.sh
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./config/nginx/invoicegen.conf:/etc/nginx/conf.d/default.conf
+      - ./:/invoicegen
+    depends_on:
+      - web
+
+  daphne_worker:
+    image: 'websource'
+    env_file: '.env'
+    command: 'python3 manage.py runworker --threads 4'
+    volumes_from:
+      - web
+    depends_on:
+      - web
+
+  celery_worker:
+    image: 'websource'
+    env_file: '.env'
+    command: 'su -m workeruser -c "celery -A InvoiceGen worker -l info"'
+    volumes_from:
+      - web
+    depends_on:
+      - web
+
+  postgres:
+    container_name: 'postgres'
+    image: 'postgres:9.5.7'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data/'
+
+  redis:
+    container_name: 'redis'
+    image: 'redis:3.2.0'
+    ports:
+      - '6379:6379'
+
+  smtp:
+    container_name: 'smtp'
+    image: 'namshi/smtp'
+    ports:
+      - '127.0.0.1:25:25'
+
+volumes:
+  pgdata:

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load autoadmin_tags %}
 
 {% block title %}
     Aanmelden
@@ -18,6 +19,9 @@
     {% if error %}
         <h5>{{ error }}</h5>
     {% endif %}
+
+    {% autoadmin_partial %}
+    {% autoadmin_properties %}
 
     <form id="login_form" method="post" action="{% url "user_login" %}">
         {% csrf_token %}

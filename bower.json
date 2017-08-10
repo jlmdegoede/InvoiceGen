@@ -1,0 +1,26 @@
+{
+  "name": "invoicegen",
+  "homepage": "https://github.com/Donenzone/FactuurMaker",
+  "authors": [
+    "Jochem <jochem@degoede.email>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "jquery-ui": "^1.12.1",
+    "react": "^15.6.1",
+    "chart.js": "chartjs#^2.6.0",
+    "reconnectingWebsocket": "^1.0.0",
+    "babel": "^5.8.38"
+  }
+}
