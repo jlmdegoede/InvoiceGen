@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 RUN apt-get update
-RUN apt-get -y install nginx supervisor nodejs-legacy npm python3 python3-pip git python3-setuptools
+RUN apt-get upgrade -y
+RUN apt-get -y install nginx texlive supervisor nodejs-legacy npm python3 python3-pip git python3-setuptools
 
 ADD requirements.txt .
 RUN pip3 install -r requirements.txt
