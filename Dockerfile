@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get -y install nginx texlive supervisor nodejs-legacy npm python3 python3-pip git python3-setuptools redis-server wget unzip fontconfig
+RUN apt-get -y install nginx texlive texlive-xetex supervisor nodejs-legacy npm python3 python3-pip git python3-setuptools redis-server wget unzip fontconfig
 
 RUN wget https://fonts.google.com/download?family=Roboto
 RUN unzip download?family=Roboto
