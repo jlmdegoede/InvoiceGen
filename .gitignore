@@ -59,7 +59,7 @@ docs/_build/
 # PyBuilder
 target/
 
-Invoicegen/site_settings.py
+invoicegen/site_settings.py
 db.sqlite3
 
 static/images

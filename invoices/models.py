@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
 from companies.models import *
-from Invoicegen.settings import ALLOWED_HOSTS
+from invoicegen.settings import ALLOWED_HOSTS
 
 
 class Invoice(models.Model):

@@ -18,10 +18,10 @@ load_dotenv(find_dotenv())
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-ROOT_HOSTCONF = 'Invoicegen.hosts'
+ROOT_HOSTCONF = 'invoicegen.hosts'
 
 ALLOWED_HOSTS = ['*']
-DEBUG = False
+DEBUG = True
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Host for sending e-mail.
@@ -37,6 +37,14 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
+    'autoadmin',
+    'channels',
+    'django_bootstrap_breadcrumbs',
+    'django_tables2',
+    'django.contrib.humanize',
+    'markdownx',
+    'rest_framework',
+
     'orders',
     'agreements',
     'invoices',
@@ -45,13 +53,6 @@ INSTALLED_APPS = (
     'statistics',
     'hour_registration',
     'mail',
-
-    'autoadmin'
-    'channels',
-    'django_bootstrap_breadcrumbs',
-    'django_tables2',
-    'django.contrib.humanize',
-    'rest_framework',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -67,9 +68,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'Invoicegen.urls'
+ROOT_URLCONF = 'invoicegen.urls'
 
-WSGI_APPLICATION = 'Invoicegen.wsgi.application'
+WSGI_APPLICATION = 'invoicegen.wsgi.application'
 
 
 # Database
@@ -94,10 +95,10 @@ CONTEXT_PROCESSORS = [
     'django.template.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.template.context_processors.request',
-    'Invoicegen.context_processor.website_name',
-    'Invoicegen.context_processor.color_up',
-    'Invoicegen.context_processor.color_down',
-    'Invoicegen.context_processor.attach_toast_to_response']
+    'invoicegen.context_processor.website_name',
+    'invoicegen.context_processor.color_up',
+    'invoicegen.context_processor.color_down',
+    'invoicegen.context_processor.attach_toast_to_response']
 
 TEMPLATES = [
     {
@@ -120,7 +121,7 @@ CHANNEL_LAYERS = {
         "CONFIG": {
            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
          },
-        "ROUTING": "Invoicegen.routing.channel_routing",
+        "ROUTING": "invoicegen.routing.channel_routing",
     },
 }
 

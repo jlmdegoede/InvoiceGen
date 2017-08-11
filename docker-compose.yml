@@ -30,7 +30,7 @@ services:
   celery_worker:
     image: 'websource'
     env_file: '.env'
-    command: 'su -m workeruser -c "celery -A Invoicegen worker -l info"'
+    command: 'su -m workeruser -c "celery -A invoicegen worker -l info"'
     volumes_from:
       - web
     depends_on:

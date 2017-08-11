@@ -1,6 +1,6 @@
 import os
 
-from Invoicegen.settings import BASE_DIR
+from invoicegen.settings import BASE_DIR
 
 
 def get_temp_folder_path():

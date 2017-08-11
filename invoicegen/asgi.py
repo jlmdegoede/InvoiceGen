@@ -6,5 +6,5 @@ ASGI applications at "liveblog.asgi:channel_layer" as their channel layer.
 
 import os
 from channels.asgi import get_channel_layer
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Invoicegen.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "invoicegen.settings")
 channel_layer = get_channel_layer()

@@ -9,7 +9,7 @@ from django.views import View
 from rest_framework import viewsets
 
 import mail.views
-from Invoicegen.celery import app
+from invoicegen.celery import app
 from invoices.forms import *
 from invoices.tasks import task_generate_pdf
 from settings.localization_nl import get_localized_text

@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.mail import EmailMessage
-from Invoicegen.settings import DEFAULT_FROM_EMAIL
+from invoicegen.settings import DEFAULT_FROM_EMAIL
 
 # Create your models here.
 

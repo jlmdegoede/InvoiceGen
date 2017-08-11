@@ -2,7 +2,7 @@ from settings.models import Setting
 
 
 def website_name(request):
-    site_name = "Invoicegen"
+    site_name = "invoicegen"
     site_name_objects = Setting.objects.filter(key='site_name')
     if site_name_objects.count() != 0:
         site_name = site_name_objects[0].value

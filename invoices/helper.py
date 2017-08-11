@@ -3,7 +3,7 @@ from datetime import date
 from django.shortcuts import HttpResponse
 from django_tables2 import RequestConfig
 
-from Invoicegen.settings import BASE_DIR
+from invoicegen.settings import BASE_DIR
 from orders.models import Product
 from settings.const import DEFAULT_DOCX
 from settings.helper import get_setting

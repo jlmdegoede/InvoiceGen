@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 
-from Invoicegen.celery import app
+from invoicegen.celery import app
 from orders.models import Product
 from settings.helper import get_setting
 from settings.const import DEFAULT_PDF
