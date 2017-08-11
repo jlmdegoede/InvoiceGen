@@ -35,10 +35,8 @@ def agreementtext_index(request):
                   {'model_agreements': model_agreements})
 
 
-@login_required
-@permission_required('agreements.add_agreement')
-def add_agreement(request):
-    if request.method == 'POST':
+class AddAgreement(View):
+    def post(self, request):
         agreement = Agreement()
         agreement_form = AgreementForm(request.POST, instance=agreement)
         if agreement_form.is_valid():
@@ -46,21 +44,45 @@ def add_agreement(request):
             agreement_form.save(commit=False)
             agreement.created = timezone.now()
             agreement.url = get_random_string(length=32)
-            agreement.agreement_text_copy = replace_text(agreement.agreement_text.text, data['article_concerned'])
             agreement.company = data['company']
             agreement.save()
             for article in data['article_concerned']:
                 agreement.article_concerned.add(article)
             agreement.save()
             request.session['toast'] = 'Overeenkomst toegevoegd'
-            return redirect(reverse('agreement_index'))
+            return redirect(reverse('new_agreement_step_two', kwargs={'agreement_id': agreement.id}))
         else:
             return render(request, 'agreements/new_edit_agreement.html',
                           {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form})
-    else:
+
+    def get(self, request):
         form = AgreementForm()
         articles = Product.objects.filter(done=False)
         return render(request, 'agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
+
+
+class AddAgreementStepTwo(View):
+    def post(self, request, agreement_id):
+        agreement = Agreement.objects.get(id=agreement_id)
+        variables = self.agreement_variables(agreement_id)
+        key_value_list = []
+        for variable in variables.all():
+            post_name = 'variable' + str(variable.id)
+            value = request.POST[post_name]
+            key_value_list.append({variable.name: value})
+        agreement.agreement_text_copy = replace_text(agreement.agreement_text.text, agreement.article_concerned.all())
+        agreement.save()
+        request.session['toast'] = 'Overeenkomst toegevoegd'
+        return redirect(reverse('agreement_index'))
+
+    def get(self, request, agreement_id):
+        variables = self.agreement_variables(agreement_id)
+        return render(request, 'agreements/new_agreement_step_two.html', {'variables': variables, 'agreement_id': agreement_id})
+
+    def agreement_variables(self, agreement_id):
+        agreement = Agreement.objects.get(id=agreement_id)
+        variables = agreement.agreement_text.variables
+        return variables
 
 
 def view_agreement(request, url):
