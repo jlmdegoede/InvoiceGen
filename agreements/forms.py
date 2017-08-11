@@ -2,17 +2,24 @@ from django import forms
 
 from markdownx.fields import MarkdownxFormField
 
-from agreements.models import Agreement, AgreementText
 from orders.models import *
+
+from .models import Agreement, AgreementText, AgreementTextVariable
+
+
+class AgreementTextVariableForm(forms.ModelForm):
+    name = forms.CharField(label="Naam", max_length=200)
+    description = forms.CharField(label="Omschrijving", max_length=200)
 
 
 class AgreementTextForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)
     text = MarkdownxFormField()
+    variables = forms.ModelMultipleChoiceField(queryset=AgreementTextVariable.objects.all(), required=False)
 
     class Meta:
-        model = Product
-        fields = ('title', 'text',)
+        model = AgreementText
+        fields = ('title', 'text', 'variables')
 
 
 class AgreementForm(forms.ModelForm):

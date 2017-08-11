@@ -1,4 +1,4 @@
-{% extends 'agreements/model_agreements.html' %}
+{% extends 'agreements/agreementtext/agreementtext_index.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% block model_agreements_active %}active{% endblock %}
@@ -18,13 +18,13 @@
 {% block content %}
     <script src="{% static "handlebars/handlebars.min.js" %}" type="text/javascript"></script>
 
-    {% if edit %}
-        <h4>Modelovereenkomst bewerken</h4>
-    {% else %}
-        <h4>Modelovereenkomst toevoegen</h4>
-    {% endif %}
+    <h4>Modelovereenkomst bewerken</h4>
 
-    <p>
+    <p class="flow-text">Zodra je een nieuwe overeenkomst aanmaakt, worden deze variabelen automatisch ingevuld met de relevante informatie,
+    zoals de opdrachtgever en de opdrachten voor die overeenkomst.<p/>
+
+    <p class="flow-text">Wijzigingen die je nu maakt zijn alleen van toepassing op nieuwe overeenkomsten.</p>
+
         Voer hieronder de tekst van de modelovereenkomst in.
         Je kunt de volgende variabelen in de modelovereenkomst gebruiken:
     <ul>
@@ -46,15 +46,8 @@
             <OMSCHRIJVING_OPDRACHT>{% endfilter %}</li>
     </ul>
 
-    Zodra je een nieuwe overeenkomst aanmaakt, worden deze variabelen automatisch ingevuld met de relevante informatie,
-    zoals de opdrachtgever en de opdrachten voor die overeenkomst.</p>
-    {% if edit %}
-        <form id="article_form" class="col s12" method="post"
-              action="{% url "edit_model_agreement" model_agreement_id %}">
-        Wijzigingen die je nu maakt zijn alleen van toepassing op nieuwe overeenkomsten.
-    {% else %}
-        <form id="article_form" class="col s12" method="post" action="{% url "add_agreement_text" %}">
-    {% endif %}
+    <form id="article_form" class="col s12" method="post"
+          action="{% url "edit_model_agreement" model_agreement_id %}">
 {% csrf_token %}
 
 <div class="row">
@@ -71,11 +64,17 @@
         <div class="col s6">
             {{ form.media }}
         </div>
+        <div class="input-field col s12">
+            {{ form.variables }}
+            <label for="{{ form.variables.id_for_label }}">Selecteer variabelen (of voeg nieuwe toe hieronder)</label>
+            {{ form.errors.variables }}
+        </div>
     </div>
     <div class="row">
+        <h5>Extra variabelen toevoegen</h5>
         <div class="input-field col s6">
-            <input placeholder="<VARIABELE_NAAM>" id="var_name1" name="var_name1" type="text" class="validate">
-            <label for="var_name1">Variabele naam</label>
+            <input placeholder="<VARIABELENAAM>" id="var_name1" name="var_name1" type="text" class="validate var_name">
+            <label for="var_name1">Variabelenaam</label>
         </div>
         <div class="input-field col s6">
             <input id="desc1" name="desc1" type="text" class="validate">
@@ -95,32 +94,37 @@
     <br/>
     <br/>
     <a href="javascript: history.go(-1)" class="waves-effect waves-teal btn-flat">Annuleren</a>
-</form>
     </div>
+</form>
 
     <script id="entry-template" type="text/x-handlebars-template">
         <div class="input-field col s6">
-            <input placeholder="<VARIABELE_NAAM>" id="var_name{% templatetag openvariable %}nr}}" name="var_name{% templatetag openvariable %}nr{% templatetag closevariable %}" type="text" class="validate varname">
-            <label for="var_name{% templatetag openvariable %}nr{% templatetag closevariable %}">Variabele naam</label>
+            <input placeholder="<VARIABELENAAM>" id="var_name{% templatetag openvariable %}nr}}"
+                   name="var_name{% templatetag openvariable %}nr{% templatetag closevariable %}" type="text"
+                   class="validate var_name">
+            <label for="var_name{% templatetag openvariable %}nr{% templatetag closevariable %}">Variabelenaam</label>
         </div>
         <div class="input-field col s6">
-            <input id="desc{% templatetag openvariable %}nr{% templatetag closevariable %}" name="desc{{nr}}" type="text" class="validate desc">
+            <input id="desc{% templatetag openvariable %}nr{% templatetag closevariable %}"
+                   name="desc{% templatetag openvariable %}nr{% templatetag closevariable %}" type="text"
+                   class="validate desc">
             <label for="desc{% templatetag openvariable %}nr{% templatetag closevariable %}">Omschrijving</label>
         </div>
     </script>
 
     <script type="text/javascript">
-    $(document).ready(function() {
-        $('#extravar').click(function(e) {
-            var source   = $("#entry-template").html();
-            var template = Handlebars.compile(source);
-            var counter = $('.varname').length + 1;
-            var context = {nr: counter};
-            var html = template(context);
-            $('#attachpoint').append(html);
-            Materialize.updateTextFields();
+        $(document).ready(function () {
+            $('select').material_select();
+            $('#extravar').click(function (e) {
+                var source = $("#entry-template").html();
+                var template = Handlebars.compile(source);
+                var counter = $('.var_name').length + 1;
+                var context = {nr: counter};
+                var html = template(context);
+                $('#attachpoint').append(html);
+                Materialize.updateTextFields();
+            });
         });
-    });
     </script>
 
 {% endblock %}

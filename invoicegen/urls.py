@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from markdownx import urls as markdownx
 from rest_framework import routers
 
-import agreements.views
 import companies.views
 import hour_registration.views
 import mail.views
@@ -25,7 +24,6 @@ router.register(r'companies', CompanyViewSet)
 router.register(r'outgoing-invoices', OutgoingInvoiceViewSet)
 
 urlpatterns = [
-
                   url(r'^$', orders.views.index, name='index'),
                   url(r'^accounts/login/$', orders.views.user_login, name='user_login'),
                   url(r'^logout/$', orders.views.user_logout, name='logout'),
@@ -34,6 +32,7 @@ urlpatterns = [
 
                   url(r'^opdracht/', include('orders.urls')),
                   url(r'^facturen/', include('invoices.urls')),
+                  url(r'^overeenkomsten/', include('agreements.urls')),
 
                   url(r'^email/templates/$', mail.views.list_view_templates, name='list_view_templates'),
                   url(r'^email/templates/nieuw/$', mail.views.NewEditEmailTemplate.as_view(),
@@ -86,30 +85,6 @@ urlpatterns = [
                       name='delete_time_tracking'),
                   url(r'^urenregistratie/omschrijving/$', hour_registration.views.add_description_to_hourregistration,
                       name='add_description_to_hourregistration'),
-
-                  url(r'^overeenkomsten/$', agreements.views.agreement_index,
-                      name='agreement_index'),
-                  url(r'^overeenkomsten/modelovereenkomsten/nieuw/$', agreements.views.add_agreement_text,
-                      name='add_agreement_text'),
-                  url(r'^overeenkomsten/nieuw/$', agreements.views.add_agreement,
-                      name='add_agreement'),
-                  url(r'^overeenkomsten/ondertekenen/(?P<url>\w+)/$', agreements.views.view_agreement,
-                      name='view_agreement'),
-                  url(r'^overeenkomsten/ondertekenen/contractor/(?P<url>\w+)/$',
-                      agreements.views.sign_agreement_contractor,
-                      name='sign_contractor'),
-                  url(r'^overeenkomsten/ondertekenen/client/(?P<url>\w+)/$', agreements.views.sign_agreement_client,
-                      name='sign_client'),
-                  url(r'^overeenkomsten/verwijderen/(?P<agreement_id>\d+)/$', agreements.views.delete_agreement,
-                      name='delete_agreement'),
-                  url(r'^overeenkomsten/modelovereenkomsten/$', agreements.views.index_model_agreements,
-                      name='index_model_agreements'),
-                  url(r'^overeenkomsten/modelovereenkomsten/bewerken/(?P<model_agreement_id>\d+)/$',
-                      agreements.views.edit_model_agreement,
-                      name='edit_model_agreement'),
-                  url(r'^overeenkomsten/modelovereenkomsten/verwijderen/(?P<model_agreement_text_id>\d+)/$',
-                      agreements.views.delete_model_agreement,
-                      name='delete_model_agreement'),
 
                   url(r'^wachtwoord-vergeten/$', django.contrib.auth.views.password_reset,
                       {'post_reset_redirect': '/wachtwoord-vergeten/klaar/'},

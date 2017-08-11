@@ -30,14 +30,14 @@ class AgreementTestCase(TestCase):
         self.user.save()
         self.c = Client()
 
-    def test_redirect_index_model_agreements(self):
-        response = self.c.get(reverse('index_model_agreements'))
+    def test_redirect_agreementtext_index(self):
+        response = self.c.get(reverse('agreementtext_index'))
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/accounts/login/?next=/' in response.url)
 
-    def test_index_model_agreements(self):
+    def test_agreementtext_index(self):
         self.c.login(username='testuser', password='secret')
-        response = self.c.get(reverse('index_model_agreements'))
+        response = self.c.get(reverse('agreementtext_index'))
         self.assertTrue(self.text.title in response.context['model_agreements'].rows[0].get_cell(0))
         self.assertIsNotNone(response.context['model_agreements'].rows)
 

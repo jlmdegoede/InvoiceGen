@@ -4,7 +4,7 @@
     {% if user.is_authenticated %}
         <a href="{% url "agreement_index" %}"
            class="collection-item {% block agreements_active %}{% endblock %}">Overeenkomsten beheren</a>
-        <a href="{% url "index_model_agreements" %}"
+        <a href="{% url "agreementtext_index" %}"
            class="collection-item {% block model_agreements_active %}{% endblock %}">Modelovereenkomsten beheren</a>
     {% endif %}
 {% endblock %}

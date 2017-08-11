@@ -2,19 +2,20 @@ from base64 import b64decode
 
 import invoicegen.settings
 import settings.helper
-from agreements.forms import AgreementForm, AgreementTextForm
-from agreements.models import *
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
+from django.views import View
 from django.shortcuts import *
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django_tables2 import RequestConfig
+from django.forms import formset_factory
 
 from .tables import AgreementTable, AgreementTextTable
-from .models import AgreementTextVariable
 from .helper import replace_text
+from .forms import AgreementForm, AgreementTextForm, AgreementTextVariableForm
+from .models import *
 
 
 @login_required
@@ -27,10 +28,11 @@ def agreement_index(request):
 
 @login_required
 @permission_required('agreements.view_agreementtext')
-def index_model_agreements(request):
+def agreementtext_index(request):
     model_agreements = AgreementTextTable(AgreementText.objects.all())
     RequestConfig(request).configure(model_agreements)
-    return render(request, 'agreements/model_agreements.html', {'model_agreements': model_agreements})
+    return render(request, 'agreements/agreementtext/agreementtext_index.html',
+                  {'model_agreements': model_agreements})
 
 
 @login_required
@@ -51,7 +53,7 @@ def add_agreement(request):
                 agreement.article_concerned.add(article)
             agreement.save()
             request.session['toast'] = 'Overeenkomst toegevoegd'
-            return redirect('/overeenkomsten/')
+            return redirect(reverse('agreement_index'))
         else:
             return render(request, 'agreements/new_edit_agreement.html',
                           {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form})
@@ -122,10 +124,10 @@ def delete_agreement(request, agreement_id=-1):
         agreement_to_delete = Agreement.objects.get(id=agreement_id)
         agreement_to_delete.delete()
         request.session['toast'] = 'Overeenkomst verwijderd'
-        return redirect('/overeenkomsten')
+        return redirect(reverse('agreement_index'))
     except:
         request.session['toast'] = 'Verwijderen mislukt'
-        return redirect('/overeenkomsten')
+        return redirect(reverse('agreement_index'))
 
 
 @login_required
@@ -135,62 +137,70 @@ def delete_model_agreement(request, model_agreement_text_id=-1):
         agreement_text_to_delete = AgreementText.objects.get(id=model_agreement_text_id)
         agreement_text_to_delete.delete()
         request.session['toast'] = 'Modelvereenkomst verwijderd'
-        return redirect('/overeenkomsten/modelovereenkomsten')
+        return redirect(reverse('agreementtext_index'))
     except:
         request.session['toast'] = 'Verwijderen mislukt'
-        return redirect('/overeenkomsten/modelovereenkomsten')
+        return redirect(reverse('agreementtext_index'))
 
 
-
-@login_required
-@permission_required('agreements.change_agreementtext')
-def edit_model_agreement(request, model_agreement_id):
-    if request.method == 'POST':
-        model_agreement = AgreementText.objects.get(id=model_agreement_id)
-        form = AgreementTextForm(request.POST, instance=model_agreement)
+class EditAgreementText(View):
+    def post(self, request, model_agreement_id):
+        agreementtext = AgreementText.objects.get(id=model_agreement_id)
+        form = AgreementTextForm(request.POST, instance=agreementtext)
         if form.is_valid():
             form.save()
-            return redirect('/overeenkomsten')
+            variable_list = get_extra_variables(request)
+            agreementtext.variables.add(*variable_list)
+            agreementtext.save()
+            return redirect(reverse('agreementtext_index'))
         else:
-            return render(request, 'agreements/new_edit_agreement_text.html',
+            return render(request, 'agreements/agreementtext/edit_agreementtext.html',
                           {'form': form, 'edit': True, 'error': form.errors,
-                           'model_agreement_id': model_agreement.id})
-    else:
-        try:
-            model_agreement = AgreementText.objects.get(id=model_agreement_id)
-            form = AgreementTextForm(instance=model_agreement)
-            return render(request, 'agreements/new_edit_agreement_text.html',
-                          {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id})
-        except:
-            return redirect(to=index_model_agreements)
+                           'model_agreement_id': agreementtext.id})
+
+    def get(self, request, model_agreement_id):
+        model_agreement = AgreementText.objects.get(id=model_agreement_id)
+        form = AgreementTextForm(instance=model_agreement)
+        return render(request, 'agreements/agreementtext/edit_agreementtext.html',
+                      {'form': form, 'model_agreement_id': model_agreement.id})
 
 
-@login_required
-@permission_required('agreements.add_agreementtext')
-def add_agreement_text(request):
-    if request.method == 'POST':
+class AddAgreementText(View):
+    def post(self, request):
         agree_text = AgreementText()
         agree_text_form = AgreementTextForm(request.POST, instance=agree_text)
         if agree_text_form.is_valid():
             agree_text_form.save(commit=False)
             agree_text.edited_at = timezone.now()
-
-            var_obj = request.POST['var_name1']
-            variable_list = []
-            while var_obj is not None:
-                desc = request.POST['desc1']
-                variable = AgreementTextVariable(name=var_obj, description=desc)
-                variable.save()
-                variable_list.append(variable)
-                
-
+            agree_text.save()
+            variable_list = get_extra_variables(request)
+            agree_text.variables.add(*variable_list)
             agree_text.save()
             request.session['toast'] = 'Modelovereenkomst toegevoegd'
-            return redirect('/overeenkomsten')
+            return redirect(reverse('agreementtext_index'))
         else:
-            return render(request, 'agreements/new_edit_agreement_text.html',
+            return render(request, 'agreements/agreementtext/new_agreementtext.html',
                           {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form,
                            'error': agree_text_form.errors})
-    else:
+
+    def get(self, request):
         form = AgreementTextForm()
-        return render(request, 'agreements/new_edit_agreement_text.html', {'form': form})
+        return render(request, 'agreements/agreementtext/new_agreementtext.html', {'form': form})
+
+def get_extra_variables(request):
+    var_obj = request.POST['var_name1']
+    counter = 1
+    variable_list = []
+    while var_obj is not None:
+        desc_variable_name = 'desc' + str(counter)
+        desc = request.POST[desc_variable_name]
+        variable = AgreementTextVariable(name=var_obj, description=desc)
+        variable.save()
+        variable_list.append(variable)
+        counter += 1
+        key_variable_name = 'var_name' + str(counter)
+        if key_variable_name in request.POST:
+            var_obj = request.POST[key_variable_name]
+        else:
+            var_obj = None
+    return variable_list
