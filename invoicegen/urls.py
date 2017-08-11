@@ -33,6 +33,7 @@ urlpatterns = [
                   url(r'^opdracht/', include('orders.urls')),
                   url(r'^facturen/', include('invoices.urls')),
                   url(r'^overeenkomsten/', include('agreements.urls')),
+                  url(r'^activiteiten/', include('activities.urls')),
 
                   url(r'^email/templates/$', mail.views.list_view_templates, name='list_view_templates'),
                   url(r'^email/templates/nieuw/$', mail.views.NewEditEmailTemplate.as_view(),

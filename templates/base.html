@@ -60,12 +60,12 @@
                             class="left material-icons" style="margin-right:-5px;">search</i>&nbsp;</a></li>
 
                     {% if perms.Orders.view_product %}
-                        <li class="{% block orders_active %}{% endblock %}"><a href="{% url "index" %}"><i
+                        <li class="{% block activity_active %}{% endblock %}"><a href="{% url "activity_index" %}"><i
                                 class="material-icons left">local_activity</i>Activiteiten</a></li>
                     {% endif %}
 
                     {% if perms.Orders.view_product %}
-                        <li class="{% block activity_active %}{% endblock %}"><a href="{% url "index" %}"><i
+                        <li class="{% block orders_active %}{% endblock %}"><a href="{% url "index" %}"><i
                                 class="material-icons left">work</i>Opdrachten</a></li>
                     {% endif %}
 
@@ -92,6 +92,10 @@
                             <a href="#!email"><span class="email">{{ request.user.email }}</span></a>
                         </div>
                     </li>
+
+                    {% if perms.Orders.view_product %}
+                        <li><a href="{% url "activity_index" %}">Activiteiten</a></li>
+                    {% endif %}
 
                     {% if perms.Orders.view_product %}
                         <li><a href="{% url "index" %}">Opdrachten</a></li>

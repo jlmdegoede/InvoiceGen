@@ -10,11 +10,10 @@ from django.shortcuts import *
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django_tables2 import RequestConfig
-from django.forms import formset_factory
 
 from .tables import AgreementTable, AgreementTextTable
 from .helper import replace_text
-from .forms import AgreementForm, AgreementTextForm, AgreementTextVariableForm
+from .forms import AgreementForm, AgreementTextForm
 from .models import *
 
 

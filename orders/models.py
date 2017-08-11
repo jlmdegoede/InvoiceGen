@@ -1,4 +1,6 @@
 from django.db import models
+from django.shortcuts import reverse
+from django.utils.text import slugify
 
 from companies.models import Company
 from invoices.models import OutgoingInvoice
@@ -25,6 +27,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('view_product', args=[self.pk, slugify(self.title)])
 
     def get_price(self):
         return float(self.price_per_quantity * self.quantity)
