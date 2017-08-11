@@ -1,11 +1,14 @@
 from django import forms
+
+from markdownx.fields import MarkdownxFormField
+
+from agreements.models import Agreement, AgreementText
 from orders.models import *
-from agreements.models import AgreementText, Agreement
 
 
 class AgreementTextForm(forms.ModelForm):
     title = forms.CharField(label="Titel", max_length=200)
-    text = forms.CharField(widget=forms.Textarea(attrs={'class': 'materialize-textarea'}), required=True)
+    text = MarkdownxFormField()
 
     class Meta:
         model = Product
@@ -13,15 +16,17 @@ class AgreementTextForm(forms.ModelForm):
 
 
 class AgreementForm(forms.ModelForm):
-    agree_text = forms.ModelChoiceField(queryset=AgreementText.objects.all(), widget=forms.Select())
+    agreement_text = forms.ModelChoiceField(queryset=AgreementText.objects.all(), widget=forms.Select())
     company = forms.ModelChoiceField(queryset=Company.objects.all(), widget=forms.Select())
     article_concerned = forms.ModelMultipleChoiceField(queryset=Product.objects.all())
     client_name = forms.CharField(label="Naam opdrachtgever", max_length=200)
-    client_emailaddress = forms.CharField(label="E-mailadres opdrachtgever", max_length=200, widget=forms.TextInput(attrs={'class': 'validate', 'type': 'email'}))
+    client_emailaddress = forms.CharField(label="E-mailadres opdrachtgever", max_length=200,
+                                          widget=forms.TextInput(attrs={'class': 'validate', 'type': 'email'}))
 
     class Meta:
         model = Agreement
-        fields = ('agree_text', 'article_concerned', 'client_name', 'client_emailaddress')
+        fields = ('agreement_text', 'article_concerned', 'client_name', 'client_emailaddress')
+
 
 class SignatureForm(forms.Form):
     signature = forms.FileField(required=True)

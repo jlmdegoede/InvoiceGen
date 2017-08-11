@@ -2,7 +2,7 @@ from base64 import b64decode
 
 import invoicegen.settings
 import settings.helper
-from agreements.forms import AgreementForm, AgreementTextForm, SignatureForm
+from agreements.forms import AgreementForm, AgreementTextForm
 from agreements.models import *
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files.base import ContentFile
@@ -11,23 +11,10 @@ from django.shortcuts import *
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django_tables2 import RequestConfig
-from orders.models import Company
-from settings.models import UserSetting
 
 from .tables import AgreementTable, AgreementTextTable
-
-CLIENT_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
-CLIENT_CITY_ZIPCODE_CONSTANT = '<POSTCODE_PLAATS_OPDRACHTGEVER>'
-CLIENT_ADDRESS_CONSTANT = '<ADRES_OPDRACHTGEVER>'
-CLIENT_COMPANY_NAME_CONSTANT = '<NAAM_OPDRACHTGEVER>'
-
-CONTRACTOR_NAME_CONSTANT = '<MIJN_NAAM>'
-CONTRACTOR_CITY_ZIPCODE_CONSTANT = '<MIJN_POSTCODE_EN_WOONPLAATS>'
-CONTRACTOR_ADDRESS_CONSTANT = '<MIJN_ADRES>'
-
-OPDRACHT_OMSCHRIJVING_CONSTANT = '<OMSCHRIJVING_OPDRACHT>'
-
-AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
+from .models import AgreementTextVariable
+from .helper import replace_text
 
 
 @login_required
@@ -35,7 +22,7 @@ AGREED_TEXT_CONSTANT = 'Ik ga akkoord'
 def agreement_index(request):
     agreements = AgreementTable(Agreement.objects.all())
     RequestConfig(request).configure(agreements)
-    return render(request, 'Agreements/agreements.html', {'agreements': agreements})
+    return render(request, 'agreements/agreements.html', {'agreements': agreements})
 
 
 @login_required
@@ -43,7 +30,7 @@ def agreement_index(request):
 def index_model_agreements(request):
     model_agreements = AgreementTextTable(AgreementText.objects.all())
     RequestConfig(request).configure(model_agreements)
-    return render(request, 'Agreements/model_agreements.html', {'model_agreements': model_agreements})
+    return render(request, 'agreements/model_agreements.html', {'model_agreements': model_agreements})
 
 
 @login_required
@@ -57,7 +44,7 @@ def add_agreement(request):
             agreement_form.save(commit=False)
             agreement.created = timezone.now()
             agreement.url = get_random_string(length=32)
-            agreement.agreement_text_copy = replace_text(agreement.agree_text.text, data['article_concerned'])
+            agreement.agreement_text_copy = replace_text(agreement.agreement_text.text, data['article_concerned'])
             agreement.company = data['company']
             agreement.save()
             for article in data['article_concerned']:
@@ -66,12 +53,12 @@ def add_agreement(request):
             request.session['toast'] = 'Overeenkomst toegevoegd'
             return redirect('/overeenkomsten/')
         else:
-            return render(request, 'Agreements/new_edit_agreement.html',
+            return render(request, 'agreements/new_edit_agreement.html',
                           {'toast': 'Formulier onjuist ingevuld', 'form': agreement_form})
     else:
         form = AgreementForm()
         articles = Product.objects.filter(done=False)
-        return render(request, 'Agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
+        return render(request, 'agreements/new_edit_agreement.html', {'form': form, 'articles': articles})
 
 
 def view_agreement(request, url):
@@ -80,7 +67,7 @@ def view_agreement(request, url):
         0] + '/overeenkomsten/ondertekenen/' + agreement.url
     agreement.full_name = settings.helper.get_user_fullname()
     if request.method == 'GET':
-        return render(request, 'Agreements/view_sign_agreement.html', {'agreement': agreement})
+        return render(request, 'agreements/view_sign_agreement.html', {'agreement': agreement})
 
 
 @login_required
@@ -89,7 +76,7 @@ def sign_agreement_contractor(request, url):
     agreement = Agreement.objects.get(url=url)
     if request.method == 'POST':
         if 'signature' in request.POST and 'signee_name' in request.POST and request.POST[
-            'signee_name'].strip() and request.POST['signee_name'].strip():
+                'signee_name'].strip() and request.POST['signee_name'].strip():
             image_data = request.POST['signature'].split(',')
             image_data = b64decode(image_data[1])
             now = timezone.now()
@@ -109,7 +96,7 @@ def sign_agreement_client(request, url):
     agreement = Agreement.objects.get(url=url)
     if request.method == 'POST':
         if 'signature' in request.POST and 'signee_name' in request.POST and request.POST[
-            'signee_name'].strip() and request.POST['signee_name'].strip():
+                'signee_name'].strip() and request.POST['signee_name'].strip():
             image_data = request.POST['signature'].split(',')
             image_data = b64decode(image_data[1])
             now = timezone.now()
@@ -154,33 +141,6 @@ def delete_model_agreement(request, model_agreement_text_id=-1):
         return redirect('/overeenkomsten/modelovereenkomsten')
 
 
-def replace_text(agree_text, products):
-    user = UserSetting.objects.first()
-    company = Company.objects.first()
-    client_name = company.company_name
-    client_city_zipcode = company.company_city_and_zipcode
-    client_company_name = company.company_name
-    client_address = company.company_address
-    contractor_name = user.name
-    contractor_city_zipcode = user.city_and_zipcode
-    contractor_address = user.address
-
-    article_text = "\n"
-    for product in products:
-        article_text += "Opdracht " + product.title + " met een kwantiteit van " + str(
-            product.quantity) + " en een prijs van " + str(
-            product.price_per_quantity) + " euro per eenheid voor opdrachtgever " + product.from_company.company_name + "\n"
-
-    agree_text = agree_text.replace(OPDRACHT_OMSCHRIJVING_CONSTANT, article_text)
-    agree_text = agree_text.replace(CLIENT_NAME_CONSTANT, client_name)
-    agree_text = agree_text.replace(CLIENT_CITY_ZIPCODE_CONSTANT, client_city_zipcode)
-    agree_text = agree_text.replace(CLIENT_COMPANY_NAME_CONSTANT, client_company_name)
-    agree_text = agree_text.replace(CLIENT_ADDRESS_CONSTANT, client_address)
-    agree_text = agree_text.replace(CONTRACTOR_ADDRESS_CONSTANT, contractor_address)
-    agree_text = agree_text.replace(CONTRACTOR_CITY_ZIPCODE_CONSTANT, contractor_city_zipcode)
-    agree_text = agree_text.replace(CONTRACTOR_NAME_CONSTANT, contractor_name)
-    return agree_text
-
 
 @login_required
 @permission_required('agreements.change_agreementtext')
@@ -192,13 +152,14 @@ def edit_model_agreement(request, model_agreement_id):
             form.save()
             return redirect('/overeenkomsten')
         else:
-            return render(request, 'Agreements/new_edit_agreement_text.html', {'form': form, 'edit': True, 'error': form.errors,
-                                                                       'model_agreement_id': model_agreement.id})
+            return render(request, 'agreements/new_edit_agreement_text.html',
+                          {'form': form, 'edit': True, 'error': form.errors,
+                           'model_agreement_id': model_agreement.id})
     else:
         try:
             model_agreement = AgreementText.objects.get(id=model_agreement_id)
             form = AgreementTextForm(instance=model_agreement)
-            return render(request, 'Agreements/new_edit_agreement_text.html',
+            return render(request, 'agreements/new_edit_agreement_text.html',
                           {'form': form, 'edit': True, 'model_agreement_id': model_agreement.id})
         except:
             return redirect(to=index_model_agreements)
@@ -213,13 +174,23 @@ def add_agreement_text(request):
         if agree_text_form.is_valid():
             agree_text_form.save(commit=False)
             agree_text.edited_at = timezone.now()
+
+            var_obj = request.POST['var_name1']
+            variable_list = []
+            while var_obj is not None:
+                desc = request.POST['desc1']
+                variable = AgreementTextVariable(name=var_obj, description=desc)
+                variable.save()
+                variable_list.append(variable)
+                
+
             agree_text.save()
             request.session['toast'] = 'Modelovereenkomst toegevoegd'
             return redirect('/overeenkomsten')
         else:
-            return render(request, 'Agreements/new_edit_agreement_text.html',
+            return render(request, 'agreements/new_edit_agreement_text.html',
                           {'toast': 'Formulier onjuist ingevuld', 'form': agree_text_form,
-                                       'error': agree_text_form.errors})
+                           'error': agree_text_form.errors})
     else:
         form = AgreementTextForm()
-        return render(request, 'Agreements/new_edit_agreement_text.html', {'form': form})
+        return render(request, 'agreements/new_edit_agreement_text.html', {'form': form})

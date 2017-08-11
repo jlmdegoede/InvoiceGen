@@ -1,4 +1,4 @@
-{% extends 'Agreements/agreements.html' %}
+{% extends 'agreements/agreements.html' %}
 {% load staticfiles %}
 {% load django_bootstrap_breadcrumbs %}
 {% block agreements_active %}active{% endblock %}
@@ -41,8 +41,8 @@
                 </div>
 
                 <div class="input-field col s12">
-                    {{ form.agree_text }}
-                    <label for="{{ form.agree_text.id_for_label }}">Modelovereenkomst</label>
+                    {{ form.agreement_text }}
+                    <label for="{{ form.agreement_text.id_for_label }}">Modelovereenkomst</label>
                 </div>
 
                 <div class="input-field col s12">

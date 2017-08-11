@@ -1,13 +1,10 @@
-from django.test import TestCase
+from django.contrib.auth.models import ContentType, Group, Permission, User
+from django.core.urlresolvers import reverse
+from django.test import Client, TestCase
+from django.utils import timezone
+
 from agreements.models import Agreement, AgreementText
 from companies.models import Company
-from django.test import Client
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-from django.contrib.auth.models import Group, ContentType, Permission
-
-# Create your tests here.
 
 
 class AgreementTestCase(TestCase):
@@ -15,9 +12,9 @@ class AgreementTestCase(TestCase):
         self.company = Company.objects.create(company_name='Testbedrijf', company_address='Testadres',
                                               company_city_and_zipcode='Testplaats 1234AB')
         self.text = AgreementText.objects.create(title='Model',
-                                                 text='TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST',
+                                                 text='Dit is een testtekstt',
                                                  edited_at=timezone.now())
-        self.agreement = Agreement.objects.create(agree_text=self.text, client_name='test',
+        self.agreement = Agreement.objects.create(agreement_text=self.text, client_name='test',
                                                   client_emailaddress='test@test.nl',
                                                   company=self.company,
                                                   agreement_text_copy='TEST TEST TEST TEST',
@@ -29,9 +26,7 @@ class AgreementTestCase(TestCase):
         all_permissions = Permission.objects.filter(content_type=content_type)
         agreements_group.permissions.set(all_permissions)
         agreements_group.save()
-
         self.user.groups.add(agreements_group)
-
         self.user.save()
         self.c = Client()
 

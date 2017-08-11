@@ -1,6 +1,8 @@
 from django.db import models
-from orders.models import Product
+from markdownx.models import MarkdownxField
+
 from companies.models import Company
+from orders.models import Product
 
 
 class AgreementTextVariable(models.Model):
@@ -10,7 +12,7 @@ class AgreementTextVariable(models.Model):
 
 class AgreementText(models.Model):
     title = models.CharField(max_length=300)
-    text = models.TextField()
+    text = MarkdownxField()
     edited_at = models.DateTimeField()
     variables = models.ManyToManyField(to=AgreementTextVariable)
 

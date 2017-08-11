@@ -61,6 +61,11 @@
 
                     {% if perms.Orders.view_product %}
                         <li class="{% block orders_active %}{% endblock %}"><a href="{% url "index" %}"><i
+                                class="material-icons left">local_activity</i>Activiteiten</a></li>
+                    {% endif %}
+
+                    {% if perms.Orders.view_product %}
+                        <li class="{% block activity_active %}{% endblock %}"><a href="{% url "index" %}"><i
                                 class="material-icons left">work</i>Opdrachten</a></li>
                     {% endif %}
 
