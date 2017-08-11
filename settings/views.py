@@ -6,8 +6,8 @@ from django.shortcuts import *
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
-from InvoiceGen.settings import DEFAULT_COLOR
-from InvoiceGen.settings import ALLOWED_HOSTS
+from Invoicegen.settings import DEFAULT_COLOR
+from Invoicegen.settings import ALLOWED_HOSTS
 from invoices.models import InvoiceTemplate
 from mail.views import create_and_send_email_without_form
 from settings.forms import *
@@ -66,7 +66,7 @@ class PersonalSettings(View):
         user_i = UserSetting.objects.all().first()
         if not user_i:
             user_i = UserSetting()
-        site_name = get_setting(SITE_NAME, 'InvoiceGen')
+        site_name = get_setting(SITE_NAME, 'Invoicegen')
         form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
         color_up = get_setting(COLOR_UP, DEFAULT_COLOR)
         color_down = get_setting(COLOR_DOWN, DEFAULT_COLOR)

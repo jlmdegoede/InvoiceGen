@@ -9,5 +9,5 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "invoicegen@@test"
 REDIS_HOST = "localhost"
 POSTGRES_HOST = "localhost"
-'> InvoiceGen/site_settings.py
+'> Invoicegen/site_settings.py
 

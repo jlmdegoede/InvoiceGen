@@ -6,7 +6,7 @@ from django.utils.crypto import get_random_string
 
 from docxtpl import DocxTemplate
 
-from InvoiceGen.settings import BASE_DIR
+from Invoicegen.settings import BASE_DIR
 from settings.models import UserSetting
 from utils.file_helper import get_temp_folder_path
 

@@ -2,8 +2,8 @@
 from __future__ import absolute_import, unicode_literals
 from django.utils import timezone
 from .models import Email
-from InvoiceGen.settings import BASE_DIR
-from InvoiceGen.celery import app
+from Invoicegen.settings import BASE_DIR
+from Invoicegen.celery import app
 from celery.result import AsyncResult
 
 

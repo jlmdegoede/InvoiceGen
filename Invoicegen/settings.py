@@ -1,5 +1,5 @@
 """
-Django settings for InvoiceGen project.
+Django settings for Invoicegen project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -18,11 +18,10 @@ load_dotenv(find_dotenv())
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-ROOT_HOSTCONF = 'InvoiceGen.hosts'
+ROOT_HOSTCONF = 'Invoicegen.hosts'
 
 ALLOWED_HOSTS = ['*']
 DEBUG = False
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Host for sending e-mail.
@@ -37,20 +36,22 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+
     'orders',
     'agreements',
     'invoices',
     'companies',
     'settings',
-    'django_bootstrap_breadcrumbs',
-    'hour_registration',
     'statistics',
+    'hour_registration',
     'mail',
+
+    'autoadmin'
+    'channels',
+    'django_bootstrap_breadcrumbs',
     'django_tables2',
     'django.contrib.humanize',
-    'channels',
     'rest_framework',
-    'autoadmin'
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -66,9 +67,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'InvoiceGen.urls'
+ROOT_URLCONF = 'Invoicegen.urls'
 
-WSGI_APPLICATION = 'InvoiceGen.wsgi.application'
+WSGI_APPLICATION = 'Invoicegen.wsgi.application'
 
 
 # Database
@@ -93,10 +94,10 @@ CONTEXT_PROCESSORS = [
     'django.template.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.template.context_processors.request',
-    'InvoiceGen.context_processor.website_name',
-    'InvoiceGen.context_processor.color_up',
-    'InvoiceGen.context_processor.color_down',
-    'InvoiceGen.context_processor.attach_toast_to_response']
+    'Invoicegen.context_processor.website_name',
+    'Invoicegen.context_processor.color_up',
+    'Invoicegen.context_processor.color_down',
+    'Invoicegen.context_processor.attach_toast_to_response']
 
 TEMPLATES = [
     {
@@ -119,7 +120,7 @@ CHANNEL_LAYERS = {
         "CONFIG": {
            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],  # set redis address
          },
-        "ROUTING": "InvoiceGen.routing.channel_routing",
+        "ROUTING": "Invoicegen.routing.channel_routing",
     },
 }
 

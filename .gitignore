@@ -59,7 +59,7 @@ docs/_build/
 # PyBuilder
 target/
 
-InvoiceGen/site_settings.py
+Invoicegen/site_settings.py
 db.sqlite3
 
 static/images
@@ -84,7 +84,7 @@ static/images
 /web.config
 /web.debug.config
 /readme.mht
-/.vs/InvoiceGen/v14
+/.vs/Invoicegen/v14
 
 *.rdb
 

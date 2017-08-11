@@ -8,9 +8,9 @@ TEXT_STRINGS = {
     'INVOICE_CREATED': 'Factuur aangemaakt',
     'USER_DELETED': 'Gebruiker succesvol verwijderd',
     'USER_DELETE_FIRST': 'Je kunt de eerste gebruiker niet verwijderen',
-    'NEW_USER_MAIL_SUBJECT': 'Je nieuwe InvoiceGen-account',
+    'NEW_USER_MAIL_SUBJECT': 'Je nieuwe Invoicegen-account',
     'CHANGED_INVOICE': 'Factuur gewijzigd',
-    'NEW_USER_MAIL_CONTENTS': 'Beste [USER],\n\nEr is een nieuwe gebruikersaccount voor je aangemaakt op [WEBSITE]. Je kunt inloggen met je e-mailadres en het volgende wachtwoord:\n\n[PASSWORD]\n\nMet vriendelijke groet,\nHet InvoiceGen-team'
+    'NEW_USER_MAIL_CONTENTS': 'Beste [USER],\n\nEr is een nieuwe gebruikersaccount voor je aangemaakt op [WEBSITE]. Je kunt inloggen met je e-mailadres en het volgende wachtwoord:\n\n[PASSWORD]\n\nMet vriendelijke groet,\nHet Invoicegen-team'
 }
 
 
