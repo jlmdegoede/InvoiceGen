@@ -65,12 +65,14 @@ class AddAgreementStepTwo(View):
     def post(self, request, agreement_id):
         agreement = Agreement.objects.get(id=agreement_id)
         variables = self.agreement_variables(agreement_id)
-        key_value_list = []
+        key_value_list = {}
         for variable in variables.all():
             post_name = 'variable' + str(variable.id)
             value = request.POST[post_name]
-            key_value_list.append({variable.name: value})
-        agreement.agreement_text_copy = replace_text(agreement.agreement_text.text, agreement.article_concerned.all())
+            if variable.name:
+                key_value_list[variable.name] = value
+        agreement.agreement_text_copy = replace_text(agreement.agreement_text.text, agreement.article_concerned.all(),
+                                                     agreement.company, key_value_list)
         agreement.save()
         request.session['toast'] = 'Overeenkomst toegevoegd'
         return redirect(reverse('agreement_index'))
