@@ -209,20 +209,23 @@ class AddAgreementText(View):
         form = AgreementTextForm()
         return render(request, 'agreements/agreementtext/new_agreementtext.html', {'form': form})
 
+
 def get_extra_variables(request):
     var_obj = request.POST['var_name1']
-    counter = 1
-    variable_list = []
-    while var_obj is not None:
-        desc_variable_name = 'desc' + str(counter)
-        desc = request.POST[desc_variable_name]
-        variable = AgreementTextVariable(name=var_obj, description=desc)
-        variable.save()
-        variable_list.append(variable)
-        counter += 1
-        key_variable_name = 'var_name' + str(counter)
-        if key_variable_name in request.POST:
-            var_obj = request.POST[key_variable_name]
-        else:
-            var_obj = None
-    return variable_list
+    if var_obj != '':
+        counter = 1
+        variable_list = []
+        while var_obj is not None:
+            desc_variable_name = 'desc' + str(counter)
+            desc = request.POST[desc_variable_name]
+            variable = AgreementTextVariable(name=var_obj, description=desc)
+            variable.save()
+            variable_list.append(variable)
+            counter += 1
+            key_variable_name = 'var_name' + str(counter)
+            if key_variable_name in request.POST:
+                var_obj = request.POST[key_variable_name]
+            else:
+                var_obj = None
+        return variable_list
+    return []

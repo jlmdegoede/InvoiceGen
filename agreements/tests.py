@@ -52,18 +52,18 @@ class AgreementTestCase(TestCase):
 
     def test_add_post_agreement_text(self):
         self.c.login(username='testuser', password='secret')
-        data = {'title': 'TEST', 'text': 'Test Test Test'}
+        data = {'title': 'TEST', 'text': 'Test Test Test', 'var_name1': ''}
         response = self.c.post(reverse('add_agreement_text'), data)
         self.assertIsNone(response.context)
 
     def test_add_post_no_title_agreement_text(self):
         self.c.login(username='testuser', password='secret')
-        data = {'text': 'Test Test Test'}
+        data = {'text': 'Test Test Test', 'var_name1': ''}
         response = self.c.post(reverse('add_agreement_text'), data)
         self.assertIsNotNone(response.context['error'])
 
     def test_add_post_no_text_agreement_text(self):
         self.c.login(username='testuser', password='secret')
-        data = {'title': 'TEST'}
+        data = {'title': 'TEST', 'var_name1': ''}
         response = self.c.post(reverse('add_agreement_text'), data)
         self.assertIsNotNone(response.context['error'])
