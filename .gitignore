@@ -90,4 +90,4 @@ static/images
 
 supervisord.pid
 .env
-payment/banks/bunq.conf
+payment/providers/bunq.conf

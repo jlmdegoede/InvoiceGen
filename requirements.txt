@@ -28,7 +28,7 @@ docxtpl==0.3.9
 gitdb2==2.0.2
 GitPython==2.1.5
 hyperlink==17.3.0
-idna==2.6
+idna==2.5
 incremental==17.5.0
 kombu==4.1.0
 lxml==3.8.0
@@ -51,6 +51,6 @@ six==1.10.0
 smmap2==2.0.3
 Twisted==17.5.0
 txaio==2.8.1
-urllib3==1.22
+urllib3==1.21.1
 vine==1.1.4
 zope.interface==4.4.2

@@ -20,7 +20,6 @@ from .serializer import OutgoingInvoiceSerializer
 from .tables import *
 from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_products, get_docx_invoice, \
     get_markdown_invoice, get_pdf_invoice
-from payment.banks.bunq import BunqApi
 
 
 @login_required
@@ -272,16 +271,6 @@ class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
         return mail.views.get_email_form(request, to=invoice.to_company.company_email, invoice_id=invoice_id)
-
-
-def send_bunq_request(request):
-    if request.POST:
-        invoice_id = request.POST['invoice_id']
-        invoice = OutgoingInvoice.objects.get(id=invoice_id)
-        bunq_api = BunqApi()
-        bunq_api.create_request(invoice.get_total_amount(), invoice.to_company.company_email, invoice.title)
-        return JsonResponse({'request': 'created'})
-
 
 class OutgoingInvoiceViewSet(viewsets.ModelViewSet):
     queryset = OutgoingInvoice.objects.all()

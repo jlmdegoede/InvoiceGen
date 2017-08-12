@@ -129,7 +129,11 @@
         <div class="container left">
             <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur
                 exporteren</a>
-            <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">bunq request</a>
+
+            {% if user.is_authenticated %}
+            <a href="{% url "bunq_request" invoice.id %}" class="modal-trigger btn waves-effect waves-light btn-flat">bunq request</a>
+            {% endif %}
+            <a href="{% url "mollie_payment" invoice.id %}" class="modal-trigger btn waves-effect waves-light btn-flat">betalen met iDEAL</a>
         </div>
     </div>
 
