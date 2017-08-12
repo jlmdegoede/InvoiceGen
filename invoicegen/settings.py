@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'statistics',
     'hour_registration',
     'mail',
+    'payment',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

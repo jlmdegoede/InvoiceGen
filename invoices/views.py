@@ -20,20 +20,21 @@ from .serializer import OutgoingInvoiceSerializer
 from .tables import *
 from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_products, get_docx_invoice, \
     get_markdown_invoice, get_pdf_invoice
+from payment.banks.bunq import BunqApi
 
 
 @login_required
 @permission_required('invoices.view_invoice')
 def get_outgoing_invoices(request):
     dict = get_invoices('outgoing', request)
-    return render(request, 'Invoices/outgoing_invoice_table.html', dict)
+    return render(request, 'invoices/outgoing_invoice_table.html', dict)
 
 
 @login_required
 @permission_required('invoices.view_invoice')
 def get_incoming_invoices(request):
     dict = get_invoices('incoming', request)
-    return render(request, 'Invoices/incoming_invoice_table.html', dict)
+    return render(request, 'invoices/incoming_invoice_table.html', dict)
 
 
 class AddOutgoingInvoice(View):
@@ -41,7 +42,7 @@ class AddOutgoingInvoice(View):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(instance=invoice)
 
-        return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+        return render(request, 'invoices/new_edit_outgoing_invoice.html',
                       {'form': f, 'invoiceid': invoice.id, 'edit': False})
 
     def post(self, request):
@@ -63,7 +64,7 @@ class AddOutgoingInvoice(View):
             request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen')
         else:
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
@@ -101,7 +102,7 @@ def share_link_to_outgoing_invoice(request, invoice_id):
 
 def view_outgoing_invoice_guest(request, invoice_url):
     invoice = OutgoingInvoice.objects.get(url=invoice_url)
-    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
+    return render(request, 'invoices/view_outgoing_invoice.html', {'invoice': invoice})
 
 
 @login_required
@@ -111,7 +112,7 @@ def add_incoming_invoice(request):
         invoice = IncomingInvoice()
         f = IncomingInvoiceForm(instance=invoice)
 
-        return render(request, 'Invoices/new_edit_incoming_invoice.html',
+        return render(request, 'invoices/new_edit_incoming_invoice.html',
                       {'form': f, 'invoiceid': invoice.id, 'edit': False})
     elif request.method == 'POST':
         invoice = IncomingInvoice()
@@ -126,7 +127,7 @@ def add_incoming_invoice(request):
             request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
@@ -135,14 +136,14 @@ def add_incoming_invoice(request):
 @permission_required('invoices.view_invoice')
 def detail_incoming_invoice(request, invoice_id):
     invoice = IncomingInvoice.objects.get(id=invoice_id)
-    return render(request, 'Invoices/view_incoming_invoice.html', {'invoice': invoice})
+    return render(request, 'invoices/view_incoming_invoice.html', {'invoice': invoice})
 
 
 @login_required
 @permission_required('invoices.view_invoice')
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
+    return render(request, 'invoices/view_outgoing_invoice.html', {'invoice': invoice})
 
 
 class EditOutgoingInvoice(View):
@@ -152,7 +153,7 @@ class EditOutgoingInvoice(View):
             f = OutgoingInvoiceForm(instance=invoice)
             products = Product.objects.filter(invoice=invoice)
 
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': products, 'edit': True,
                            'invoice_id': invoice_id})
         except:
@@ -176,7 +177,7 @@ class EditOutgoingInvoice(View):
             request.session['toast'] = get_localized_text('CHANGED_INVOICE')
             return redirect('/facturen')
         else:
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': old_products, 'invoice_id': invoice.id, 'edit': True,
                            'toast': get_localized_text('INVALID_FORM')})
 
@@ -187,7 +188,7 @@ class EditIncomingInvoice(View):
             invoice = IncomingInvoice.objects.get(id=invoice_id)
             f = IncomingInvoiceForm(instance=invoice)
 
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoice': invoice, 'edit': True})
         except:
             request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
@@ -204,7 +205,7 @@ class EditIncomingInvoice(View):
             request.session['toast'] = get_localized_text('INVOICE_CHANGED')
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/new_edit_incoming_invoice.html',
                           {'form': f, 'invoice_id': invoice.id, 'edit': True,
                            'toast': get_localized_text('INVALID_FORM')})
 
@@ -271,6 +272,15 @@ class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
         return mail.views.get_email_form(request, to=invoice.to_company.company_email, invoice_id=invoice_id)
+
+
+def send_bunq_request(request):
+    if request.POST:
+        invoice_id = request.POST['invoice_id']
+        invoice = OutgoingInvoice.objects.get(id=invoice_id)
+        bunq_api = BunqApi()
+        bunq_api.create_request(invoice.get_total_amount(), invoice.to_company.company_email, invoice.title)
+        return JsonResponse({'request': 'created'})
 
 
 class OutgoingInvoiceViewSet(viewsets.ModelViewSet):
