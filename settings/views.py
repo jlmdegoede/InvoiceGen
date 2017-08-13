@@ -12,10 +12,24 @@ from invoices.models import InvoiceTemplate
 from mail.views import create_and_send_email_without_form
 from settings.forms import *
 from settings.models import *
+from payment.providers.bunq import BunqApi
 
 from .localization_nl import get_localized_text
 from .helper import get_setting, save_website_name, save_colors, save_setting, create_groups, add_user_to_groups
 from .const import *
+
+
+@login_required
+@permission_required('settings.change_setting')
+def settings(request):
+    return_dict = {
+        'personal': PersonalSettings().get_personal_settings(request),
+        'users': UserSettings().get_user_settings(request),
+        'invoices': get_invoice_templates(),
+        'settings': get_bunq_settings(),
+    }
+    create_groups()
+    return render(request, 'settings/settings.html', return_dict)
 
 
 class UserSettings(View):
@@ -37,7 +51,7 @@ class UserSettings(View):
             self.prepare_new_user_mail(email, username, password)
             return redirect(to=settings)
         else:
-            return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
+            return render(request, 'settings/settings.html', {'users': {'new_user_form': user_form}})
 
     def prepare_new_user_mail(self, email, username, password):
         subject = get_localized_text('NEW_USER_MAIL_SUBJECT')
@@ -89,21 +103,9 @@ class PersonalSettings(View):
         else:
             color_up = get_setting(COLOR_UP, DEFAULT_COLOR)
             color_down = get_setting(COLOR_DOWN, DEFAULT_COLOR)
-            return render(request, 'Settings/settings.html',
+            return render(request, 'settings/settings.html',
                           {'personal': {'form': form, 'error': form.errors,
                                         'color_up': color_up, 'color_down': color_down}})
-
-
-@login_required
-@permission_required('settings.change_setting')
-def settings(request):
-    return_dict = {
-        'personal': PersonalSettings().get_personal_settings(request),
-        'users': UserSettings().get_user_settings(request),
-        'invoices': get_invoice_templates,
-    }
-    create_groups()
-    return render(request, 'Settings/settings.html', return_dict)
 
 
 def get_invoice_templates():
@@ -132,7 +134,7 @@ class EditUserView(View):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         user_form = UserForm(instance=user)
-        return render(request, 'Settings/edit_user.html', {'form': user_form, 'userid': user.id})
+        return render(request, 'settings/edit_user.html', {'form': user_form, 'userid': user.id})
 
     @method_decorator(permission_required('settings.change_setting'))
     def post(self, request, user_id):
@@ -148,4 +150,24 @@ class EditUserView(View):
             add_user_to_groups(user, groups)  # before adding the new ones
             return redirect(to=settings)
         else:
-            return render(request, 'Settings/settings.html', {'users': {'new_user_form': user_form}})
+            return render(request, 'settings/settings.html', {'users': {'new_user_form': user_form}})
+
+
+@login_required
+@permission_required('settings.change_setting')
+def save_bunq_settings(request):
+    if request.POST:
+        api_key = request.POST['bunq_api_key']
+        save_setting(BUNQ_API_KEY, api_key)
+        default_bunq_account = request.POST['defaultbunq']
+        save_setting(DEFAULT_BUNQ_ACCOUNT, default_bunq_account)
+        return redirect(to=settings)
+
+
+def get_bunq_settings():
+    bunq_api_key = get_setting(BUNQ_API_KEY, '')
+    default_bunq = int(get_setting(DEFAULT_BUNQ_ACCOUNT, 0))
+    bunq_accounts = None
+    if bunq_api_key != '':
+        bunq_accounts = BunqApi().monetary_accounts()
+    return {'bunq_api_key': bunq_api_key, 'default_bunq_account': default_bunq, 'accounts': bunq_accounts}

@@ -1,28 +1,45 @@
 from bunq.sdk import context
-from bunq.sdk.json import converter
 from bunq.sdk.model import generated
 from bunq.sdk.model.generated import object_
+
+from settings.helper import get_setting
+from settings.const import BUNQ_API_KEY, DEFAULT_BUNQ_ACCOUNT
 
 
 class BunqApi(object):
     _REQUEST_CURRENCY = 'EUR'
     _COUNTERPARTY_POINTER_TYPE = 'EMAIL'
     _REQUEST_DESCRIPTION = 'This is a generated request!'
-    _USER_ITEM_ID = 0  # Put your user ID here
-    _MONETARY_ACCOUNT_ITEM_ID = 0  # Put your monetary account ID here
     _STATUS_REVOKED = 'REVOKED'
 
     def __init__(self):
-        self.context = context.ApiContext(
-            context.ApiEnvironmentType.SANDBOX,
-            '###YOUR_API_KEY###',  # Put your API key here
-            'test device python'
-        )
+        try:
+            self.context = context.ApiContext.restore()
+        except Exception as e:
+            api_key = get_setting(BUNQ_API_KEY, '')
+            self.context = context.ApiContext(
+                context.ApiEnvironmentType.SANDBOX,
+                api_key,
+                'test device python'
+            )
+            self.context.save()
 
-        self.context.save()
-        ctx_restored = context.ApiContext.restore()
-        print('Is original context equal the one saved and restored?:',
-              converter.class_to_json(self.context) == converter.class_to_json(ctx_restored))
+        for user in generated.User.list(self.context):
+            self.user_id = user.UserCompany.id_
+            self.user = generated.User.get(self.context, self.user_id)
+        self.monetary_account = int(get_setting(DEFAULT_BUNQ_ACCOUNT, 0))
+
+    def monetary_accounts(self):
+        accounts = generated.MonetaryAccount.list(self.context, self.user_id)
+        account_list = []
+        for account in accounts:
+            account_dict = {'id': account.MonetaryAccountBank.id_}
+            for alias in account.MonetaryAccountBank.alias:
+                if alias.type_ == 'IBAN':
+                    account_dict['name'] = alias.name
+                    account_dict['value'] = alias.value
+                    account_list.append(account_dict)
+        return account_list
 
     def create_request(self, counterparty_email, request_amount, description):
         request_map = {
@@ -41,14 +58,14 @@ class BunqApi(object):
         request_id = generated.RequestInquiry.create(
             self.context,
             request_map,
-            self._USER_ITEM_ID,
-            self._MONETARY_ACCOUNT_ITEM_ID
+            self.user_id,
+            self.monetary_account
         )
         print(
             generated.RequestInquiry.get(
                 self.context,
-                self._USER_ITEM_ID,
-                self._MONETARY_ACCOUNT_ITEM_ID,
+                self.user_id,
+                self.monetary_account,
                 request_id
             ).to_json()
         )

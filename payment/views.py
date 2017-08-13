@@ -19,6 +19,6 @@ def mollie_payment(request, invoice_id):
 def bunq_request(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     bunq_api = BunqApi()
-    bunq_api.create_request(invoice.get_total_amount(), invoice.to_company.company_email, invoice.title)
+    bunq_api.create_request( invoice.to_company.company_email, invoice.get_total_amount(), invoice.title)
     return JsonResponse({'request': 'created'})
 
