@@ -47,7 +47,7 @@ class OutgoingInvoice(Invoice):
 
     def get_complete_url(self):
         if self.url is not None:
-            return 'https://{0}{1}'.format(ALLOWED_HOSTS[0], reverse('view_outgoing_invoice_guest', args=[self.url]))
+            return 'http://{0}{1}'.format(ALLOWED_HOSTS[0], reverse('view_outgoing_invoice_guest', args=[self.url]))
 
 
 class IncomingInvoice(Invoice):

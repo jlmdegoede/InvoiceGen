@@ -28,7 +28,7 @@ def view_statistics(request):
         nr_of_words.append(tuple[1])
         totale_inkomsten.append(tuple[2])
         not_yet_invoiced.append(tuple[3])
-    return render(request, 'Statistics/statistics.html',
+    return render(request, 'statistics/statistics.html',
                   {'nr_of_articles': nr_of_articles, 'not_yet_invoiced': not_yet_invoiced, 'nr_of_words': nr_of_words,
                    'totale_inkomsten': totale_inkomsten, 'year': year, 'year_list': year_list, 'total_hours': total_hours})
 
@@ -167,7 +167,7 @@ def view_btw_aangifte(request):
     outgoing_invoices = OutgoingInvoice.objects.filter(date_created__gte=start_date, date_created__lte=end_date)
     outgoing_invoices = [x for x in outgoing_invoices if x.get_btw() is not 0]
 
-    return render(request, 'Statistics/btw_aangifte.html',
+    return render(request, 'statistics/btw_aangifte.html',
                   {'incoming_btw': incoming_btw, 'outgoing_btw': outgoing_btw, 'difference_btw': str(difference_btw),
                    'incoming_invoices': incoming_invoices, 'outgoing_invoices': outgoing_invoices,
                    'start_date': get_formatted_string(start_date), 'end_date': get_formatted_string(end_date)})
