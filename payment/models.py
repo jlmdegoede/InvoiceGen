@@ -19,6 +19,9 @@ class Payment(models.Model):
     status = models.CharField(max_length=20, choices=PAYMENT_STATUS)
     payment_amount = models.DecimalField(max_digits=99, decimal_places=2)
 
+    def get_absolute_url(self):
+        return self.for_invoice.get_absolute_url()
+
 
 class BunqRequest(Payment):
     counterparty_email = models.EmailField(null=True)
@@ -30,7 +33,6 @@ class BunqRequest(Payment):
 
     def __str__(self):
         return "Betaling via bunq request gemaakt op {0} met status {1}".format(self.created, self.status)
-
 
 
 class MolliePayment(Payment):

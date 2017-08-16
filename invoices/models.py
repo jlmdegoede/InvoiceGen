@@ -60,6 +60,9 @@ class OutgoingInvoice(Invoice):
             else:
                 return '{0}{1}'.format(site_url, reverse('view_outgoing_invoice_guest', args=[self.url]))
 
+    def get_absolute_url(self):
+        return reverse('detail_outgoing_invoice', kwargs={'invoice_id': self.pk})
+
 
 class IncomingInvoice(Invoice):
     def generate_filename(self, filename):
