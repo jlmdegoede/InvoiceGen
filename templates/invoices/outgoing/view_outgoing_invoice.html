@@ -1,0 +1,337 @@
+{% extends 'invoices/outgoing/outgoing_invoice_table.html' %}
+{% load staticfiles %}
+{% load django_bootstrap_breadcrumbs %}
+{% load humanize %}
+{% block invoices_active %}active{% endblock %}
+
+{% block title %}
+    Factuur inzien
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuur inzien" "" %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <h4>{{ invoice.title }}</h4>
+    {% if mollie_set and not user.is_authenticated %}
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Betaling</span>
+                        {% if invoice.paid %}
+                            <p>Deze factuur is betaald op {{ invoice.payment_set.first.created }}.</p>
+                        {% else %}
+                            <p>Deze factuur is nog niet betaald. Je kunt handmatig het bedrag overmaken op IBAN {{ user_setting.iban }} t.a.v. {{ user_setting.name }} of nu
+                                betalen via iDEAL.
+                                {% if user.is_authenticated %}
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="card-action">
+                        {% if not invoice.paid %}
+                            <a href="{% url "mollie_payment" invoice.id %}">betalen met iDEAL</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+        <table class="responsive-table bordered">
+            <tr>
+                <td>
+                    Datum aangemaakt
+                </td>
+                <td>
+                    <b>{{ invoice.date_created }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Vervaldatum
+                </td>
+                <td>
+                    <b>{{ invoice.expiration_date }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Betaald
+                </td>
+                <td>
+                    <b>{% if invoice.paid %} Ja {% else %} Nee {% endif %}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Opdrachtgever
+                </td>
+                <td>
+                    <b>{{ invoice.to_company }}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Volgnummer
+                </td>
+                <td>
+                    <b>{{ invoice.invoice_number }}</b>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <h4>Geleverd</h4>
+        <table class="responsive-table highlight">
+            <thead>
+            <th>Omschrijving</th>
+            <th>Identificatienr.</th>
+            <th>Kwantiteit</th>
+            <th>Prijs per eenheid</th>
+            <th>Prijs</th>
+            </thead>
+            {% for product in invoice.product_set.all %}
+                <tr>
+                    <td>
+                        <a href="{% url "view_product" product.id product.title|slugify %}">{{ product.title }}</a>
+                    </td>
+                    <td>
+                        {{ product.identification_number }}
+                    </td>
+                    <td>
+                        {{ product.quantity }}
+                    </td>
+                    <td>
+                        €{{ product.price_per_quantity|floatformat:2 }}
+                    </td>
+                    <td>
+                        €{{ product.get_price|floatformat:2 }}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3"></td>
+                <td>
+                    <b>Subtotaal</b>
+                </td>
+                <td>
+                    €{{ invoice.get_total_amount|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3"></td>
+                <td>
+                    <b>BTW</b>
+                </td>
+                <td>
+                    €{{ invoice.get_btw|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3"></td>
+                <td>
+                    <b>Totaalbedrag</b>
+                </td>
+                <td>
+                    €{{ invoice.get_total_amount_including_btw|floatformat:2 }}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+    <h4>Exporteren</h4>
+    <div class="col s12">
+        <div class="container left">
+            <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur
+                exporteren</a>
+            {% if user.is_authenticated and bunq_set and not invoice.payment_set.first %}
+                <a href="#bunq-request-modal" class="modal-trigger btn waves-effect waves-light btn-flat">bunq request
+                    maken</a>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    <!-- Modal Structure -->
+    <div id="modal-export-invoice" class="modal bottom-sheet">
+        <i class="large material-icons right">import_export</i>
+        <div class="modal-content">
+            <h4>Factuur exporteren</h4>
+            {% if invoice.url %}
+                Deze factuur is gedeeld op link <a href="{{ invoice.get_complete_url }}">{{ invoice.get_complete_url }}</a>.
+            {% endif %}
+            <div class="col s12">
+                <div class="container left">
+                    <a href="{% url "download_invoice" "markdown" invoice.id %}"
+                       class="btn waves-effect waves-light btn-flat">Markdown</a>
+                </div>
+            </div>
+
+            <div class="col s12">
+                <div class="container left">
+                    <a href="#" id="pdf" class="btn waves-effect waves-light btn-flat">PDF</a>
+                </div>
+            </div>
+
+            <div class="col s12">
+                <div class="container left">
+                    <a href="{% url "download_invoice" "docx" invoice.id %}"
+                       class="btn waves-effect waves-light btn-flat">DOCX</a>
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% if invoice.url is not None %}
+                    <div class="col s12">
+                        <div class="container left">
+                            <a href="#" class="open-share-modal btn waves-effect waves-light btn-flat">Link niet langer delen</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col s12">
+                        <div class="container left">
+                            <a href="#" class="open-share-modal btn waves-effect waves-light btn-flat">Link delen</a>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="col s12">
+                    <div class="container left">
+                        <a href="{% url "email_outgoing_invoice" invoice.id %}"
+                           class="btn waves-effect waves-light btn-flat">E-mail</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Annuleren</a>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal-result-pdf" class="modal bottom-sheet">
+        <i class="large material-icons right">announcement</i>
+        <div class="modal-content">
+            <h4>PDF exporteren</h4>
+            <div id="result-div"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+            <a class="btn-floating btn-large red" href="{% url "edit_outgoing_invoice" invoice.id %}">
+                <i class="large material-icons">mode_edit</i>
+            </a>
+        </div>
+    {% endif %}
+
+
+    <div id="share-modal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>Link delen</h4>
+            Kopieer en plak de volgende link naar deze factuur: <p id="link"></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
+    </div>
+
+
+    <div id="bunq-request-modal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>bunq request aanmaken</h4>
+            <span id="bunq-inner">De request wordt verstuurd naar {{ invoice.to_company.company_email }}.</span>
+        </div>
+        <div class="modal-footer">
+            <span id="bunq-send"><a href="#" class="btn" id="send-bunq-request">Versturen</a></span>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".button-collapse").sideNav();
+            $(".dropdown-button").dropdown();
+            var intervalId = 0;
+            var taskId = 0;
+            $("#pdf").on("click", function (event) {
+                $.get({
+                    url: "{% url 'generate_pdf' invoice.id %}",
+                    success: function (data) {
+                        $('#modal-result-pdf').modal('open');
+                        $("#result-div").html("Bezig met maken van document... Een ogenblik geduld");
+                        taskId = data.task_id;
+                        intervalId = setInterval(monitor_pdf_status, 2000);
+                    },
+                });
+            });
+
+            function monitor_pdf_status() {
+                $.get({
+                    url: "/facturen/status/" + taskId,
+                    success: function (data) {
+                        if (data.status == 'SUCCESS') {
+                            clearInterval(intervalId);
+                            $("#result-div").html("Document gemaakt: ");
+                            var downloadLink = $("<a />", {
+                                href: "/facturen/downloaden/pdf/{{ invoice.id }}/",
+                                text: "nu downloaden",
+                                class: "btn waves-effect waves-light btn-flat"
+                            }).appendTo("#result-div");
+                        }
+                    }
+                })
+            }
+
+            $('.modal').modal();
+            $('.open-share-modal').click(function (event) {
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "share_link_to_outgoing_invoice" invoice.id %}',
+                    success: function (data) {
+                        if (data.url == undefined) {
+                            location.reload()
+                        } else {
+                            var link = "<a href='" + data.url + "'>" + data.url + "</a>";
+                            $('#link').html(link)
+                        }
+                    },
+                });
+                $('#share-modal').modal('open');
+            });
+
+            $('#send-bunq-request').click(function(e) {
+                $('#bunq-inner').text('Bezig met verzenden...');
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "bunq_request" invoice.id %}',
+                    success: function (data) {
+                        if (data.request == 'created') {
+                            $('#bunq-inner').text('De request is succesvol verzonden.');
+                            $('#bunq-send').remove();
+                        }
+                    },
+
+                })
+            });
+        });
+    </script>
+
+{% endblock %}

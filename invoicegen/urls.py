@@ -34,6 +34,8 @@ urlpatterns = [
                   url(r'^facturen/', include('invoices.urls')),
                   url(r'^overeenkomsten/', include('agreements.urls')),
                   url(r'^activiteiten/', include('activities.urls')),
+                  url(r'^betalingen/', include('payment.urls')),
+                  url(r'^instellingen/', include('settings.urls')),
 
                   url(r'^email/templates/$', mail.views.list_view_templates, name='list_view_templates'),
                   url(r'^email/templates/nieuw/$', mail.views.NewEditEmailTemplate.as_view(),
@@ -47,17 +49,6 @@ urlpatterns = [
                   url(r'^email/verzenden/$', mail.views.save_and_send_email, name='save_and_send_email'),
                   url(r'^email/inhoud/$', mail.views.get_email_contents, name='get_email_contents'),
                   url(r'^email/get-template/$', mail.views.get_template, name='get_template'),
-
-                  url(r'^instellingen/$', settings.views.settings, name='settings'),
-                  url(r'^instellingen/persoonlijk$', settings.views.PersonalSettings.as_view(),
-                      name='personal_settings'),
-                  url(r'^instellingen/nieuwe-gebruiker$', settings.views.UserSettings.as_view(),
-                      name='create_new_user'),
-                  url(r'^instellingen/gebruiker/bewerken/(?P<user_id>\d+)/$', settings.views.EditUserView.as_view(),
-                      name='edit_user'),
-                  url(r'^instellingen/gebruiker/verwijderen$', settings.views.delete_user, name='delete_user'),
-                  url(r'^instellingen/factuursjabloon/standaard$', settings.views.save_default_invoice_template,
-                      name='default_invoice'),
 
                   url(r'^statistieken/$', statistics.views.view_statistics, name='statistics'),
 

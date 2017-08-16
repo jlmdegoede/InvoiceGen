@@ -13,7 +13,7 @@ def get_email_form(request, to=None, invoice_id=0):
     initial_values = {'to': to}
     email_form = EmailForm(initial=initial_values)
     email_templates = EmailTemplate.objects.all()
-    return render(request, 'Mail/email_invoice.html', {'form': email_form, 'emailtemplates': email_templates,
+    return render(request, 'mail/email_invoice.html', {'form': email_form, 'emailtemplates': email_templates,
                                                        'invoice_id': invoice_id})
 
 
@@ -41,20 +41,20 @@ def save_and_send_email(request):
         return redirect(reverse('detail_outgoing_invoice', args=[invoice_id]))
     else:
         email_templates = EmailTemplate.objects.all()
-        return render(request, 'Mail/email_invoice.html', {'form': email_form, 'email_templates': email_templates, 'invoice_id': invoice_id})
+        return render(request, 'mail/email_invoice.html', {'form': email_form, 'email_templates': email_templates, 'invoice_id': invoice_id})
 
 
 @login_required
 def list_view_templates(request):
     template_table = EmailTemplateTable(EmailTemplate.objects.all())
-    return render(request, 'Mail/email_template_list.html', {'template_table': template_table})
+    return render(request, 'mail/email_template_list.html', {'template_table': template_table})
 
 
 class NewEditEmailTemplate(View):
     def get(self, request, email_template_id=0):
         email_template = self.get_email_template_instance(email_template_id)
         email_template_form = EmailTemplateForm(instance=email_template)
-        return render(request, 'Mail/new_edit_email_template.html', {'form': email_template_form, 'email_template_id': email_template_id})
+        return render(request, 'mail/new_edit_email_template.html', {'form': email_template_form, 'email_template_id': email_template_id})
 
     def get_email_template_instance(self, email_template_id=0):
         return EmailTemplate() if email_template_id is 0 else EmailTemplate.objects.get(id=email_template_id)
@@ -66,14 +66,14 @@ class NewEditEmailTemplate(View):
             email_template.save()
             return redirect(to=list_view_templates)
         else:
-            return render(request, 'Mail/new_edit_email_template.html', {'form': email_template_form})
+            return render(request, 'mail/new_edit_email_template.html', {'form': email_template_form})
 
 
 class SentEmailListView(View):
     def get(self, request):
         emails = Email.objects.all()
         email_table = EmailTable(emails)
-        return render(request, 'Mail/sent_emails.html', {'table': email_table})
+        return render(request, 'mail/sent_emails.html', {'table': email_table})
 
 
 @login_required

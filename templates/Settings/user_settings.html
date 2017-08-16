@@ -1,3 +1,18 @@
+{% extends "settings/settings.html" %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block title %}
+    Gebruikers
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Gebruikers" "user_settings" %}
+{% endblock %}
+
+{% block user_settings %}active{% endblock %}
+
+{% block settings %}
 <h4>Actieve gebruikers</h4>
 <table>
     <thead>
@@ -6,7 +21,7 @@
         <td></td>
     </tr>
     </thead>
-    {% for user in users.user_list %}
+    {% for user in user_list %}
         <tr>
             <td><a href="{% url 'edit_user' user.id %}" class="collection-item">{{ user.username }}</a></td>
             <td><a href="#modal-delete" data-id="{{ user.id }}" class="delete-link modal-trigger"><i class="material-icons">delete</i></a></td>
@@ -16,25 +31,25 @@
 
 <h4>Nieuwe gebruiker aanmaken</h4>
 De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te loggen.
-<form id="new-user-form" class="col s12" method="post" action="{% url "create_new_user" %}">
+<form id="new-user-form" class="col s12" method="post" action="{% url "user_settings" %}">
     {% csrf_token %}
 
     <p class="row">
     <div class="input-field col s4">
-        {{ users.new_user_form.username }}
-        <label for="{{ users.new_user_form.username.id_for_label }}">Gebruikersnaam</label>
-        {{ users.new_user_form.errors.title }}
+        {{ new_user_form.username }}
+        <label for="{{ new_user_form.username.id_for_label }}">Gebruikersnaam</label>
+        {{ new_user_form.errors.title }}
     </div>
     <div class="input-field col s4">
-        {{ users.new_user_form.email }}
-        <label for="{{ users.new_user_form.email.id_for_label }}">E-mailadres</label>
-        {{ users.new_user_form.errors.email }}
+        {{ new_user_form.email }}
+        <label for="{{ new_user_form.email.id_for_label }}">E-mailadres</label>
+        {{ new_user_form.errors.email }}
     </div>
 
     <div class="input-field col s12">
-        {{ users.new_user_form.groups }}
-        <label for="{{ users.new_user_form.groups.id_for_label }}">Groepen</label>
-        {{ users.new_user_form.errors.groups }}
+        {{ new_user_form.groups }}
+        <label for="{{ new_user_form.groups.id_for_label }}">Groepen</label>
+        {{ new_user_form.errors.groups }}
     </div>
 
     <div class="col s12">
@@ -81,3 +96,4 @@ De nieuwe gebruiker ontvangt een e-mail met daarin een wachtwoord om in te logge
         });
     });
 </script>
+{% endblock %}

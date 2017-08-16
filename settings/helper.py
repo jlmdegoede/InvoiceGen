@@ -3,11 +3,10 @@ from .group_management import *
 from .models import UserSetting, Setting
 
 
-def save_colors(form):
-    color_up = form.cleaned_data['color_up']
-    save_setting('color_up', color_up)
-    color_down = form.cleaned_data['color_down']
-    save_setting('color_down', color_down)
+def get_from_request_and_save_setting(request, key, setting_key):
+    if key in request.POST:
+        value = request.POST[key]
+        save_setting(setting_key, value)
 
 
 def convert_to_json_utf8(data):
@@ -50,19 +49,6 @@ def save_setting(key, value):
         setting.value = value
     setting.save()
     return setting
-
-
-def save_website_name(form):
-    site_name_f = form.cleaned_data['site_name']
-    site_name = Setting.objects.filter(key='site_name')
-
-    if site_name is not None:
-        if site_name.count() == 0:
-            site_name = Setting(key='site_name', value=site_name_f)
-        else:
-            site_name = site_name[0]
-            site_name.value = site_name_f
-        site_name.save()
 
 
 def create_groups():

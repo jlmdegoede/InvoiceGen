@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import *
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.views import View
 from rest_framework import viewsets
 
@@ -13,6 +12,9 @@ from invoicegen.celery import app
 from invoices.forms import *
 from invoices.tasks import task_generate_pdf
 from settings.localization_nl import get_localized_text
+from settings.models import UserSetting
+from settings.const import BUNQ_API_KEY, MOLLIE_API_KEY
+from payment.providers.bunq import check_payment_status
 from utils.date_helper import *
 
 from .models import *
@@ -26,22 +28,21 @@ from .helper import get_invoices, add_invoice_to_products, remove_invoice_from_p
 @permission_required('invoices.view_invoice')
 def get_outgoing_invoices(request):
     dict = get_invoices('outgoing', request)
-    return render(request, 'Invoices/outgoing_invoice_table.html', dict)
+    return render(request, 'invoices/outgoing/outgoing_invoice_table.html', dict)
 
 
 @login_required
 @permission_required('invoices.view_invoice')
 def get_incoming_invoices(request):
     dict = get_invoices('incoming', request)
-    return render(request, 'Invoices/incoming_invoice_table.html', dict)
+    return render(request, 'invoices/incoming/incoming_invoice_table.html', dict)
 
 
 class AddOutgoingInvoice(View):
     def get(self, request):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(instance=invoice)
-
-        return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+        return render(request, 'invoices/outgoing/new_edit_outgoing_invoice.html',
                       {'form': f, 'invoiceid': invoice.id, 'edit': False})
 
     def post(self, request):
@@ -51,19 +52,16 @@ class AddOutgoingInvoice(View):
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = timezone.now()
-
             products = f.cleaned_data['products']
             for product in products:
                 invoice.to_company = product.from_company
-
             invoice.invoice_number = f.cleaned_data['invoice_number']
             invoice.save()
             add_invoice_to_products(invoice, products)
-
             request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen')
         else:
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/outgoing/new_edit_outgoing_invoice.html',
                           {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
@@ -91,17 +89,26 @@ def share_link_to_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     return_dict = {}
     if invoice.url is None:
-        invoice.url = get_random_string(length=32)
+        invoice.generate_and_save_url()
         return_dict['url'] = request.build_absolute_uri(reverse('view_outgoing_invoice_guest', args=[invoice.url]))
     else:
         invoice.url = None
+        invoice.save()
     invoice.save()
     return JsonResponse(return_dict)
 
 
-def view_outgoing_invoice_guest(request, invoice_url):
+def view_outgoing_invoice_guest(request, invoice_url, paid=None):
     invoice = OutgoingInvoice.objects.get(url=invoice_url)
-    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
+    bunq_set = get_setting(BUNQ_API_KEY, '') != ''
+    mollie_set = get_setting(MOLLIE_API_KEY, '') != ''
+    user_setting = UserSetting.objects.first()
+    if paid == 'paid':
+        check_payment_status(invoice.id)
+    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice,
+                                                                            'mollie_set': mollie_set,
+                                                                            'bunq_set': bunq_set,
+                                                                            'user_setting': user_setting})
 
 
 @login_required
@@ -111,7 +118,7 @@ def add_incoming_invoice(request):
         invoice = IncomingInvoice()
         f = IncomingInvoiceForm(instance=invoice)
 
-        return render(request, 'Invoices/new_edit_incoming_invoice.html',
+        return render(request, 'invoices/incoming/new_edit_incoming_invoice.html',
                       {'form': f, 'invoiceid': invoice.id, 'edit': False})
     elif request.method == 'POST':
         invoice = IncomingInvoice()
@@ -126,7 +133,7 @@ def add_incoming_invoice(request):
             request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/incoming/new_edit_incoming_invoice.html',
                           {'form': f, 'invoiceid': invoice.id, 'edit': False,
                            'toast': "Formulier ongeldig!"})
 
@@ -135,14 +142,18 @@ def add_incoming_invoice(request):
 @permission_required('invoices.view_invoice')
 def detail_incoming_invoice(request, invoice_id):
     invoice = IncomingInvoice.objects.get(id=invoice_id)
-    return render(request, 'Invoices/view_incoming_invoice.html', {'invoice': invoice})
+    return render(request, 'invoices/incoming/view_incoming_invoice.html', {'invoice': invoice})
 
 
 @login_required
 @permission_required('invoices.view_invoice')
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    return render(request, 'Invoices/view_outgoing_invoice.html', {'invoice': invoice})
+    bunq_set = get_setting(BUNQ_API_KEY, '') != ''
+    mollie_set = get_setting(MOLLIE_API_KEY, '') != ''
+    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice,
+                                                                            'mollie_set': mollie_set,
+                                                                            'bunq_set': bunq_set})
 
 
 class EditOutgoingInvoice(View):
@@ -152,7 +163,7 @@ class EditOutgoingInvoice(View):
             f = OutgoingInvoiceForm(instance=invoice)
             products = Product.objects.filter(invoice=invoice)
 
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/outgoing/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': products, 'edit': True,
                            'invoice_id': invoice_id})
         except:
@@ -176,7 +187,7 @@ class EditOutgoingInvoice(View):
             request.session['toast'] = get_localized_text('CHANGED_INVOICE')
             return redirect('/facturen')
         else:
-            return render(request, 'Invoices/new_edit_outgoing_invoice.html',
+            return render(request, 'invoices/outgoing/new_edit_outgoing_invoice.html',
                           {'form': f, 'products': old_products, 'invoice_id': invoice.id, 'edit': True,
                            'toast': get_localized_text('INVALID_FORM')})
 
@@ -187,7 +198,7 @@ class EditIncomingInvoice(View):
             invoice = IncomingInvoice.objects.get(id=invoice_id)
             f = IncomingInvoiceForm(instance=invoice)
 
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/incoming/new_edit_incoming_invoice.html',
                           {'form': f, 'invoice': invoice, 'edit': True})
         except:
             request.session['toast'] = get_localized_text('INVOICE_NOT_FOUND')
@@ -204,7 +215,7 @@ class EditIncomingInvoice(View):
             request.session['toast'] = get_localized_text('INVOICE_CHANGED')
             return redirect('/facturen/inkomend')
         else:
-            return render(request, 'Invoices/new_edit_incoming_invoice.html',
+            return render(request, 'invoices/incoming/new_edit_incoming_invoice.html',
                           {'form': f, 'invoice_id': invoice.id, 'edit': True,
                            'toast': get_localized_text('INVALID_FORM')})
 

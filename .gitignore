@@ -90,3 +90,4 @@ static/images
 
 supervisord.pid
 .env
+bunq.conf
