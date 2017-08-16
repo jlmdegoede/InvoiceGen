@@ -17,19 +17,6 @@
     {% breadcrumb "Opdrachten" "index" %}
 {% endblock %}
 
-{% block side_menu_outside_collections %}
-    <div class="row"><br/>
-        <div class="col m6">
-            <select class="year_select">
-                <option value="" disabled selected>Eerdere jaren</option>
-                {% for year in years_not_in_table %}
-                    <option value="{{ year }}">{{ year }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-{% endblock %}
-
 {% block content %}
     {% if first_time %}
         <div class="card-panel teal white-text">
@@ -63,6 +50,15 @@
                         afgerond</a>
                 </div>
 
+                <div class="col s2">
+                    <select class="year_select">
+                        <option value="" disabled selected>Eerdere jaren</option>
+                        {% for year in years_not_in_table %}
+                            <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
             </div>
             </p>
         </div>
@@ -71,23 +67,20 @@
             <div id="{{ y }}" class="col s12">
                 {% render_table table "../templates/table_materialize.html" %}
 
-            <div class="row">
-                <div class="col m3">
-                <a href="#" class="modal-trigger waves-effect waves-light btn tooltipped" data-position="bottom"
-                   data-delay="50" style="background-color: {{ color_down }} !important;"
-                   data-tooltip="Vink opdrachten aan in de tabel en klik hier om er een factuur voor te genereren">Factureren</a>
+                <div class="row">
+                    <div class="col m3">
+                        <a href="#" class="modal-trigger waves-effect waves-light btn tooltipped" data-position="bottom"
+                           data-delay="50" style="background-color: {{ color_down }} !important;"
+                           data-tooltip="Vink opdrachten aan in de tabel en klik hier om er een factuur voor te genereren">Factureren</a>
+                    </div>
                 </div>
             </div>
-
-
-            </div>
-
         {% endfor %}
     </div>
 
     <script type="text/babel" src="/static/js/hourregistration.js"></script>
 
-    <div id="urenregistratie"></div>
+    <div id="urenregistratie" data-color="{{ color_up }}"></div>
 
     <div id="modal-invoice" class="modal bottom-sheet">
         <div class="modal-content">
