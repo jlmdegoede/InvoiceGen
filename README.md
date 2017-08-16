@@ -10,6 +10,8 @@ IG biedt ondersteuning voor de Web DBA en stelt je in staat om modelovereenkomst
 
 Al deze functies zijn in een modern jasje gegoten dat perfect werkt op je smartphone en tablet, zodat je ook onderweg zaken kunt doen, en geheel gratis, zolang je het zelf host.
 
+<img src='docs/images/mac-index.png' width=500px />
+
 ## Functies
 - Beheer je opdrachten en opdrachtgevers
 - Houd eenvoudig je uren bij
@@ -20,6 +22,8 @@ Al deze functies zijn in een modern jasje gegoten dat perfect werkt op je smartp
 - Duidelijk overzicht van binnenkomende en uitgaande facturen dat helpt met de btw-aangifte
 - Geheel open source en gratis
 - Werkt goed op smartphone en tablet
+- Integratie met Mollie: je opdrachtgevers betalen eenvoudig via iDEAL
+- Integratie met bunq: verstuur naar je opdrachtgever een bunq request om snel betaald te worden
 
 ## Beta
 Invoicegen is op dit moment nog in het betastadium, dus verwacht nog niet zo veel. Hoewel er al veel af is, kan het allemaal nog wat uitgebreider en flexibeler.
