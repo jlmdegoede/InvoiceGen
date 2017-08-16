@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.utils.crypto import get_random_string
 
 from companies.models import *
-from invoicegen.settings import ALLOWED_HOSTS
+from settings.helper import get_setting
+from settings.const import SITE_URL
 
 
 class Invoice(models.Model):
@@ -45,9 +47,18 @@ class OutgoingInvoice(Invoice):
             btw += product.get_price() * (float(product.tax_rate / 100))
         return btw
 
-    def get_complete_url(self):
-        if self.url is not None:
-            return 'http://{0}{1}'.format(ALLOWED_HOSTS[0], reverse('view_outgoing_invoice_guest', args=[self.url]))
+    def generate_and_save_url(self):
+        if not self.url:
+            self.url = get_random_string(length=32)
+            self.save()
+
+    def get_complete_url(self, optional_arg=''):
+        site_url = get_setting(SITE_URL, '')
+        if self.url and site_url:
+            if optional_arg:
+                return '{0}{1}'.format(site_url, reverse('view_outgoing_invoice_guest_paid', args=[self.url, optional_arg]))
+            else:
+                return '{0}{1}'.format(site_url, reverse('view_outgoing_invoice_guest', args=[self.url]))
 
 
 class IncomingInvoice(Invoice):

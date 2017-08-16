@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import *
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.views import View
 from rest_framework import viewsets
 
@@ -13,8 +12,9 @@ from invoicegen.celery import app
 from invoices.forms import *
 from invoices.tasks import task_generate_pdf
 from settings.localization_nl import get_localized_text
+from settings.models import UserSetting
 from settings.const import BUNQ_API_KEY, MOLLIE_API_KEY
-from settings.helper import get_setting
+from payment.providers.bunq import check_payment_status
 from utils.date_helper import *
 
 from .models import *
@@ -89,21 +89,26 @@ def share_link_to_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     return_dict = {}
     if invoice.url is None:
-        invoice.url = get_random_string(length=32)
+        invoice.generate_and_save_url()
         return_dict['url'] = request.build_absolute_uri(reverse('view_outgoing_invoice_guest', args=[invoice.url]))
     else:
         invoice.url = None
+        invoice.save()
     invoice.save()
     return JsonResponse(return_dict)
 
 
-def view_outgoing_invoice_guest(request, invoice_url):
+def view_outgoing_invoice_guest(request, invoice_url, paid=None):
     invoice = OutgoingInvoice.objects.get(url=invoice_url)
     bunq_set = get_setting(BUNQ_API_KEY, '') != ''
     mollie_set = get_setting(MOLLIE_API_KEY, '') != ''
+    user_setting = UserSetting.objects.first()
+    if paid == 'paid':
+        check_payment_status(invoice.id)
     return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice,
                                                                             'mollie_set': mollie_set,
-                                                                            'bunq_set': bunq_set})
+                                                                            'bunq_set': bunq_set,
+                                                                            'user_setting': user_setting})
 
 
 @login_required

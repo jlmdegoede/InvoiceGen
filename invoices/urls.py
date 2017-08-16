@@ -22,6 +22,8 @@ urlpatterns = [
         name='detail_outgoing_invoice'),
     url(r'^bekijken/(?P<invoice_url>\w+)/$', invoices.views.view_outgoing_invoice_guest,
         name='view_outgoing_invoice_guest'),
+    url(r'^bekijken/(?P<invoice_url>\w+)/(?P<paid>\w+)$', invoices.views.view_outgoing_invoice_guest,
+        name='view_outgoing_invoice_guest_paid'),
     url(r'^delen/(?P<invoice_id>\d+)/$', invoices.views.share_link_to_outgoing_invoice,
         name='share_link_to_outgoing_invoice'),
     url(r'^email/(?P<invoice_id>\d+)/$', login_required(invoices.views.SendOutgoingInvoicePerEmail.as_view()),

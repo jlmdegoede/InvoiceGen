@@ -32,6 +32,7 @@ class BunqRequest(Payment):
         return "Betaling via bunq request gemaakt op {0} met status {1}".format(self.created, self.status)
 
 
+
 class MolliePayment(Payment):
     payment_id = models.IntegerField()
 

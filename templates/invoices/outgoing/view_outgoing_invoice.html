@@ -29,7 +29,7 @@
                         {% if invoice.paid %}
                             <p>Deze factuur is betaald op {{ invoice.payment_set.first.created }}.</p>
                         {% else %}
-                            <p>Deze factuur is nog niet betaald. Je kunt handmatig het bedrag overmaken op IBAN t.a.v. of nu
+                            <p>Deze factuur is nog niet betaald. Je kunt handmatig het bedrag overmaken op IBAN {{ user_setting.iban }} t.a.v. {{ user_setting.name }} of nu
                                 betalen via iDEAL.
                                 {% if user.is_authenticated %}
                                 {% endif %}
@@ -157,7 +157,7 @@
         <div class="container left">
             <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur
                 exporteren</a>
-            {% if user.is_authenticated and bunq_set %}
+            {% if user.is_authenticated and bunq_set and not invoice.payment_set.first %}
                 <a href="#bunq-request-modal" class="modal-trigger btn waves-effect waves-light btn-flat">bunq request
                     maken</a>
             {% endif %}
@@ -171,6 +171,9 @@
         <i class="large material-icons right">import_export</i>
         <div class="modal-content">
             <h4>Factuur exporteren</h4>
+            {% if invoice.url %}
+                Deze factuur is gedeeld op link <a href="{{ invoice.get_complete_url }}">{{ invoice.get_complete_url }}</a>.
+            {% endif %}
             <div class="col s12">
                 <div class="container left">
                     <a href="{% url "download_invoice" "markdown" invoice.id %}"

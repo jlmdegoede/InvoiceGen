@@ -7,7 +7,7 @@ from invoices.models import OutgoingInvoice
 
 from .providers.mollie import MollieApi
 from .providers.bunq import BunqApi
-from .models import BunqRequest, MolliePayment, Payment
+from .models import MolliePayment
 
 
 def mollie_payment(request, invoice_id):
@@ -25,11 +25,6 @@ def bunq_request(request, invoice_id):
     return JsonResponse({'request': 'created'})
 
 
-@login_required
-def bunq_request_status(request, invoice_id):
-    pass
-
-
 @csrf_exempt
 def mollie_webhook(request):
     mollie = MollieApi()
@@ -39,13 +34,13 @@ def mollie_webhook(request):
     payment_obj = MolliePayment.objects.get(payment_id=payment_nr)
 
     if payment.isPaid():
-        payment_obj.status = Payment.PAID
+        payment_obj.status = MolliePayment.PAID
         payment_obj.for_invoice.paid = True
         payment_obj.for_invoice.save()
     elif payment.isPending() or payment.isOpen():
-        payment_obj.status = Payment.PENDING
+        payment_obj.status = MolliePayment.PENDING
     else:
-        payment_obj.status = Payment.CANCELLED
+        payment_obj.status = MolliePayment.CANCELLED
     payment_obj.save()
     return JsonResponse({'webhook': 'received'})
 

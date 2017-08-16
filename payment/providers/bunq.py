@@ -1,3 +1,5 @@
+from django.utils.crypto import get_random_string
+
 from bunq.sdk import context
 from bunq.sdk.model import generated
 from bunq.sdk.model.generated import object_
@@ -20,12 +22,17 @@ class BunqApi(object):
             self.context = context.ApiContext(
                 context.ApiEnvironmentType.SANDBOX,
                 api_key,
-                'test device python'
+                'Invoicegen.nl'
             )
             self.context.save()
 
         for user in generated.User.list(self.context):
-            self.user_id = user.UserCompany.id_
+            if hasattr(user, 'UserCompany'):
+                self.user_id = user.UserCompany.id_
+            elif hasattr(user, 'UserPerson'):
+                self.user_id = user.UserPerson.id_
+            elif hasattr(user, 'UserLight'):
+                self.user_id = user.UserLight.id_
             self.user = generated.User.get(self.context, self.user_id)
         self.monetary_account = int(get_setting(DEFAULT_BUNQ_ACCOUNT, 0))
 
@@ -42,11 +49,13 @@ class BunqApi(object):
         return account_list
 
     def create_request(self, invoice):
+        invoice.generate_and_save_url()
         bunq_request = BunqRequest()
         bunq_request.counterparty_email = invoice.to_company.company_email
         bunq_request.description = invoice.title
         bunq_request.payment_amount = invoice.get_total_amount()
-        bunq_request.for_invoice = invoice.id
+        bunq_request.to_company = invoice.to_company
+        bunq_request.for_invoice = invoice
         bunq_request.status = BunqRequest.PENDING
 
         request_map = {
@@ -60,6 +69,8 @@ class BunqApi(object):
             ),
             generated.RequestInquiry.FIELD_DESCRIPTION: bunq_request.description,
             generated.RequestInquiry.FIELD_ALLOW_BUNQME: True,
+            generated.RequestInquiry.FIELD_MERCHANT_REFERENCE: invoice.invoice_number,
+            generated.RequestInquiry.FIELD_REDIRECT_URL: invoice.get_complete_url('paid')
         }
         request_id = generated.RequestInquiry.create(
             self.context,
@@ -70,6 +81,18 @@ class BunqApi(object):
         bunq_request.bunq_request_id = request_id
         bunq_request.save()
 
+    def check_if_paid(self, invoice_id):
+        bunq_request = BunqRequest.objects.get(for_invoice_id=invoice_id)
+        request_status = self.get_request_status(bunq_request.bunq_request_id)
+        if request_status.status == 'PAID':
+            bunq_request.status = BunqRequest.PAID
+            bunq_request.for_invoice.paid = True
+            bunq_request.for_invoice.save()
+            bunq_request.save()
+            return True
+        else:
+            return False
+
     def get_request_status(self, request_id):
         return generated.RequestInquiry.get(
             self.context,
@@ -77,3 +100,8 @@ class BunqApi(object):
             self.monetary_account,
             request_id
         )
+
+
+def check_payment_status(invoice_id):
+    bunq = BunqApi()
+    bunq.check_if_paid(invoice_id)
