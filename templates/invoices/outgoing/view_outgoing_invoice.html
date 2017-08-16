@@ -158,7 +158,7 @@
             <a href="#modal-export-invoice" class="modal-trigger btn waves-effect waves-light btn-flat">Factuur
                 exporteren</a>
             {% if user.is_authenticated and bunq_set %}
-                <a href="{% url "bunq_request" invoice.id %}" class="btn waves-effect waves-light btn-flat">bunq request
+                <a href="#bunq-request-modal" class="modal-trigger btn waves-effect waves-light btn-flat">bunq request
                     maken</a>
             {% endif %}
         </div>
@@ -250,6 +250,18 @@
     </div>
 
 
+    <div id="bunq-request-modal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>bunq request aanmaken</h4>
+            <span id="bunq-inner">De request wordt verstuurd naar {{ invoice.to_company.company_email }}.</span>
+        </div>
+        <div class="modal-footer">
+            <span id="bunq-send"><a href="#" class="btn" id="send-bunq-request">Versturen</a></span>
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Sluiten</a>
+        </div>
+    </div>
+
+
     <script type="text/javascript">
         $(document).ready(function () {
             $(".button-collapse").sideNav();
@@ -284,10 +296,7 @@
                     }
                 })
             }
-        });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function () {
+
             $('.modal').modal();
             $('.open-share-modal').click(function (event) {
                 $.ajax({
@@ -297,12 +306,27 @@
                         if (data.url == undefined) {
                             location.reload()
                         } else {
-                            var link = "<a href='" + data.url + "'>" + data.url + "</a>"
+                            var link = "<a href='" + data.url + "'>" + data.url + "</a>";
                             $('#link').html(link)
                         }
                     },
                 });
                 $('#share-modal').modal('open');
+            });
+
+            $('#send-bunq-request').click(function(e) {
+                $('#bunq-inner').text('Bezig met verzenden...');
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "bunq_request" invoice.id %}',
+                    success: function (data) {
+                        if (data.request == 'created') {
+                            $('#bunq-inner').text('De request is succesvol verzonden.');
+                            $('#bunq-send').remove();
+                        }
+                    },
+
+                })
             });
         });
     </script>

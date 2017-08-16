@@ -21,8 +21,13 @@ def mollie_payment(request, invoice_id):
 def bunq_request(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
     bunq_api = BunqApi()
-    bunq_api.create_request( invoice.to_company.company_email, invoice.get_total_amount(), invoice.title)
+    bunq_api.create_request(invoice)
     return JsonResponse({'request': 'created'})
+
+
+@login_required
+def bunq_request_status(request, invoice_id):
+    pass
 
 
 @csrf_exempt

@@ -5,12 +5,12 @@ from bunq.sdk.model.generated import object_
 from settings.helper import get_setting
 from settings.const import BUNQ_API_KEY, DEFAULT_BUNQ_ACCOUNT
 
+from ..models import BunqRequest
+
 
 class BunqApi(object):
     _REQUEST_CURRENCY = 'EUR'
     _COUNTERPARTY_POINTER_TYPE = 'EMAIL'
-    _REQUEST_DESCRIPTION = 'This is a generated request!'
-    _STATUS_REVOKED = 'REVOKED'
 
     def __init__(self):
         try:
@@ -41,17 +41,24 @@ class BunqApi(object):
                     account_list.append(account_dict)
         return account_list
 
-    def create_request(self, counterparty_email, request_amount, description):
+    def create_request(self, invoice):
+        bunq_request = BunqRequest()
+        bunq_request.counterparty_email = invoice.to_company.company_email
+        bunq_request.description = invoice.title
+        bunq_request.payment_amount = invoice.get_total_amount()
+        bunq_request.for_invoice = invoice.id
+        bunq_request.status = BunqRequest.PENDING
+
         request_map = {
             generated.RequestInquiry.FIELD_AMOUNT_INQUIRED: object_.Amount(
-                request_amount,
+                str(bunq_request.payment_amount),
                 self._REQUEST_CURRENCY
             ),
             generated.RequestInquiry.FIELD_COUNTERPARTY_ALIAS: object_.Pointer(
                 self._COUNTERPARTY_POINTER_TYPE,
-                counterparty_email
+                bunq_request.counterparty_email
             ),
-            generated.RequestInquiry.FIELD_DESCRIPTION: description,
+            generated.RequestInquiry.FIELD_DESCRIPTION: bunq_request.description,
             generated.RequestInquiry.FIELD_ALLOW_BUNQME: True,
         }
         request_id = generated.RequestInquiry.create(
@@ -59,4 +66,14 @@ class BunqApi(object):
             request_map,
             self.user_id,
             self.monetary_account
+        )
+        bunq_request.bunq_request_id = request_id
+        bunq_request.save()
+
+    def get_request_status(self, request_id):
+        return generated.RequestInquiry.get(
+            self.context,
+            self.user_id,
+            self.monetary_account,
+            request_id
         )
