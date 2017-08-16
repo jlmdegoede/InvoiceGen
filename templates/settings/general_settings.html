@@ -1,95 +1,88 @@
-<h4>Algemene instellingen</h4>
-<div class="row">
-    <form class="col s12" method="post" action="{% url 'save_bunq_settings' %}">
-        {% csrf_token %}
-        <div class="row">
-            <div class="input-field col s12">
-                <input id="api_key" placeholder="https://je-eigen-website.nl"
-                       type="text" class="validate" name="bunq_api_key" value="{{ settings.mollie_api_key }}">
-                <label for="api_key">Website-URL</label>
-            </div>
+{% extends "settings/settings.html" %}
+{% load django_bootstrap_breadcrumbs %}
 
-            <div class="input-field col s12">
-                {{ personal.form.site_name }}
-                <label for="{{ personal.form.site_name.id_for_label }}">Websitenaam</label>
-                {{ personal.error.site_name }}
-            </div>
+{% block title %}
+    Algemene instellingen
+{% endblock %}
 
-            <legend>Bedrijfskleuren</legend>
-            <div class="input-field col s12">
-                <label for="background-color-up">Selecteer een kleur voor boven:</label><br><br>
-                <input id="background-color-up" name="color_up" type="color" value="{{ personal.color_up }}"/>
-            </div>
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Algemene instellingen" "general_settings" %}
+{% endblock %}
 
-            <div class="input-field col s12">
-                <label for="background-color-down">Selecteer een kleur voor onder:</label><br><br>
-                <input id="background-color-down" name="color_down" type="color" value="{{ personal.color_down }}"/>
+{% block general_settings %}active{% endblock %}
 
-                <br><br><br>
-            </div>
+{% block settings %}
+    <h4>Algemene instellingen</h4>
+    <div class="row">
+        <form class="col s12" method="post" action="{% url 'general_settings' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="api_key" placeholder="https://je-eigen-website.nl"
+                           type="text" class="validate" name="site_url" value="{{ site_url }}">
+                    <label for="api_key">Website-URL</label>
+                </div>
 
-            <div class="col s12">
-                <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
-                    <i class="material-icons left">send</i>
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
+                <div class="input-field col s12">
+                    <input id="site_name" name="site_name" type="text" value="{{ site_name }}"/>
+                    <label for="site_name">Websitenaam</label>
+                </div>
 
-<h5>bunq</h5>
-<div class="row">
-    <form class="col s12" method="post" action="{% url 'save_bunq_settings' %}">
-        {% csrf_token %}
-        <div class="row">
-            <div class="input-field col s12">
-                <input placeholder="Ga in bunq naar Profiel / Beveiliging / API Keys / Maak key aan" id="api_key"
-                       type="text" class="validate" name="bunq_api_key" value="{{ settings.bunq_api_key }}">
-                <label for="api_key">API-key</label>
-            </div>
-            <div class="input-field col s6">
-                <select name="defaultbunq">
-                    <option value="" disabled selected>Kies een rekening</option>
-                    {% for account in settings.accounts %}
-                        <option value="{{ account.id }}"
-                                {% if settings.default_bunq_account == account.id %}selected{% endif %}>{{ account.name }}
-                            / {{ account.value }}</option>
-                    {% endfor %}
-                </select>
-                <label>Op welke rekening wil je de requests ontvangen?</label>
-            </div>
+                <legend>Bedrijfskleuren</legend>
+                <div class="input-field col s12">
+                    <label for="background-color-up">Selecteer een kleur voor boven:</label><br><br>
+                    <input id="background-color-up" name="color_up" type="color" value="{{ color_up }}"/>
+                </div>
 
-            <div class="col s12">
-                <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
-                    <i class="material-icons left">send</i>
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
+                <div class="input-field col s12">
+                    <label for="background-color-down">Selecteer een kleur voor onder:</label><br><br>
+                    <input id="background-color-down" name="color_down" type="color" value="{{ color_down }}"/>
 
-<h5>Mollie</h5>
-<div class="row">
-    <form class="col s12" method="post" action="{% url 'save_bunq_settings' %}">
-        {% csrf_token %}
-        <div class="row">
-            <div class="input-field col s12">
-                <input id="api_key"
-                       type="text" class="validate" name="bunq_api_key" value="{{ settings.mollie_api_key }}">
-                <label for="api_key">Mollie API-key</label>
-            </div>
+                    <br><br><br>
+                </div>
 
-            <div class="col s12">
-                <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
-                    <i class="material-icons left">send</i>
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
+                <h5>bunq</h5>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('select').material_select();
-    });
-</script>
+                <div class="input-field col s12">
+                    <input placeholder="Ga in bunq naar Profiel / Beveiliging / API Keys / Maak key aan" id="api_key"
+                           type="text" class="validate" name="bunq_api_key" value="{{ bunq_api_key }}">
+                    <label for="api_key">API-key</label>
+                </div>
+                <div class="input-field col s12">
+                    <select name="defaultbunq">
+                        <option value="" disabled selected>Kies een rekening</option>
+                        {% for account in bunq_accounts %}
+                            <option value="{{ account.id }}"
+                                    {% if default_bunq_account == account.id %}selected{% endif %}>{{ account.name }}
+                                / {{ account.value }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Op welke rekening wil je de requests ontvangen?</label>
+                </div>
+
+
+                <h5>Mollie</h5>
+
+                <div class="input-field col s12">
+                    <input id="api_key"
+                           type="text" class="validate" name="mollie_api_key" value="{{ mollie_api_key }}">
+                    <label for="api_key">Mollie API-key</label>
+                </div>
+
+                <div class="col s12">
+                    <button class="btn waves-effect waves-light" type="submit" name="submit">Opslaan
+                        <i class="material-icons left">send</i>
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+{% endblock %}

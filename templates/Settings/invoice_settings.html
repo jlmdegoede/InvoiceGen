@@ -1,7 +1,22 @@
+{% extends "settings/settings.html" %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block title %}
+    Factuursjablonen
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Factuursjablonen" "personal_settings" %}
+{% endblock %}
+
+{% block invoicetemplate_settings %}active{% endblock %}
+
+{% block settings %}
 <h4>Factuursjablonen</h4>
 <h5>pdf</h5>
 <div class="row">
-    {% for template in invoices.templates.pdf %}
+    {% for template in templates.pdf %}
         <div class="col s12 m7">
             <div class="card">
                 <div class="card-image">
@@ -9,10 +24,10 @@
                     <span class="card-title">{{ template }}</span>
                 </div>
                 <div class="card-action">
-                    {% if template.id == invoices.default_pdf %}
+                    {% if template.id == default_pdf %}
                         Standaardtemplate
                     {% else %}
-                        <a href="#" data-id="{{ template.id }}" data-type="pdf">Als standaard instellen</a>{% endif %}
+                        <a href="#" data-id="{{ template.id }}" data-type="pdf" class="template">Als standaard instellen</a>{% endif %}
                 </div>
             </div>
         </div>
@@ -21,7 +36,7 @@
 
 <h5>docx</h5>
 <div class="row">
-    {% for template in invoices.templates.docx %}
+    {% for template in templates.docx %}
         <div class="col s12 m7">
             <div class="card">
                 <div class="card-image">
@@ -29,10 +44,10 @@
                     <span class="card-title">{{ template }}</span>
                 </div>
                 <div class="card-action">
-                    {% if template.id == invoices.default_docx %}
+                    {% if template.id == default_docx %}
                         Standaardtemplate
                     {% else %}
-                        <a href="#" data-id="{{ template.id }}" data-type="docx">Als standaard instellen</a>{% endif %}
+                        <a href="#" data-id="{{ template.id }}" data-type="docx" class="template">Als standaard instellen</a>{% endif %}
                 </div>
             </div>
         </div>
@@ -48,7 +63,7 @@
 
             $.ajax({
                 type: "POST",
-                url: '{% url "default_invoice" %}',
+                url: '{% url "invoicetemplate_settings" %}',
                 data: {
                     type: invoiceType,
                     template_id: invoiceId,
@@ -60,3 +75,4 @@
         });
     });
 </script>
+{% endblock %}

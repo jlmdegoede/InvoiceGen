@@ -1,48 +1,62 @@
+{% extends "settings/settings.html" %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block title %}
+    Persoonlijke gegevens
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "Persoonlijke gegevens" "settings" %}
+{% endblock %}
+
+{% block personal_settings %}active{% endblock %}
+
+{% block settings %}
 <h4>Persoonlijke gegevens</h4>
-<form id="login_form" method="post" action="{% url "personal_settings" %}">
+<form id="login_form" method="post" action="{% url "settings" %}">
     {% csrf_token %}
     <div class="row">
         <div class="input-field col s12">
-            {{ personal.form.name }}
-            <label for="{{ personal.form.name.id_for_label }}">Naam</label>
-            {{ personal.error.title }}
-        </div>
-
-
-        <div class="input-field col s12">
-            {{ personal.form.email }}
-            <label for="{{ personal.form.email.id_for_label }}">E-mailadres</label>
-            {{ personal.error.title }}
-        </div>
-
-        <div class="input-field col s6">
-            {{ personal.form.address }}
-            <label for="{{ personal.form.address.id_for_label }}">Adres</label>
-            {{ personal.error.title }}
-        </div>
-
-        <div class="input-field col s6">
-            {{ personal.form.city_and_zipcode }}
-            <label for="{{ personal.form.city_and_zipcode.id_for_label }}">Plaats en postcode</label>
-            {{ personal.error.title }}
+            {{ form.name }}
+            <label for="{{ form.name.id_for_label }}">Naam</label>
+            {{ error.title }}
         </div>
 
         <div class="input-field col s12">
-            {{ personal.form.iban }}
-            <label for="{{ personal.form.iban.id_for_label }}">IBAN</label>
-            {{ personal.error.title }}
+            {{ form.email }}
+            <label for="{{ form.email.id_for_label }}">E-mailadres</label>
+            {{ error.title }}
         </div>
 
         <div class="input-field col s6">
-            {{ personal.form.kvk }}
-            <label for="{{ personal.form.kvk.id_for_label }}">KvK-nummer (optioneel)</label>
-            {{ personal.error.kvk }}
+            {{ form.address }}
+            <label for="{{ form.address.id_for_label }}">Adres</label>
+            {{ error.title }}
         </div>
 
         <div class="input-field col s6">
-            {{ personal.form.btw_number }}
-            <label for="{{ personal.form.btw_number.id_for_label }}">BTW-nummer (optioneel)</label>
-            {{ personal.error.btw_number }}
+            {{ form.city_and_zipcode }}
+            <label for="{{ form.city_and_zipcode.id_for_label }}">Plaats en postcode</label>
+            {{ error.title }}
+        </div>
+
+        <div class="input-field col s12">
+            {{ form.iban }}
+            <label for="{{ form.iban.id_for_label }}">IBAN</label>
+            {{ error.title }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ form.kvk }}
+            <label for="{{ form.kvk.id_for_label }}">KvK-nummer (optioneel)</label>
+            {{ error.kvk }}
+        </div>
+
+        <div class="input-field col s6">
+            {{ form.btw_number }}
+            <label for="{{ form.btw_number.id_for_label }}">BTW-nummer (optioneel)</label>
+            {{ error.btw_number }}
         </div>
 
 
@@ -51,3 +65,4 @@
         </button>
     </div>
 </form>
+{% endblock %}

@@ -16,39 +16,16 @@
 {% endblock %}
 
 {% block side_menu %}
-    <a href="#data" class="collection-item" id="data-link">Persoonlijke gegevens</a>
-    <a href="#invoices" class="collection-item" id="invoices-link">Factuursjablonen</a>
-    <a href="#users" class="collection-item" id="users-link">Gebruikers</a>
-    <a href="#settings" class="collection-item" id="settings-link">Algemene instellingen</a>
+    <a href="{% url 'settings' %}" class="collection-item {% block personal_settings %}{% endblock %}">Persoonlijke gegevens</a>
+    <a href="{% url 'general_settings' %}" class="collection-item {% block general_settings %}{% endblock %}">Algemene instellingen</a>
+    <a href="{% url 'invoicetemplate_settings' %}" class="collection-item {% block invoicetemplate_settings %}{% endblock %}">Factuursjablonen</a>
+    <a href="{% url 'user_settings' %}" class="collection-item {% block user_settings %}{% endblock %}">Gebruikers</a>
 {% endblock %}
 
 {% block content %}
 
     <div class="row">
-        <div id="data" class="col s12 settings-tab" style="display:none;">{% include "settings/personal_settings.html" %}</div>
-        <div id="invoices" class="col s12 settings-tab" style="display:none;">{% include "settings/invoice_settings.html" %}</div>
-        <div id="users" class="col s12 settings-tab" style="display:none;">{% include "settings/user_settings.html" %}</div>
-        <div id="settings" class="col s12 settings-tab" style="display:none;">{% include "settings/general_settings.html" %}</div>
+        {% block settings %}{% endblock %}
     </div>
-
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var hash = window.location.hash;
-                if (!hash) {
-                    hash = '#data'
-                }
-                current_location = hash.replace('#', '');
-                $(hash).show();
-                $('#' + current_location + '-link').addClass('active');
-
-                $('.collection-item').click(function (e) {
-                    $('.settings-tab').hide();
-                    var divClicked = $(this).attr('href');
-                    $('.collection-item').removeClass('active');
-                    $(this).addClass('active');
-                    $(divClicked).show();
-                });
-            });
-        </script>
 
 {% endblock %}

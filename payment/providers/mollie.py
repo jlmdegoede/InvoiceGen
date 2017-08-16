@@ -1,6 +1,8 @@
 import os, time
 
 from django.shortcuts import reverse
+from settings.helper import get_setting
+from settings.const import SITE_URL, MOLLIE_API_KEY
 import Mollie
 
 from ..models import MolliePayment, Payment
@@ -9,8 +11,10 @@ from ..models import MolliePayment, Payment
 class MollieApi(object):
 
     def __init__(self):
-        self.mollie = Mollie.API.Client()
-        self.mollie.setApiKey(os.getenv('MOLLIE_API_KEY'))
+        api_key = get_setting(MOLLIE_API_KEY, '')
+        if api_key:
+            self.mollie = Mollie.API.Client()
+            self.mollie.setApiKey(api_key)
 
     def create_request(self, invoice):
         payment_obj = MolliePayment()
@@ -18,8 +22,8 @@ class MollieApi(object):
         payment_obj.payment_amount = invoice.get_total_amount()
         payment_obj.status = Payment.PENDING
         payment_obj.for_invoice = invoice
-        webhook_url = 'http://debf641e.ngrok.io' + reverse('mollie_webhook')
-        return_url = 'http://debf641e.ngrok.io' + reverse('mollie_return', kwargs={'invoice_id': invoice.id})
+        webhook_url = get_setting(SITE_URL, '') + reverse('mollie_webhook')
+        return_url = get_setting(SITE_URL, '') + reverse('mollie_return', kwargs={'invoice_id': invoice.id})
         payment = self.mollie.payments.create({
             'amount': payment_obj.payment_amount,
             'description': invoice.title,

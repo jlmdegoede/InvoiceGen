@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import *
@@ -10,35 +8,21 @@ from invoicegen.settings import DEFAULT_COLOR
 from invoicegen.settings import ALLOWED_HOSTS
 from invoices.models import InvoiceTemplate
 from mail.views import create_and_send_email_without_form
-from settings.forms import *
-from settings.models import *
 from payment.providers.bunq import BunqApi
 
+from .forms import *
+from .models import *
 from .localization_nl import get_localized_text
-from .helper import get_setting, save_website_name, save_colors, save_setting, create_groups, add_user_to_groups
+from .helper import get_setting, get_from_request_and_save_setting, save_setting, create_groups, add_user_to_groups
 from .const import *
 
 
-@login_required
-@permission_required('settings.change_setting')
-def settings(request):
-    return_dict = {
-        'personal': PersonalSettings().get_personal_settings(request),
-        'users': UserSettings().get_user_settings(request),
-        'invoices': get_invoice_templates(),
-        'settings': get_bunq_settings(),
-    }
-    create_groups()
-    return render(request, 'settings/settings.html', return_dict)
-
-
 class UserSettings(View):
-    @method_decorator(permission_required('settings.change_setting'))
-    def get_user_settings(self, request):
+    def get(self, request):
         user_list = User.objects.all()
-        return {'user_list': user_list, 'new_user_form': UserForm()}
+        return render(request, 'settings/user_settings.html',
+                      {'user_list': user_list, 'new_user_form': UserForm()})
 
-    @method_decorator(permission_required('settings.change_setting'))
     def post(self, request):
         user_form = UserForm(request.POST)
         if user_form.is_valid():
@@ -49,9 +33,9 @@ class UserSettings(View):
             new_user = User.objects.create_user(username, email, password)
             add_user_to_groups(new_user, groups)
             self.prepare_new_user_mail(email, username, password)
-            return redirect(to=settings)
+            return redirect(to='user_settings')
         else:
-            return render(request, 'settings/settings.html', {'users': {'new_user_form': user_form}})
+            return render(request, 'settings/user_settings.html', {'users': {'new_user_form': user_form}})
 
     def prepare_new_user_mail(self, email, username, password):
         subject = get_localized_text('NEW_USER_MAIL_SUBJECT')
@@ -70,22 +54,18 @@ def delete_user(request):
             user.delete()
 
             request.session['toast'] = get_localized_text(key='USER_DELETED')
-            return redirect(to=settings)
+            return redirect(to='user_settings')
         else:
             return JsonResponse({'error': get_localized_text('USER_DELETE_FIRST')})
 
 
 class PersonalSettings(View):
-    def get_personal_settings(self, request):
+    def get(self, request):
         user_i = UserSetting.objects.all().first()
         if not user_i:
             user_i = UserSetting()
-        site_name = get_setting(SITE_NAME, 'invoicegen')
-        form = UserSettingForm(instance=user_i, initial={'site_name': site_name})
-        color_up = get_setting(COLOR_UP, DEFAULT_COLOR)
-        color_down = get_setting(COLOR_DOWN, DEFAULT_COLOR)
-
-        return {'form': form, 'color_up': color_up, 'color_down': color_down}
+        form = UserSettingForm(instance=user_i)
+        return render(request, 'settings/personal_settings.html', {'form': form})
 
     @method_decorator(permission_required('settings.change_setting'))
     def post(self, request):
@@ -95,38 +75,32 @@ class PersonalSettings(View):
             user = UserSetting()
         form = UserSettingForm(request.POST, instance=user)
         if form.is_valid():
-            save_website_name(form)
-            save_colors(form)
             form.save()
             request.session['toast'] = get_localized_text(key='SETTINGS_SAVED')
-            return redirect(to=settings)
+            return redirect(to='settings')
         else:
-            color_up = get_setting(COLOR_UP, DEFAULT_COLOR)
-            color_down = get_setting(COLOR_DOWN, DEFAULT_COLOR)
-            return render(request, 'settings/settings.html',
-                          {'personal': {'form': form, 'error': form.errors,
-                                        'color_up': color_up, 'color_down': color_down}})
+            return render(request, 'settings/personal_settings.html', {'form': form, 'error': form.errors})
 
 
-def get_invoice_templates():
-    pdf_templates = InvoiceTemplate.objects.filter(template_type=InvoiceTemplate.LATEX)
-    docx_templates = InvoiceTemplate.objects.filter(template_type=InvoiceTemplate.DOCX)
-    default_pdf = get_setting(DEFAULT_PDF, 1)
-    default_docx = get_setting(DEFAULT_DOCX, 2)
-    return {'templates': {'pdf': pdf_templates, 'docx': docx_templates},
-            'default_docx': int(default_docx), 'default_pdf': int(default_pdf)}
+class InvoiceTemplateSettings(View):
+    def get(self, request):
+        pdf_templates = InvoiceTemplate.objects.filter(template_type=InvoiceTemplate.LATEX)
+        docx_templates = InvoiceTemplate.objects.filter(template_type=InvoiceTemplate.DOCX)
+        default_pdf = get_setting(DEFAULT_PDF, 1)
+        default_docx = get_setting(DEFAULT_DOCX, 2)
+        return render(request, 'settings/invoice_settings.html',
+                      {'templates': {'pdf': pdf_templates, 'docx': docx_templates},
+                       'default_docx': int(default_docx), 'default_pdf': int(default_pdf)})
 
-
-@login_required
-def save_default_invoice_template(request):
-    if request.POST:
-        type = request.POST['type']
-        template_id = request.POST['template_id']
-        if 'pdf' in type:
-            save_setting('pdf_default_template', template_id)
-        elif 'docx' in type:
-            save_setting('docx_default_template', template_id)
-        return JsonResponse({'saved': True})
+    def post(self, request):
+        if request.POST:
+            type = request.POST['type']
+            template_id = request.POST['template_id']
+            if 'pdf' in type:
+                save_setting('pdf_default_template', template_id)
+            elif 'docx' in type:
+                save_setting('docx_default_template', template_id)
+            return JsonResponse({'saved': True})
 
 
 class EditUserView(View):
@@ -148,26 +122,35 @@ class EditUserView(View):
             user.email = email
             user.groups.clear()  # delete existing groups
             add_user_to_groups(user, groups)  # before adding the new ones
-            return redirect(to=settings)
+            return redirect(to='user_settings')
         else:
-            return render(request, 'settings/settings.html', {'users': {'new_user_form': user_form}})
+            return render(request, 'settings/edit_user.html', {'users': {'new_user_form': user_form}})
 
 
-@login_required
-@permission_required('settings.change_setting')
-def save_bunq_settings(request):
-    if request.POST:
-        api_key = request.POST['bunq_api_key']
-        save_setting(BUNQ_API_KEY, api_key)
-        default_bunq_account = request.POST['defaultbunq']
-        save_setting(DEFAULT_BUNQ_ACCOUNT, default_bunq_account)
-        return redirect(to=settings)
+class GeneralSettings(View):
+    def get(self, request):
+        return_dict = {}
+        return_dict['site_name'] = get_setting(SITE_NAME, 'Invoicegen')
+        return_dict['site_url'] = get_setting(SITE_URL, '')
+        return_dict['color_up'] = get_setting(COLOR_UP, DEFAULT_COLOR)
+        return_dict['color_down'] = get_setting(COLOR_DOWN, DEFAULT_COLOR)
+        bunq_api_key = get_setting(BUNQ_API_KEY, '')
+        return_dict['default_bunq_account'] = int(get_setting(DEFAULT_BUNQ_ACCOUNT, 0))
+        bunq_accounts = None
+        if bunq_api_key != '':
+            bunq_accounts = BunqApi().monetary_accounts()
+        return_dict['bunq_accounts'] = bunq_accounts
+        return_dict['mollie_api_key'] = get_setting(MOLLIE_API_KEY, '')
+        return_dict['bunq_api_key'] = bunq_api_key
+        return render(request, 'settings/general_settings.html', return_dict)
 
-
-def get_bunq_settings():
-    bunq_api_key = get_setting(BUNQ_API_KEY, '')
-    default_bunq = int(get_setting(DEFAULT_BUNQ_ACCOUNT, 0))
-    bunq_accounts = None
-    if bunq_api_key != '':
-        bunq_accounts = BunqApi().monetary_accounts()
-    return {'bunq_api_key': bunq_api_key, 'default_bunq_account': default_bunq, 'accounts': bunq_accounts}
+    def post(self, request):
+        get_from_request_and_save_setting(request, 'bunq_api_key', BUNQ_API_KEY)
+        get_from_request_and_save_setting(request, 'defaultbunq', DEFAULT_BUNQ_ACCOUNT)
+        get_from_request_and_save_setting(request, 'site_name', SITE_NAME)
+        get_from_request_and_save_setting(request, 'site_url', SITE_URL)
+        get_from_request_and_save_setting(request, 'color_up', COLOR_UP)
+        get_from_request_and_save_setting(request, 'color_down', COLOR_DOWN)
+        get_from_request_and_save_setting(request, 'mollie_api_key', MOLLIE_API_KEY)
+        request.session['toast'] = get_localized_text(key='SETTINGS_SAVED')
+        return redirect(to='general_settings')
