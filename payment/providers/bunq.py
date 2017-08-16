@@ -54,18 +54,9 @@ class BunqApi(object):
             generated.RequestInquiry.FIELD_DESCRIPTION: description,
             generated.RequestInquiry.FIELD_ALLOW_BUNQME: True,
         }
-
         request_id = generated.RequestInquiry.create(
             self.context,
             request_map,
             self.user_id,
             self.monetary_account
-        )
-        print(
-            generated.RequestInquiry.get(
-                self.context,
-                self.user_id,
-                self.monetary_account,
-                request_id
-            ).to_json()
         )

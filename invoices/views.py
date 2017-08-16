@@ -13,6 +13,8 @@ from invoicegen.celery import app
 from invoices.forms import *
 from invoices.tasks import task_generate_pdf
 from settings.localization_nl import get_localized_text
+from settings.const import BUNQ_API_KEY, MOLLIE_API_KEY
+from settings.helper import get_setting
 from utils.date_helper import *
 
 from .models import *
@@ -40,7 +42,6 @@ class AddOutgoingInvoice(View):
     def get(self, request):
         invoice = OutgoingInvoice()
         f = OutgoingInvoiceForm(instance=invoice)
-
         return render(request, 'invoices/outgoing/new_edit_outgoing_invoice.html',
                       {'form': f, 'invoiceid': invoice.id, 'edit': False})
 
@@ -51,15 +52,12 @@ class AddOutgoingInvoice(View):
         if f.is_valid():
             f.save(commit=False)
             invoice.date_created = timezone.now()
-
             products = f.cleaned_data['products']
             for product in products:
                 invoice.to_company = product.from_company
-
             invoice.invoice_number = f.cleaned_data['invoice_number']
             invoice.save()
             add_invoice_to_products(invoice, products)
-
             request.session['toast'] = get_localized_text('INVOICE_CREATED')
             return redirect('/facturen')
         else:
@@ -101,7 +99,11 @@ def share_link_to_outgoing_invoice(request, invoice_id):
 
 def view_outgoing_invoice_guest(request, invoice_url):
     invoice = OutgoingInvoice.objects.get(url=invoice_url)
-    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice})
+    bunq_set = get_setting(BUNQ_API_KEY, '') != ''
+    mollie_set = get_setting(MOLLIE_API_KEY, '') != ''
+    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice,
+                                                                            'mollie_set': mollie_set,
+                                                                            'bunq_set': bunq_set})
 
 
 @login_required
@@ -142,7 +144,11 @@ def detail_incoming_invoice(request, invoice_id):
 @permission_required('invoices.view_invoice')
 def detail_outgoing_invoice(request, invoice_id):
     invoice = OutgoingInvoice.objects.get(id=invoice_id)
-    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice})
+    bunq_set = get_setting(BUNQ_API_KEY, '') != ''
+    mollie_set = get_setting(MOLLIE_API_KEY, '') != ''
+    return render(request, 'invoices/outgoing/view_outgoing_invoice.html', {'invoice': invoice,
+                                                                            'mollie_set': mollie_set,
+                                                                            'bunq_set': bunq_set})
 
 
 class EditOutgoingInvoice(View):
@@ -271,6 +277,7 @@ class SendOutgoingInvoicePerEmail(View):
     def get(self, request, invoice_id):
         invoice = OutgoingInvoice.objects.get(id=invoice_id)
         return mail.views.get_email_form(request, to=invoice.to_company.company_email, invoice_id=invoice_id)
+
 
 class OutgoingInvoiceViewSet(viewsets.ModelViewSet):
     queryset = OutgoingInvoice.objects.all()
