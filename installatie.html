@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installatie &mdash; Invoicegen 1.0b4 documentatie</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Zoeken" href="search.html"/>
+    <link rel="top" title="Invoicegen 1.0b4 documentatie" href="index.html"/>
+        <link rel="next" title="Eerste keer" href="eerste-keer.html"/>
+        <link rel="prev" title="Welkom bij de handleiding van Invoicegen" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Invoicegen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installatie</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directe-installatie">Directe installatie</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="eerste-keer.html">Eerste keer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opdrachten.html">Opdrachten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="facturen.html">Facturen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overeenkomsten.html">Overeenkomsten</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instellingen.html">Instellingen &amp; Statistieken</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Invoicegen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installatie</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/installatie.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installatie">
+<h1>Installatie<a class="headerlink" href="#installatie" title="Permalink naar deze titel">¶</a></h1>
+<p>Je kunt Invoicegen op twee manieren installeren: direct op de server (Linux of macOS) of door middel van Docker. Die laatste manier wordt aanbevolen, gezien die het eenvoudigste is.</p>
+<div class="section" id="docker">
+<h2>Docker<a class="headerlink" href="#docker" title="Permalink naar deze titel">¶</a></h2>
+<p>We gaan er vanuit dat je Docker al hebt geïnstalleerd op je favoriete platform.
+Daarna is het als eerste nodig om een postgres-container binnen te halen en te starten:</p>
+<ul class="simple">
+<li><cite>docker pull postgres &amp;&amp; docker pull jlmdegoede/invoicegen</cite></li>
+<li><cite>docker run –name igpostgres -d postgres</cite>.</li>
+</ul>
+<p>Vervolgens start je Invoicegen met
+- <cite>docker run -d -e SECRET_KEY=&lt;je-geheime-sleutel&gt; –link igpostgres:postgres -p 80:80 jlmdegoede/invoicegen</cite></p>
+<p>Zorg dat je een goede geheime sleutel invult. Je kunt er bijvoorbeeld <a class="reference external" href="http://www.miniwebtool.com/django-secret-key-generator/">hier</a> een genereren.
+Ga in de browser naar <a class="reference external" href="http://127.0.0.1">http://127.0.0.1</a> om in te loggen.</p>
+<p>Voor in productie map je de container naar een andere poort met <cite>-p 8000:80</cite> en zet je er apache of nginx voor met https.</p>
+</div>
+<div class="section" id="directe-installatie">
+<h2>Directe installatie<a class="headerlink" href="#directe-installatie" title="Permalink naar deze titel">¶</a></h2>
+<p>Je kunt Invoicegen ook direct installeren zonder Docker, maar dan is het wel nodig om veel software te installeren.
+Zorg ervoor dat je postgresql, redis-server, nodejs-legacy en python3 met pip hebt geïnstalleerd. Kloon de git-repository met:</p>
+<ul class="simple">
+<li><cite>git clone https://github.com/jlmdegoede/Invoicegen.git</cite></li>
+<li><cite>cd Invoicegen</cite></li>
+</ul>
+<p>Maak een bestand <cite>.env</cite> en plaats daarin <cite>SECRET_KEY=&lt;je-secret-key&gt;</cite> die je bijvoorbeeld vanaf <a class="reference external" href="http://www.miniwebtool.com/django-secret-key-generator/">hier</a> genereert.</p>
+<p>Installeer de Python-dependencies met:</p>
+<ul class="simple">
+<li>optioneel: maak eerst een virtualenv met: <cite>virtualenv -p python3 ~/.venvig</cite></li>
+<li>optioneel: activeer de virtualenv met <cite>source ~/.venvig/bin/activate</cite></li>
+<li><cite>pip3 install -r requirements.txt</cite></li>
+</ul>
+<p>Verzamel de statische dependencies:</p>
+<ul class="simple">
+<li><cite>npm install -g bower</cite></li>
+<li><cite>bower install</cite></li>
+<li><cite>python3 manage.py collectstatic</cite></li>
+</ul>
+<p>Kickstart de database en genereer de eerste admin:</p>
+<ul class="simple">
+<li><cite>python3 manage.py migrate</cite></li>
+<li><cite>python3 manage.py createautoadmin</cite></li>
+</ul>
+<p>Daarna kun je supervisord gebruiken uit de map config/ om Daphne, Celery en een aantal workers te starten. Met nginx of apache zet je dan een reverse-proxy op naar poort 8000. Zorg ervoor dat je ook websockets doorstuurt naar Invoicegen.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="eerste-keer.html" class="btn btn-neutral float-right" title="Eerste keer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welkom bij de handleiding van Invoicegen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jochem.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0b4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
