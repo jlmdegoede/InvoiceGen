@@ -75,14 +75,14 @@
                                 class="material-icons left">work</i>Opdrachten</a></li>
                     {% endif %}
 
-                    {% if perms.Agreements.view_agreement %}
-                        <li class="{% block agreements_active %}{% endblock %}"><a href="{% url "agreement_index" %}"><i
-                                class="material-icons left">description</i>Overeenkomsten</a></li>
-                    {% endif %}
-
                     {% if perms.Invoices.view_invoice %}
                         <li class="{% block invoices_active %}{% endblock %}"><a href="{% url "get_invoices" %}"><i
                                 class="material-icons left">credit_card</i>Facturen</a></li>
+                    {% endif %}
+
+                    {% if perms.Agreements.view_agreement %}
+                        <li class="{% block agreements_active %}{% endblock %}"><a href="{% url "agreement_index" %}"><i
+                                class="material-icons left">description</i>Overeenkomsten</a></li>
                     {% endif %}
 
                     <li class="{% block more_active %}{% endblock %}"><a class="dropdown-button" href="#!"

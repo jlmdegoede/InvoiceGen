@@ -48,6 +48,8 @@ pytz==2017.2
 redis==2.10.5
 requests==2.18.3
 six==1.10.0
+sphinx==1.6.3
+sphinx_rtd_theme==0.2.4
 smmap2==2.0.3
 Twisted==17.5.0
 txaio==2.8.1
