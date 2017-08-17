@@ -39,3 +39,6 @@ Vervolgens start je Invoicegen met
 
 Zorg dat je een goede geheime sleutel invult. Je kunt er bijvoorbeeld [hier](http://www.miniwebtool.com/django-secret-key-generator/) een genereren.
 Ga in de browser naar http://127.0.0.1 om in te loggen.
+
+## Documentatie
+Voor meer informatie over hoe je Invoicegen installeert en hoe je het precies gebruikt, lees je de complete [handleiding](https://jlmdegoede.github.io/Invoicegen/).
