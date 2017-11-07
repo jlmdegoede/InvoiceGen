@@ -45,7 +45,7 @@ class OutgoingInvoice(Invoice):
         products = Product.objects.filter(invoice=self)
         for product in products:
             btw += product.get_price() * (float(product.tax_rate / 100))
-        return btw
+        return round(btw, 2)
 
     def generate_and_save_url(self):
         if not self.url:
