@@ -34,7 +34,7 @@ class OutgoingInvoice(Invoice):
         products = Product.objects.filter(invoice=self)
         for product in products:
             totaalbedrag += product.get_price()
-        return totaalbedrag
+        return round(totaalbedrag, 2)
 
     def get_total_amount_including_btw(self):
         return self.get_total_amount() + self.get_btw()
